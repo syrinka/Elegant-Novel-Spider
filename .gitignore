@@ -1,0 +1,6 @@
+local/
+dump/
+
+src/resources/status.yml
+
+**/__pycache__/
