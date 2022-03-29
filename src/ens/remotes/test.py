@@ -1,4 +1,4 @@
-from ens.remote import Remote, RemoteInfo, RemoteCatalog
+from ens.remote import Remote, RemoteNovel
 
 
 class Test(Remote):

@@ -1,9 +1,12 @@
+import pkgutil
+
+import ens.remotes as remotes
 from ens.typing import *
 from ens.exceptions import *
 
 
 _dependencies = {
-    'fetch': ('get_novel', 'get_catalog', 'get_index', 'get_content')
+    'fetch': ('get_info', 'get_catalog', 'get_index', 'get_content')
 }
 
 
@@ -48,7 +51,7 @@ class Remote(object):
         )
 
 
-    def get_novel(self) -> RemoteNovel:
+    def get_info(self) -> RemoteNovel:
         raise NotImplementedError
 
 
@@ -72,3 +75,9 @@ def get_remote(name) -> Remote:
         return Remote._remotes[name]
     except KeyError:
         raise RemoteNotFound(name)
+
+
+for ff, name, ispkg in pkgutil.iter_modules(remotes.__path__):
+    if name not in remotes.disabled:
+        name = 'ens.remotes.' + name
+        ff.find_module(name).load_module(name)

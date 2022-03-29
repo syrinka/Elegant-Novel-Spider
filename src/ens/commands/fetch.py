@@ -4,14 +4,16 @@ from ens.local import Local
 from ens.remote import get_remote
 from ens.typing import *
 from ens.exceptions import *
+from ens.utils.command import *
 
 
 @click.command('fetch')
+@arg_code
 def main(code: Code):
     try:
         remote = get_remote(code.remote)(code)
     except RemoteNotFound:
-        return # alert
+        raise # alert
 
     try:
         local = Local(code)
@@ -19,19 +21,19 @@ def main(code: Code):
         local = Local.init(code)
 
     try:
-        r_novel = remote.get_novel()
-    except FetchFail:
-        return
+        r_novel = remote.get_info()
+    except FetchError:
+        raise FetchError('Fail to get remote info.')
 
     novel = r_novel.as_novel()
     # merge novel info
 
-    local.set_novel(novel) # 更新信息
+    local.set_info(novel) # 更新信息
 
     try:
         catalog = remote.get_catalog()
-    except FetchFail:
-        return
+    except FetchError:
+        raise FetchError('Fail to get catalog.')
 
     # merge catalog
 
@@ -39,8 +41,8 @@ def main(code: Code):
 
     try:
         index = remote.get_index()
-    except FetchFail:
-        return
+    except FetchError:
+        raise FetchError('Fail to get index.')
 
     local.set_index(index)
 
