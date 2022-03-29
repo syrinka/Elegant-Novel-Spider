@@ -44,13 +44,16 @@ class Remote(object):
 
 
     @classmethod
-    def status(cls, feat: str) -> bool:
+    def status(cls) -> dict:
         """
         判断能否支持某个功能
         """
-        return all(
-            cls._is_overrided(dep) for dep in _dependencies[feat]
-        )
+        status = {}
+        for feat, deps in _dependencies.items():
+            status[feat] = all(
+                cls._is_overrided(dep) for dep in deps
+            )
+        return status
 
 
     def get_info(self) -> RemoteNovel:
