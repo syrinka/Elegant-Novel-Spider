@@ -72,7 +72,7 @@ class Remote(object):
         raise NotImplementedError
 
 
-def get_remote(name) -> Callable[[Code], Remote]:
+def get_remote(name) -> Type[Remote]:
     """
     获取远程源对应的逻辑类
     """
