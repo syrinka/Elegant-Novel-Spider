@@ -1,5 +1,4 @@
 import difflib
-import imp
 
 from ens.typing import *
 

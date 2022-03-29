@@ -1,4 +1,3 @@
-from operator import delitem
 import yaml
 
 from ens.paths import STATUS
