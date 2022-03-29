@@ -91,6 +91,6 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
             local.set_chap(cid, content)
 
         elif mode == 'diff':
-            raise NotImplemented('Not support for now!') # TODO
+            raise NotImplementedError('Not support for now!') # TODO
 
     echo('Done.', style='good')

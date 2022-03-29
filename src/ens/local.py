@@ -114,7 +114,7 @@ class Local(object):
         """
         spine = []
         for vol in self.catalog:
-            spine.extend(vol['catalog'])
+            spine.extend(vol['cids'])
         return spine
 
 
@@ -196,7 +196,7 @@ class Local(object):
         with self.conn:
             self.cursor.executemany(
                 'INSERT OR IGNORE INTO `index` (cid, title) VALUES (?, ?)',
-                index.keys()
+                index.items()
             )
             self.conn.commit()
 
