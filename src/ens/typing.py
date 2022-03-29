@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass, field, InitVar
+from dataclasses import dataclass, field, InitVar, asdict
 from typing import List, Dict, Tuple, Union, Literal, NewType, Type
 from datetime import datetime
 
@@ -53,6 +53,10 @@ class Novel(object):
         return Code(self.remote + conf.CODE_DELIM + self.nid)
 
 
+    def as_dict(self):
+        return asdict(self)
+
+
 @dataclass
 class Shelf(object):
     name: Union[str, None] = None
@@ -74,7 +78,11 @@ class RemoteNovel(object):
     expand: dict = field(default_factory=dict)
 
     def as_novel(self) -> Novel:
-        pass
+        return Novel(
+            self.code.remote, self.code.nid,
+            self.title, self.author, self.intro, self.last_update
+        )
+
 
     def __rich__(self):
         text = ''

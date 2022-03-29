@@ -171,8 +171,8 @@ class Local(object):
         """
         self.info = info
         yaml.dump(
+            info.as_dict(),
             open(self.info_path, 'w', encoding='utf-8'),
-            dict(info),
             allow_unicode = True
         )
 
@@ -183,8 +183,8 @@ class Local(object):
         """
         self.catalog = catalog
         yaml.dump(
+            catalog,
             open(self.catalog_path, 'w', encoding='utf-8'),
-            dict(catalog),
             allow_unicode = True
         )
 
