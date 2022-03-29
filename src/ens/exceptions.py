@@ -1,7 +1,8 @@
 class ENSError(Exception):
-    msg = '{}'
+    msg = 'An Error Occur'
     def __init__(self, *args, **kw):
-        self.msg = self.msg.format(*args, **kw)
+        if args or kw:
+            self.msg = self.msg.format(*args, **kw)
 
 
     def __rich__(self):
@@ -38,12 +39,12 @@ class RemoteError(ENSError):
 
 
 class RemoteNotFound(RemoteError):
-    pass
+    msg = 'Given remote {} not found.'
 
 
 class DuplicateRemote(RemoteError):
     pass
 
 
-class FetchFail(RemoteError):
+class FetchError(RemoteError):
     pass
