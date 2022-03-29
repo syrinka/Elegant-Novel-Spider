@@ -4,6 +4,7 @@ import subprocess
 from contextlib import contextmanager
 
 from rich.console import Console
+from rich.theme import Theme
 from rich.progress import (
     Progress,
     SpinnerColumn,
@@ -17,7 +18,11 @@ from ens.exceptions import *
 __all__ = ['console', 'echo', 'pager', 'track', 'escape']
 
 
-console = Console(highlight=False)
+theme = Theme({
+    'bad': 'red',
+    'good': 'green'
+})
+console = Console(highlight=False, theme=theme)
 
 
 def debug(*msg):
