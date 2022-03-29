@@ -1,8 +1,13 @@
 class ENSError(Exception):
-    msg = 'An Error Occur'
+    msg = None
     def __init__(self, *args, **kw):
         if args or kw:
-            self.msg = self.msg.format(*args, **kw)
+            if self.msg is None and len(args) == 1:
+                self.msg = str(args[0])
+            else:
+                self.msg = self.msg.format(*args, **kw)
+        else:
+            self.msg = 'An Error Occur.'
 
 
     def __rich__(self):
@@ -47,4 +52,9 @@ class DuplicateRemote(RemoteError):
 
 
 class FetchError(RemoteError):
+    pass
+
+
+
+class TopicNotFound(ENSError):
     pass
