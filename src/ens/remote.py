@@ -19,7 +19,7 @@ class Remote(object):
     name = None
 
     def __init__(self, code: Code):
-        self.code = Code
+        self.code = code
         self.__remote_init__(code)
         pass
 
