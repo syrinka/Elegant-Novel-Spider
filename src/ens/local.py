@@ -209,6 +209,19 @@ class Local(object):
         return self.has_chap(cid)
 
 
+def get_local_shelf() -> List[Novel]:
+    shelf = Shelf()
+    for remote in os.listdir(paths.LOCAL):
+        for nid in os.listdir(join(paths.LOCAL, remote)):
+            path = join(paths.LOCAL, remote, nid, 'info.yml')
+            _info = yaml.load(open(
+                path, 'r', encoding='utf-8'
+            ), Loader=yaml.SafeLoader)
+            shelf += Novel(**_info)
+
+    return shelf
+        
+
 if __name__ == '__main__':
     c = Code('test~book1')
     a = Local(c)

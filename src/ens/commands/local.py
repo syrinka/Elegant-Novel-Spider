@@ -1,5 +1,7 @@
 import click
 
+from ens.local import Local, get_local_shelf
+from ens.console import echo
 from ens.utils.command import *
 
 
@@ -12,13 +14,14 @@ def main():
 
 
 @main.command('list')
-def func(all):
+def func():
     """
     列出所有本地数据
 
     Alias: ls
     """
-    pass
+    shelf = get_local_shelf()
+    echo(shelf)
 
 
 alias(main, 'ls', 'list')
