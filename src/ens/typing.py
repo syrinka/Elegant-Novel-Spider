@@ -42,6 +42,12 @@ class Code(object):
         self.remote, self.nid = match[1], match[2]
 
 
+    def __rich__(self):
+        return '[plum4]{}[/]{}[cyan]{}[/]'.format(
+            self.remote, conf.CODE_DELIM, self.nid
+        )
+
+
 @dataclass
 class Novel(object):
     remote: str
@@ -50,6 +56,12 @@ class Novel(object):
     author: str
     intro: str = None
     last_update: datetime = None
+
+
+    def __rich__(self):
+        return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
+            self.title, self.author, self.code.__rich__()
+        )
 
 
     @property
@@ -65,6 +77,18 @@ class Novel(object):
 class Shelf(object):
     name: Union[str, None] = None
     novels: List[Novel] = field(default_factory=list)
+
+
+    def __add__(self, novel):
+        self.novels.append(novel)
+        return self
+
+
+    def __rich_console__(self, console, opt):
+        if self.name is not None:
+            yield f'\[{self.name}]'
+        for i, novel in enumerate(self.novels):
+            yield '#{}  {}'.format(i+1, novel.__rich__())
 
 
 @dataclass
