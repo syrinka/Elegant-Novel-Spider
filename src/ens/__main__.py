@@ -10,4 +10,4 @@ if __name__ == '__main__':
     except ENSError as e:
         console.print(e)
     except Exception as e:
-        console.print_exception(e)
+        console.print_exception()
