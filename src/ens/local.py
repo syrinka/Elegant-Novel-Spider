@@ -14,7 +14,7 @@ from ens.exceptions import *
 _sql_chap = '''
 CREATE TABLE IF NOT EXISTS `chaps` (
     cid VARCHAR(128),
-    text TEXT,
+    content TEXT,
     PRIMARY KEY (cid)
 );'''
 _sql_index = '''
@@ -124,7 +124,7 @@ class Local(object):
 
 
     def get_chap(self, cid: str) -> str:
-        self.cursor.execute('SELECT text FROM `chaps` WHERE cid=?', (cid,))
+        self.cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
         try:
             return self.cursor.fetchone()[0]
         except TypeError:
@@ -132,11 +132,11 @@ class Local(object):
             return None
 
 
-    def set_chap(self, cid: str, text: str) -> str:
+    def set_chap(self, cid: str, content: str) -> str:
         with self.conn:
             self.cursor.execute(
-                'REPLACE INTO `chaps` (cid, text) VALUES (?, ?)',
-                (cid, text)
+                'REPLACE INTO `chaps` (cid, content) VALUES (?, ?)',
+                (cid, content)
             )
             self.conn.commit()
 
