@@ -14,13 +14,15 @@ def main():
 
 
 @main.command('list')
-def func():
+@opt_filter
+def func(filter):
     """
     列出所有本地数据
 
     Alias: ls
     """
     shelf = get_local_shelf()
+    shelf.apply_filter(filter)
     echo(shelf)
 
 

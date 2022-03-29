@@ -209,7 +209,7 @@ class Local(object):
         return self.has_chap(cid)
 
 
-def get_local_shelf() -> List[Novel]:
+def get_local_shelf() -> Shelf:
     shelf = Shelf()
     for remote in os.listdir(paths.LOCAL):
         for nid in os.listdir(join(paths.LOCAL, remote)):

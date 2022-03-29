@@ -1,9 +1,10 @@
 import click
 
 import ens.config as conf
-from ens.typing import Code
+from ens.typing import Code, Shelf
 from ens.status import Status
 from ens.remote import get_remote
+from ens.typing import FilterRule, ShelfFilter
 from ens.exceptions import *
 
 
@@ -55,6 +56,39 @@ opt_all = lambda h: click.option('--all', '-a',
     is_flag = True,
     help = h
 )
+
+
+def _filter_callback(ctx, param, rules):
+    opt_rules = list(FilterRule(r) for r in rules)
+    pos_rules = []
+    for i in ('remote', 'title', 'author', 'intro'):
+        rules = ctx.params.pop(i)
+        for rule in rules:
+            pos_rules.append(FilterRule(i + rule))
+
+    return ShelfFilter(opt_rules + pos_rules)
+
+
+def opt_filter(cmd):
+    filter = click.option('-f', '--filter',
+        metavar = 'RULES',
+        multiple = True,
+        callback = _filter_callback,
+        help = '根据给定条件进行筛选')
+
+    a = click.option('-R', '--remote',
+        metavar='VALUE', is_eager=True, multiple=True,
+        help = 'Alias of "-f remote<VALUE>"')
+    b = click.option('-T', '--title',
+        metavar='VALUE', is_eager=True, multiple=True,
+        help = 'Alias of "-f title<VALUE>"')
+    c = click.option('-A', '--author',
+        metavar='VALUE', is_eager=True, multiple=True,
+        help = 'Alias of "-f author<VALUE>"')
+    d = click.option('-I', '--intro',
+        metavar='VALUE', is_eager=True, multiple=True,
+        help = 'Alias of "-f intro<VALUE>"')
+    return filter(a(b(c(d(cmd)))))
 
 
 def alias(entry: click.Group, alias, origin):

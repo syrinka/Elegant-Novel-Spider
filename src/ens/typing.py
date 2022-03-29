@@ -1,6 +1,7 @@
 import re
+from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
-from typing import List, Dict, Tuple, Union, Literal, NewType, Type
+from typing import List, Dict, Literal, Union, NewType, Type, Callable
 from datetime import datetime
 
 import ens.config as conf
@@ -74,6 +75,61 @@ class Novel(object):
 
 
 @dataclass
+class FilterRule(object):
+    _rule_format = re.compile(
+        r'(?P<attr>(?:remote)|(?:author)|(?:title)|(?:intro))'
+        r'(?P<not>!?)(?P<mode>(?:[\^\$\*]?=)|)'
+        r'(?P<value>.*)'
+    )
+
+    rule_str: InitVar[str]
+
+    attr: Callable = field(init=False)
+    mode: Literal['=', '^=', '$=', '*='] = field(init=False)
+    value: Literal['remote', 'author', 'title', 'intro'] = field(init=False)
+
+
+    def __post_init__(self, rule_str):
+        rule = self._rule_format.match(rule_str)
+        self.attr = rule['attr']
+        self.aget = attrgetter(rule['attr'])
+        self.mode = rule['mode'] or conf.EMPTY_RULE_MODE
+        self.value = rule['value']
+        self.rev = bool(rule['not'])
+
+
+    def __call__(self, novel: Novel) -> bool:
+        v0 = self.aget(novel)
+        v1 = self.value
+
+        if   self.mode == '=':  res = v0 == v1
+        elif self.mode == '^=': res = v0.startswith(v1)
+        elif self.mode == '$=': res = v0.endswith(v1)
+        elif self.mode == '*=': res = v1 in v0
+        return res ^ self.rev
+
+    def __repr__(self):
+        return '{} {} {}'.format(
+            self.attr, self.mode, self.value
+        ) + (' (not)' if self.rev else '')
+
+
+@dataclass
+class ShelfFilter(object):
+    rules: List[FilterRule]
+    mode: Literal['all', 'any'] = 'all'
+
+
+    def __call__(self, novel) -> bool:
+        judge = all if self.mode == 'all' else any
+        return judge(rule(novel) for rule in self.rules)
+
+    
+    def __repr__(self):
+        return '\n'.join(str(rule) for rule in self.rules)
+
+
+@dataclass
 class Shelf(object):
     name: Union[str, None] = None
     novels: List[Novel] = field(default_factory=list)
@@ -89,6 +145,10 @@ class Shelf(object):
             yield f'\[{self.name}]'
         for i, novel in enumerate(self.novels):
             yield '#{}  {}'.format(i+1, novel.__rich__())
+
+
+    def apply_filter(self, ffunc: ShelfFilter):
+        self.novels = list(filter(ffunc, self.novels))
 
 
 @dataclass
