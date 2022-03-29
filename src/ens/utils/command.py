@@ -55,3 +55,7 @@ opt_all = lambda h: click.option('--all', '-a',
     is_flag = True,
     help = h
 )
+
+
+def alias(entry: click.Group, alias, origin):
+    entry.commands[alias] = entry.commands[origin]
