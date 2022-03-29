@@ -15,7 +15,7 @@ from rich.progress import (
 from ens.exceptions import *
 
 
-__all__ = ['console', 'echo', 'pager', 'track', 'escape']
+__all__ = ['console', 'doing', 'echo', 'pager', 'track', 'escape']
 
 
 theme = Theme({
@@ -23,6 +23,9 @@ theme = Theme({
     'good': 'green'
 })
 console = Console(highlight=False, theme=theme)
+
+
+doing = console.status
 
 
 def debug(*msg):
