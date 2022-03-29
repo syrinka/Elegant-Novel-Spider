@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass, field, InitVar
-from typing import List, Dict, Tuple, Union, Literal, NewType
+from typing import List, Dict, Tuple, Union, Literal, NewType, Callable
 from datetime import datetime
 
 import ens.config as conf
