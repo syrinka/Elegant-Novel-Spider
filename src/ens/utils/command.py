@@ -3,10 +3,8 @@ import click
 import ens.config as conf
 from ens.typing import Code
 from ens.status import Status
+from ens.remote import get_remote
 from ens.exceptions import *
-
-
-__all__ = ['arg_code']
 
 
 def _code_callback(ctx, param, code):
@@ -39,3 +37,21 @@ arg_code = click.argument('code',
     callback = _code_callback
 )
 
+
+def _remote_callback(ctx, param, remote):
+    try:
+        return get_remote(remote)
+    except RemoteNotFound:
+        raise
+
+
+arg_remote = click.argument('remote',
+    type = str,
+    callback = _remote_callback
+)
+
+
+opt_all = lambda h: click.option('--all', '-a',
+    is_flag = True,
+    help = h
+)
