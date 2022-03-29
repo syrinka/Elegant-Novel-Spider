@@ -35,19 +35,21 @@ class Remote(object):
         pass
 
 
-    def _is_overrided(self, funcname: str) -> bool:
+    @classmethod
+    def _is_overrided(cls, funcname: str) -> bool:
         """
         判断函数是否被重写
         """
-        return funcname in self.__dict__
+        return funcname in cls.__dict__
 
 
-    def status(self, feat: str) -> bool:
+    @classmethod
+    def status(cls, feat: str) -> bool:
         """
         判断能否支持某个功能
         """
         return all(
-            self._is_overrided(dep) for dep in _dependencies[feat]
+            cls._is_overrided(dep) for dep in _dependencies[feat]
         )
 
 
@@ -77,7 +79,11 @@ def get_remote(name) -> Remote:
         raise RemoteNotFound(name)
 
 
+all_remotes = {}
 for ff, name, ispkg in pkgutil.iter_modules(remotes.__path__):
     if name not in remotes.disabled:
         name = 'ens.remotes.' + name
         ff.find_module(name).load_module(name)
+        all_remotes[name] = True
+    else:
+        all_remotes[name] = False
