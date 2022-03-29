@@ -82,8 +82,8 @@ def get_remote(name) -> Remote:
 all_remotes = {}
 for ff, name, ispkg in pkgutil.iter_modules(remotes.__path__):
     if name not in remotes.disabled:
+        all_remotes[name] = True
         name = 'ens.remotes.' + name
         ff.find_module(name).load_module(name)
-        all_remotes[name] = True
     else:
         all_remotes[name] = False
