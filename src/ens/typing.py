@@ -18,8 +18,10 @@ class Code(object):
     remote: str = field(init=False)
     nid: str = field(init=False)
 
+
     def __repr__(self):
         return self.remote + conf.CODE_DELIM + self.nid
+
 
     def __eq__(self, other):
         return repr(self) == (
@@ -27,8 +29,10 @@ class Code(object):
             else repr(other)
         )
 
+
     def __iter__(self):
         return iter((self.remote, self.nid))
+
 
     def __post_init__(self, code_str: str):
         match = self._code_format.match(code_str)
@@ -77,12 +81,6 @@ class RemoteNovel(object):
     finish: bool = None
     expand: dict = field(default_factory=dict)
 
-    def as_novel(self) -> Novel:
-        return Novel(
-            self.code.remote, self.code.nid,
-            self.title, self.author, self.intro, self.last_update
-        )
-
 
     def __rich__(self):
         text = ''
@@ -119,6 +117,13 @@ class RemoteNovel(object):
         if self.finish:
             push('已完结', 'green')
         return text[:-1] # 去掉最后一个换行符
+
+
+    def as_novel(self) -> Novel:
+        return Novel(
+            self.code.remote, self.code.nid,
+            self.title, self.author, self.intro, self.last_update
+        )
 
 
 Catalog = NewType('Catalog', List[Dict[str, Union[str, List[str]]]])

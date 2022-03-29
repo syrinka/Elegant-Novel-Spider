@@ -14,10 +14,12 @@ class CatalogMaker(object):
 
     def vol(self, name: str):
         self.catalog.append({'name': name, 'cids': []})
+        return self
 
 
     def chap(self, cid: str):
         self.catalog[-1]['cids'].append(cid)
+        return self
 
 
     def dump(self) -> Catalog:
