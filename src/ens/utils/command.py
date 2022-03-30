@@ -1,10 +1,13 @@
 import click
 
+from os.path import join
+
 import ens.config as conf
-from ens.typing import Code, Shelf
+from ens.console import echo
 from ens.status import Status
 from ens.remote import get_remote
-from ens.typing import FilterRule, ShelfFilter
+from ens.typing import Code, Shelf, FilterRule, ShelfFilter
+from ens.paths import MANUAL
 from ens.exceptions import *
 
 
@@ -96,3 +99,15 @@ def opt_filter(cmd):
 
 def alias(entry: click.Group, alias, origin):
     entry.commands[alias] = entry.commands[origin]
+
+
+def manual(mpage):
+    def wrap(cmd):
+        def get_help(ctx):
+            path = join(MANUAL, mpage)
+            text = open(path, encoding='utf-8').read()
+            echo(text, nl=False)
+
+        cmd.get_help = get_help
+        return cmd
+    return wrap

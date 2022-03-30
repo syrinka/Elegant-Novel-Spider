@@ -2,10 +2,14 @@ import pkgutil
 import click
 import ens.commands as cmds
 
+from ens.utils.command import manual
 
+
+@manual('ens')
 @click.group('ens')
-def ens_cli():
-    pass
+@click.pass_context
+def ens_cli(ctx):
+    ctx.info_name = 'ens'
 
 
 for ff, name, ispkg in pkgutil.iter_modules(cmds.__path__, ):
