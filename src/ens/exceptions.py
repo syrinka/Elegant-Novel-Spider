@@ -56,5 +56,10 @@ class FetchError(RemoteError):
 
 
 
+class DumperNotFound(ENSError):
+    pass
+
+
+
 class TopicNotFound(ENSError):
     pass
