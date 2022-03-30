@@ -66,7 +66,9 @@ def _filter_callback(ctx, param, rules):
         for rule in rules:
             pos_rules.append(FilterRule(i + rule))
 
-    return ShelfFilter(opt_rules + pos_rules)
+    mode = 'all' if ctx.params.pop('filter_mode') else 'any'
+
+    return ShelfFilter(opt_rules + pos_rules, mode)
 
 
 def opt_filter(cmd):
@@ -76,19 +78,20 @@ def opt_filter(cmd):
         callback = _filter_callback,
         help = '根据给定条件进行筛选')
 
-    a = click.option('-R', '--remote',
-        metavar='VALUE', is_eager=True, multiple=True,
-        help = 'Alias of "-f remote<VALUE>"')
-    b = click.option('-T', '--title',
-        metavar='VALUE', is_eager=True, multiple=True,
-        help = 'Alias of "-f title<VALUE>"')
-    c = click.option('-A', '--author',
-        metavar='VALUE', is_eager=True, multiple=True,
-        help = 'Alias of "-f author<VALUE>"')
-    d = click.option('-I', '--intro',
-        metavar='VALUE', is_eager=True, multiple=True,
-        help = 'Alias of "-f intro<VALUE>"')
-    return filter(a(b(c(d(cmd)))))
+    click.option('-R', '--remote',
+        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+    click.option('-T', '--title',
+        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+    click.option('-A', '--author',
+        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+    click.option('-I', '--intro',
+        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+
+    click.option('--all/--any', 'filter_mode',
+        is_flag=True, default=True,
+        is_eager=True, hidden=True)(cmd)
+
+    return filter(cmd)
 
 
 def alias(entry: click.Group, alias, origin):
