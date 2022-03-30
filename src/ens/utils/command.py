@@ -36,19 +36,19 @@ def _code_callback(ctx, param, code):
 
 
 arg_code = click.argument('code',
-    type = Code,
+    metavar = 'CODE',
     callback = _code_callback
 )
 
 
 arg_remote = click.argument('remote',
-    type = Remote,
+    metavar = 'REMOTE',
     callback = lambda c, p, v: get_remote(v)
 )
 
 
 opt_dumper = click.option('-d', '--dumper',
-    type = Dumper,
+    metavar = 'DUMPER',
     callback = lambda c, p, v: get_dumper(v)
 )
 
