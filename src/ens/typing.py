@@ -78,14 +78,14 @@ class Novel(object):
 class FilterRule(object):
     _rule_format = re.compile(
         r'(?P<attr>(?:remote)|(?:author)|(?:title)|(?:intro))'
-        r'(?P<not>!?)(?P<mode>(?:[\^\$\*]?=)|)'
+        r'(?P<not>!?)(?P<mode>(?:[\^\@\*]?=)|)'
         r'(?P<value>.*)'
     )
 
     rule_str: InitVar[str]
 
     attr: Callable = field(init=False)
-    mode: Literal['=', '^=', '$=', '*='] = field(init=False)
+    mode: Literal['=', '^=', '@=', '*='] = field(init=False)
     value: Literal['remote', 'author', 'title', 'intro'] = field(init=False)
 
 
@@ -104,7 +104,7 @@ class FilterRule(object):
 
         if   self.mode == '=':  res = v0 == v1
         elif self.mode == '^=': res = v0.startswith(v1)
-        elif self.mode == '$=': res = v0.endswith(v1)
+        elif self.mode == '@=': res = v0.endswith(v1)
         elif self.mode == '*=': res = v1 in v0
         return res ^ self.rev
 
