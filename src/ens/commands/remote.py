@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo
-from ens.remote import Remote, get_remote, all_remotes
+from ens.remote import Remote, all_remotes
 from ens.utils.command import *
 
 
@@ -14,7 +14,7 @@ def main():
 
 
 @main.command('list')
-@opt_all('列出所有远程源，包括不可用的')
+@opt_all
 def func(all):
     """
     列出可用的远程源

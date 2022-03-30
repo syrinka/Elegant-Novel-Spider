@@ -3,7 +3,8 @@ import click
 import ens.config as conf
 from ens.console import echo
 from ens.status import Status
-from ens.remote import get_remote
+from ens.remote import Remote, get_remote
+from ens.dumper import Dumper, get_dumper
 from ens.typing import Code, Shelf, FilterRule, ShelfFilter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
@@ -35,27 +36,25 @@ def _code_callback(ctx, param, code):
 
 
 arg_code = click.argument('code',
-    type = str,
+    type = Code,
     callback = _code_callback
 )
 
 
-def _remote_callback(ctx, param, remote):
-    try:
-        return get_remote(remote)
-    except RemoteNotFound:
-        raise
-
-
 arg_remote = click.argument('remote',
-    type = str,
-    callback = _remote_callback
+    type = Remote,
+    callback = lambda c, p, v: get_remote(v)
 )
 
 
-opt_all = lambda h: click.option('--all', '-a',
-    is_flag = True,
-    help = h
+opt_dumper = click.option('-d', '--dumper',
+    type = Dumper,
+    callback = lambda c, p, v: get_dumper(v)
+)
+
+
+opt_all = click.option('--all', '-a',
+    is_flag = True
 )
 
 
