@@ -75,26 +75,29 @@ def _filter_callback(ctx, param, rules):
 
 
 def opt_filter(cmd):
-    filter = click.option('-f', '--filter',
+    # click option 的装饰器越靠内层的越后结算
+    # 优先装饰 -f 以确保其最后结算，可以捕获到所有别名
+
+    click.option('-f', '--filter',
         metavar = 'RULES',
         multiple = True,
         callback = _filter_callback,
-        help = '根据给定条件进行筛选')
+        help = '根据给定条件进行筛选')(cmd)
 
     click.option('-R', '--remote',
-        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+        metavar='VALUE', multiple=True, hidden=True)(cmd)
     click.option('-T', '--title',
-        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+        metavar='VALUE', multiple=True, hidden=True)(cmd)
     click.option('-A', '--author',
-        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+        metavar='VALUE', multiple=True, hidden=True)(cmd)
     click.option('-I', '--intro',
-        metavar='VALUE', is_eager=True, multiple=True, hidden=True)(cmd)
+        metavar='VALUE', multiple=True, hidden=True)(cmd)
 
     click.option('--all/--any', 'filter_mode',
         is_flag=True, default=True,
-        is_eager=True, hidden=True)(cmd)
+        hidden=True)(cmd)
 
-    return filter(cmd)
+    return cmd
 
 
 def alias(entry: click.Group, alias, origin):
