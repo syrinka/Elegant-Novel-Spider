@@ -222,10 +222,13 @@ Catalog = NewType('Catalog', List[Dict[str, Union[str, List[str]]]])
 
 
 @dataclass
-class DumpInitData(object):
+class DumpMetadata(object):
     info: Novel
-    meta: dict
+    vol_count: int
+    chap_count: int
+    char_count: int
     path: str
+
 
 
 if __name__ == '__main__':

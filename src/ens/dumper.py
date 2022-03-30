@@ -17,6 +17,15 @@ class Dumper(object):
         cls._remotes[cls.name] = cls
 
 
+    def feed(self, type: Literal['meta', 'vol', 'chap'], data):
+        """
+        meta: DumpMetadata
+        vol: str
+        chap: title, content
+        """
+        pass
+
+
 def get_dumper(name) -> Type[Dumper]:
     try:
         return Dumper._dumpers[name]

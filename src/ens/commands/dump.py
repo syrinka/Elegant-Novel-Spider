@@ -1,10 +1,11 @@
 import click
 
 from ens.local import Local, get_novel
-from ens.dumper import get_dumper, all_dumpers
+from ens.dumper import Dumper, all_dumpers
 from ens.paths import DUMP, join
 from ens.typing import *
 from ens.utils.command import *
+from ens.exceptions import *
 
 
 def _list_callback(ctx, param, value):
@@ -15,19 +16,13 @@ def _list_callback(ctx, param, value):
         ctx.exit()
 
 
-def _dumper_callback(ctx, param, value):
-    print('yes')
-    return value
-
-
 @click.command('dump', short_help='输出')
 @arg_code
 @click.option('-l', '--list', 'ls',
     is_flag = True,
     callback = _list_callback,
     help = '列出所有可用的 dumper')
-@click.option('-d', '--dumper',
-    callback = _dumper_callback)
+@opt_dumper
 @click.option('--txt', 'dumper',
     flag_value = 'txt',
     default = True,
@@ -48,19 +43,28 @@ def _dumper_callback(ctx, param, value):
     help = '输出目标路径',
     default = '{title}.{ext}',
     show_default = True)
-def main(code, dumper, miss, output, **kw):
+def main(code, dumper: Dumper, miss, output, **kw):
     """
     输出小说
     """
-    print(dumper)
-    return
     local = Local(code)
-
-    dumper = get_dumper(dumper)
-    init = DumpInitData(
+    meta = DumpMetadata(
         get_novel(code),
-        local.get_meta(),
+        local.vol_count(),
+        local.chap_count(),
+        local.chap_count(),
         join(DUMP, output)
     )
 
-    dumper = dumper(init)
+    dumper = dumper()
+    dumper.feed('meta', meta)
+
+    for vol in local.catalog:
+        dumper.feed('vol', vol['name'])
+
+        for cid in vol['cids']:
+            title = local.get_chap_title(cid)
+            content = local.get_chap(cid)
+            dumper.feed('chap', (title, content))
+
+    dumper.dump()
