@@ -6,12 +6,12 @@ Options:
   --help  Show this message and exit.
 
 [gold1]Core[/]
-  fetch  抓取数据
-  dump   
+  fetch   抓取
+  dump    输出
 
 [bright_blue]Management[/]
-  local
-  remote
+  local   本地数据
+  remote  远程源
 
 [bright_magenta]Others[/]
   topic

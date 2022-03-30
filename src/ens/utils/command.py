@@ -1,13 +1,11 @@
 import click
 
-from os.path import join
-
 import ens.config as conf
 from ens.console import echo
 from ens.status import Status
 from ens.remote import get_remote
 from ens.typing import Code, Shelf, FilterRule, ShelfFilter
-from ens.paths import MANUAL
+from ens.paths import MANUAL, join
 from ens.exceptions import *
 
 
