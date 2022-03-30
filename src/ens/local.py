@@ -165,6 +165,14 @@ class Local(object):
         return cnt
 
 
+    def get_meta(self) -> dict:
+        return dict(
+            vol_count = self.vol_count(),
+            chap_count = self.chap_count(),
+            char_count = self.char_count()
+        )
+
+
     def set_info(self, info: Novel):
         """
         更新小说的信息
@@ -220,6 +228,14 @@ def get_local_shelf() -> Shelf:
             shelf += Novel(**_info)
 
     return shelf
+
+
+def get_novel(code: Code) -> Novel:
+    path = join(paths.LOCAL, code.remote, code.nid)
+    _info = yaml.load(open(
+        path, 'r', encoding='utf-8'
+    ), Loader=yaml.SafeLoader)
+    return Novel(**_info)
         
 
 if __name__ == '__main__':
