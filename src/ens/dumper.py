@@ -12,17 +12,28 @@ class Dumper(object):
 
     def __init_subclass__(cls) -> None:
         cls.name = cls.name or cls.__name__.lower()
-        if cls.name in cls._remotes:
-            raise DuplicateRemote(cls.name)
-        cls._remotes[cls.name] = cls
+        if cls.name in cls._dumpers:
+            raise DuplicateDumper(cls.name)
+        cls._dumpers[cls.name] = cls
 
 
-    def feed(self, type: Literal['meta', 'vol', 'chap'], data):
+    def init(self, meta: DumpMetadata):
+        pass
+
+
+    def feed(self, type: Literal['vol', 'chap'], data):
         """
-        meta: DumpMetadata
         vol: str
         chap: title, content
         """
+        pass
+
+
+    def dump(self):
+        pass
+
+
+    def abort(self):
         pass
 
 

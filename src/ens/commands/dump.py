@@ -41,9 +41,9 @@ def _list_callback(ctx, param, value):
 @click.option('-o', '--output',
     type = str,
     help = '输出目标路径',
-    default = '{title}.{ext}',
+    default = 'aaaa',
     show_default = True)
-def main(code, dumper: Dumper, miss, output, **kw):
+def main(code, dumper, miss, output, **kw):
     """
     输出小说
     """

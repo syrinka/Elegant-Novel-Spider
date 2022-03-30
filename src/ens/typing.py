@@ -1,7 +1,7 @@
 import re
 from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
-from typing import List, Dict, Literal, Union, NewType, Type, Callable
+from typing import List, Dict, Tuple, Literal, Union, NewType, Type, Callable
 from datetime import datetime
 
 import ens.config as conf

@@ -38,6 +38,10 @@ class LocalAlreadyExists(LocalError):
     pass
 
 
+class ChapDataNotFound(LocalError):
+    pass
+
+
 
 class RemoteError(ENSError):
     pass
@@ -56,9 +60,16 @@ class FetchError(RemoteError):
 
 
 
-class DumperNotFound(ENSError):
+class DumpError(ENSError):
     pass
 
+
+class DumperNotFound(DumpError):
+    pass
+
+
+class DuplicateDumper(DumpError):
+    pass
 
 
 class TopicNotFound(ENSError):
