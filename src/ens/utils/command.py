@@ -49,6 +49,7 @@ arg_remote = click.argument('remote',
 
 opt_dumper = click.option('-d', '--dumper',
     metavar = 'DUMPER',
+    default = 'txt',
     callback = lambda c, p, v: get_dumper(v)
 )
 
