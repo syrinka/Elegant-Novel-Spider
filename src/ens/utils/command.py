@@ -54,11 +54,6 @@ opt_dumper = click.option('-d', '--dumper',
 )
 
 
-opt_all = click.option('--all', '-a',
-    is_flag = True
-)
-
-
 def _filter_callback(ctx, param, rules):
     opt_rules = list(FilterRule(r) for r in rules)
     pos_rules = []
