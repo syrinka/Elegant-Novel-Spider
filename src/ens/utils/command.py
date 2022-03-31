@@ -42,14 +42,12 @@ arg_code = click.argument('code',
 
 
 arg_remote = click.argument('remote',
-    metavar = 'REMOTE',
     callback = lambda c, p, v: get_remote(v)
 )
 
 
-opt_dumper = click.option('-d', '--dumper',
-    metavar = 'DUMPER',
-    default = 'txt',
+arg_dumper = click.argument('dumper',
+    default = conf.DEFAULT_DUMPER,
     callback = lambda c, p, v: get_dumper(v)
 )
 
