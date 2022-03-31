@@ -12,10 +12,11 @@ from rich.progress import (
     BarColumn
 )
 
+from ens.config import DEBUG
 from ens.exceptions import *
 
 
-__all__ = ['console', 'doing', 'echo', 'pager', 'track', 'escape']
+__all__ = ['console', 'doing', 'log', 'pager', 'Track']
 
 
 theme = Theme({
@@ -28,18 +29,13 @@ console = Console(highlight=False, theme=theme)
 doing = console.status
 
 
-def debug(*msg):
-    if debug.enable:
-        console.log(*msg)
+def log(*obj):
+    if DEBUG:
+        console.log(*obj)
 
 
-def echo(*msg, style: str = None, nl: bool = True):
-    console.print(*msg, style=style, end='\n' if nl else '')
-
-
-@contextmanager
-def fake_pager(title=None):
-    yield
+def echo(msg, style: str = None, nl: bool = True):
+    console.print(msg, style=style, end='\n' if nl else '')
 
 
 @contextmanager
