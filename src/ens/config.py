@@ -1,3 +1,5 @@
+DEBUG = False
+
 CODE_DELIM = '~'
 
 CODE_INDEX_INDICATOR = '#'
