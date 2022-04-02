@@ -1,8 +1,8 @@
 import os
-import tempfile
 import difflib
 
 from ens.console import run
+from ens.exceptions import MergeError
 from ens.typing import *
 
 
@@ -53,36 +53,40 @@ def merge(old, new, index) -> Catalog:
         f.write(new)
 
     ret = run('smerge/smerge.exe', 'mergetool', path1, path2)
-    if ret == 0:
-        with open(path1, encoding='utf-8') as f:
+
+    with open(path1, encoding='utf-8') as f:
             final = f.read()
 
-        os.remove(path1)
-        os.remove(path2)
+    os.remove(path1)
+    os.remove(path2)
 
+    if ret == 0:
         return unflatten(final)
-
     else:
-        # 发生错误
-        os.remove(path1)
-        os.remove(path2)
+        raise MergeError
 
 
 if __name__ == '__main__':
+    class Mirror:
+        def __getitem__(self, key):
+            return 'title-'+key
+
     c1 = [
         {
             'name': '格林在地下城',
-            'cids': ['11', '22', '44']
+            'cids': ['1','2','3','4','5']
         }
     ]
 
     c2 = [
         {
+            'name': '备注',
+            'cids': ['4']
+        },
+        {
             'name': '格林在地下城',
-            'cids': ['11', '22', '33']
+            'cids': ['1', '2', '3']
         }
     ]
 
-    index = {'11': 'ASSD', '22': 'QWED', '33': 'REST', '44': 'Boom!'}
-
-    print(merge(c1, c2, index))
+    print(merge(c1, c2, Mirror()))

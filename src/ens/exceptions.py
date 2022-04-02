@@ -74,3 +74,8 @@ class DuplicateDumper(DumpError):
 
 class TopicNotFound(ENSError):
     pass
+
+
+
+class MergeError(ENSError):
+    pass
