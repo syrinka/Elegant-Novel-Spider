@@ -29,12 +29,14 @@ def _code_callback(ctx, param, code):
             except KeyError:
                 raise StatusError('shelf-cache not exists.')
 
-        code = Code(code)
     else:
         pass
-
-    stat.set('last-cache', str(code))
+    
+    stat = Status('sys')
+    stat.set('last-cache', code)
     stat.save()
+
+    return Code(code)
 
 
 arg_code = click.argument('code',
