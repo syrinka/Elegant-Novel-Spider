@@ -93,10 +93,6 @@ def opt_filter(cmd):
     return cmd
 
 
-def alias(entry: click.Group, alias, origin):
-    entry.commands[alias] = entry.commands[origin]
-
-
 def manual(mpage):
     def wrap(cmd):
         def get_help(ctx):

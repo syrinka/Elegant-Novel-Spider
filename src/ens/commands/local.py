@@ -25,6 +25,3 @@ def func(filter):
     shelf.apply_filter(filter)
     shelf.cache_shelf()
     echo(shelf)
-
-
-alias(main, 'ls', 'list')
