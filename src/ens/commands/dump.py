@@ -1,7 +1,6 @@
 import click
 
 from ens.local import Local, get_novel
-from ens.dumper import Dumper, all_dumpers
 from ens.paths import DUMP, join
 from ens.typing import *
 from ens.utils.command import *

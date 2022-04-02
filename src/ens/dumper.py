@@ -1,7 +1,6 @@
 import pkgutil
 
 import ens.dumpers as dumpers
-from ens.local import Local
 from ens.exceptions import *
 from ens.typing import *
 

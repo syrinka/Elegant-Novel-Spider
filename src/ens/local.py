@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from os.path import join, dirname, exists
+from os.path import join, exists
 from shutil import rmtree
 
 import yaml
