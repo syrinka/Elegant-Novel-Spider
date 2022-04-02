@@ -68,10 +68,10 @@ class Track(object):
         self.progress = Progress(
             SpinnerColumn(),
             msg,
-            TimeRemainingColumn(),
+            TimeRemainingColumn(compact=True),
             BarColumn(),
-            '{task.remaining} {task.percentage:>7.2f}%',
-            ': {task.description}',
+            '[magenta]{task.percentage:>6.1f}%',
+            '{task.description}',
             refresh_per_second = 20,
             console = console
         )
@@ -86,7 +86,7 @@ class Track(object):
                 self.progress.advance(self.task_id, advance=1)
 
 
-    def desc(self, desc):
+    def update_desc(self, desc):
         self.progress.update(self.task_id, description=desc)
 
 

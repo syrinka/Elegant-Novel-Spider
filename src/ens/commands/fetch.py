@@ -82,6 +82,8 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     track = Track(cids, 'Fetching')
     for cid in track:
+        track.update_desc(index[cid])
+
         content = remote.get_content(cid)
         
         if mode == 'update':
