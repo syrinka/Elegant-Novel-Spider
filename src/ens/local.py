@@ -129,7 +129,7 @@ class Local(object):
             return self.cursor.fetchone()[0]
         except TypeError:
             # 'NoneType' object is not subscriptable
-            return None
+            raise ChapMissing(cid)
 
 
     def set_chap(self, cid: str, content: str) -> str:

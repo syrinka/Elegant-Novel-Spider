@@ -38,7 +38,7 @@ class LocalAlreadyExists(LocalError):
     pass
 
 
-class ChapDataNotFound(LocalError):
+class ChapMissing(LocalError):
     pass
 
 

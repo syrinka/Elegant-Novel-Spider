@@ -30,7 +30,9 @@ __all__ = [
 
 theme = Theme({
     'bad': 'red',
-    'good': 'green'
+    'good': 'green',
+    'alert': 'yellow',
+    'fatal': 'red'
 })
 console = Console(highlight=False, theme=theme)
 

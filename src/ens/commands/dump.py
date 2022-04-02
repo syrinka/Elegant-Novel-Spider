@@ -37,7 +37,7 @@ def main(code, dumper, miss, output, **kw):
     )
 
     dumper = dumper()
-    dumper.feed('meta', meta)
+    dumper.init(meta)
 
     for vol in local.catalog:
         dumper.feed('vol', vol['name'])
@@ -46,11 +46,18 @@ def main(code, dumper, miss, output, **kw):
             try:
                 title = local.get_chap_title(cid)
                 content = local.get_chap(cid)
-            except ChapDataNotFound:
+            except ChapMissing:
                 if miss == 'skip':
                     continue
-                if miss == 'stop':
-                    pass
+
+                elif miss == 'stop':
+                    echo(f'[alert]章节数据缺失[/] {title} ({cid})')
+                    echo('[fatal]输出已中止')
+                    break
+                
+                elif miss == 'warn':
+                    echo(f'[alert]章节数据缺失[/] {title} ({cid})')
+                    continue
 
             dumper.feed('chap', (title, content))
 
