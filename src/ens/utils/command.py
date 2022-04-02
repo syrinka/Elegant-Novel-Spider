@@ -3,9 +3,9 @@ import click
 import ens.config as conf
 from ens.console import echo
 from ens.status import Status
-from ens.remote import Remote, get_remote
-from ens.dumper import Dumper, get_dumper
-from ens.typing import Code, Shelf, FilterRule, ShelfFilter
+from ens.remote import get_remote
+from ens.dumper import get_dumper
+from ens.typing import Code, FilterRule, ShelfFilter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
 
@@ -29,10 +29,12 @@ def _code_callback(ctx, param, code):
             except KeyError:
                 raise StatusError('shelf-cache not exists.')
 
-        return Code(code)
-
+        code = Code(code)
     else:
-        return Code(code)
+        pass
+
+    stat.set('last-cache', str(code))
+    stat.save()
 
 
 arg_code = click.argument('code',

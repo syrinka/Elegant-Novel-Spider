@@ -44,7 +44,7 @@ class Local(object):
         else:
             path = join(paths.LOCAL, *code)
             if not exists(path):
-                raise LocalNotFound
+                raise LocalNotFound(code)
             self.path = path
         
         self.info_path = join(path, 'info.yml')
@@ -80,7 +80,7 @@ class Local(object):
         
         path = join(p1, code.nid)
         if exists(path):
-            raise LocalAlreadyExists
+            raise LocalAlreadyExists(code)
         os.mkdir(path)
 
         info_path = join(path, 'info.yml')

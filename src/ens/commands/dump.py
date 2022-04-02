@@ -8,14 +8,6 @@ from ens.utils.command import *
 from ens.exceptions import *
 
 
-def _list_callback(ctx, param, value):
-    if value:
-        for i, status in all_dumpers.items():
-            if status:
-                echo(i)
-        ctx.exit()
-
-
 @click.command('dump', short_help='输出')
 @arg_code
 @arg_dumper
@@ -52,8 +44,15 @@ def main(code, dumper, miss, output, **kw):
         dumper.feed('vol', vol['name'])
 
         for cid in vol['cids']:
-            title = local.get_chap_title(cid)
-            content = local.get_chap(cid)
+            try:
+                title = local.get_chap_title(cid)
+                content = local.get_chap(cid)
+            except ChapDataNotFound:
+                if miss == 'skip':
+                    continue
+                if miss == 'stop':
+                    pass
+
             dumper.feed('chap', (title, content))
 
     dumper.dump()
