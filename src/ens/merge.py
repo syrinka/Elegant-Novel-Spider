@@ -6,6 +6,30 @@ from ens.exceptions import MergeError
 from ens.typing import *
 
 
+def merge(old, new) -> str:
+    path1 = 'old-content'
+    path2 = 'new-content'
+
+    with open(path1, 'w', encoding='utf-8') as f:
+        f.write(old)
+
+    with open(path2, 'w', encoding='utf-8') as f:
+        f.write(new)
+
+    ret = run('smerge/smerge.exe', 'mergetool', path1, path2)
+
+    with open(path1, encoding='utf-8') as f:
+            final = f.read()
+
+    os.remove(path1)
+    os.remove(path2)
+
+    if ret == 0:
+        return final
+    else:
+        raise MergeError
+
+
 def flatten(catalog: Catalog, index: dict) -> str:
     piece = []
     for vol in catalog:
@@ -41,29 +65,9 @@ def catalog_lose(old, new) -> bool:
     return False
 
 
-def merge(old, new, index) -> Catalog:
+def merge_catalog(old, new, index) -> Catalog:
     old, new = flatten(old, index), flatten(new, index)
-    path1 = 'old-index'
-    path2 = 'new-index'
-
-    with open(path1, 'w', encoding='utf-8') as f:
-        f.write(old)
-
-    with open(path2, 'w', encoding='utf-8') as f:
-        f.write(new)
-
-    ret = run('smerge/smerge.exe', 'mergetool', path1, path2)
-
-    with open(path1, encoding='utf-8') as f:
-            final = f.read()
-
-    os.remove(path1)
-    os.remove(path2)
-
-    if ret == 0:
-        return unflatten(final)
-    else:
-        raise MergeError
+    return unflatten(merge(old, new))
 
 
 if __name__ == '__main__':
@@ -89,4 +93,4 @@ if __name__ == '__main__':
         }
     ]
 
-    print(merge(c1, c2, Mirror()))
+    print(merge_catalog(c1, c2, Mirror()))
