@@ -17,17 +17,17 @@ def _code_callback(ctx, param, code):
         stat = Status('sys')
         if index == 0 and conf.ZERO_MEANS_LAST:
             try:
-                code = stat['last-code']
+                code = stat['last-cache']
             except KeyError:
-                raise StatusError('last-code not exists.')
+                raise StatusError('last-cache not exists.')
                 
         else:
             try:
-                code = stat['cache-codes'][index - 1]
+                code = stat['shelf-cache'][index - 1]
             except IndexError:
-                raise BadCodeIndex(len(stat['cache-codes']), index)
+                raise BadCodeIndex(len(stat['shelf-cache']), index)
             except KeyError:
-                raise StatusError('cache-codes not exists.')
+                raise StatusError('shelf-cache not exists.')
 
         return Code(code)
 

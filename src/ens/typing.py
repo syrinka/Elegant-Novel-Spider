@@ -5,6 +5,7 @@ from typing import List, Dict, Tuple, Literal, Union, NewType, Type, Callable
 from datetime import datetime
 
 import ens.config as conf
+from ens.status import Status
 from ens.exceptions import *
 
 
@@ -147,8 +148,19 @@ class Shelf(object):
             yield '#{}  {}'.format(i+1, novel.__rich__())
 
 
+    @property
+    def codes(self) -> List[Code]:
+        return list(n.code for n in self.novels)
+
+
     def apply_filter(self, ffunc: ShelfFilter):
         self.novels = list(filter(ffunc, self.novels))
+
+
+    def cache_shelf(self):
+        status = Status('sys')
+        status.set('shelf-cache', self.codes)
+        status.save()
 
 
 @dataclass

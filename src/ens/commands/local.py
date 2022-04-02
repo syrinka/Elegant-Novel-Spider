@@ -23,6 +23,7 @@ def func(filter):
     """
     shelf = get_local_shelf()
     shelf.apply_filter(filter)
+    shelf.cache_shelf()
     echo(shelf)
 
 
