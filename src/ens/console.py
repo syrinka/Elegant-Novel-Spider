@@ -13,10 +13,19 @@ from rich.progress import (
 )
 
 from ens.config import DEBUG
+from ens.paths import APP
 from ens.exceptions import *
 
 
-__all__ = ['console', 'doing', 'log', 'pager', 'Track']
+__all__ = [
+    'console',
+    'doing',
+    'log',
+    'echo',
+    'run',
+    'pager',
+    'Track'
+]
 
 
 theme = Theme({
@@ -36,6 +45,12 @@ def log(*obj):
 
 def echo(msg, style: str = None, nl: bool = True):
     console.print(msg, style=style, end='\n' if nl else '')
+
+
+def run(path, *args):
+    path = os.path.join(APP, path)
+    p = subprocess.Popen([path, *args])
+    return p.wait()
 
 
 @contextmanager
