@@ -21,13 +21,19 @@ from ens.exceptions import *
 @click.option('-o', '--output',
     type = str,
     help = '输出目标路径',
-    default = 'aaaa',
+    default = '{title}{ext}',
     show_default = True)
 def main(code, dumper, miss, output, **kw):
     """
     输出小说
     """
     local = Local(code)
+    output = output.format(
+        title = local.info.title,
+        author = local.info.author,
+        ext = dumper.ext or ''
+    )
+
     meta = DumpMetadata(
         get_novel(code),
         local.vol_count(),

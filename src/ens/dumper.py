@@ -8,6 +8,7 @@ from ens.typing import *
 class Dumper(object):
     _dumpers = dict()
     name = None
+    ext = None
 
     def __init_subclass__(cls) -> None:
         cls.name = cls.name or cls.__name__.lower()
