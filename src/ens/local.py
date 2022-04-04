@@ -81,7 +81,7 @@ class Local(object):
         db_path = join(path, 'data.db')
 
         yaml.dump(
-            Info(code).as_dict(),
+            Info(code).dump(),
             open(info_path, 'w')
         )
         # catalog 默认值为空列表
@@ -201,16 +201,20 @@ def get_local_shelf() -> Shelf:
             _info = yaml.load(open(
                 path, 'r', encoding='utf-8'
             ), Loader=yaml.SafeLoader)
-            shelf += Info(**_info)
+            shelf += Info.load(_info)
 
     return shelf
 
 
 def get_local_info(code: Code) -> Info:
     path = join(paths.LOCAL, code.remote, code.nid, 'info.yml')
-    _info = yaml.load(open(
-        path, 'r', encoding='utf-8'
-    ), Loader=yaml.SafeLoader)
+    try:
+        _info = yaml.load(open(
+            path, 'r', encoding='utf-8'
+        ), Loader=yaml.SafeLoader)
+    except FileNotFoundError:
+        raise LocalNotFound(code)
+        
     return Info.load(_info)
         
 
