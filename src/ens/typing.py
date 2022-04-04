@@ -231,7 +231,7 @@ class Catalog(object):
     """
     def __init__(self) -> None:
         self.catalog = list()
-        self.index = {}
+        self._index = {}
 
 
     def vol(self, name: str):
@@ -241,8 +241,12 @@ class Catalog(object):
 
     def chap(self, cid: str, title: str):
         self.catalog[-1]['cids'].append(cid)
-        self.index[cid] = title
+        self._index[cid] = title
         return self
+
+
+    def get_index(self):
+        return self._index
 
 
 @dataclass

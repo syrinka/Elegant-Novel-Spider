@@ -14,13 +14,8 @@ from ens.exceptions import *
 _sql_chap = '''
 CREATE TABLE IF NOT EXISTS `chaps` (
     cid VARCHAR(128),
-    content TEXT,
-    PRIMARY KEY (cid)
-);'''
-_sql_index = '''
-CREATE TABLE IF NOT EXISTS `index` (
-    cid VARCHAR(128),
     title TEXT,
+    content TEXT,
     PRIMARY KEY (cid)
 );'''
 
@@ -92,9 +87,7 @@ class Local(object):
             open(info_path, 'w')
         )
         open(catalog_path, 'w')
-        sqlite3.connect(db_path).cursor() \
-            .execute(_sql_chap) \
-            .execute(_sql_index)
+        sqlite3.connect(db_path).cursor().execute(_sql_chap)
 
         return cls(code)
 
@@ -119,8 +112,8 @@ class Local(object):
 
 
     def has_chap(self, cid: str) -> bool:
-        self.cursor.execute('SELECT cid FROM `chaps` WHERE cid=? LIMIT 1', (cid,))
-        return bool(self.cursor.fetchone())
+        self.cursor.execute('SELECT content IS NULL FROM `chaps` WHERE cid=?', (cid,))
+        return not self.cursor.fetchone()[0]
 
 
     def get_chap(self, cid: str) -> str:
@@ -135,19 +128,24 @@ class Local(object):
     def set_chap(self, cid: str, content: str) -> str:
         with self.conn:
             self.cursor.execute(
-                'REPLACE INTO `chaps` (cid, content) VALUES (?, ?)',
-                (cid, content)
+                'UPDATE `chaps` SET content=? WHERE cid=?',
+                (content, cid)
             )
             self.conn.commit()
 
 
     def get_chap_title(self, cid: str) -> str:
-        self.cursor.execute('SELECT title FROM `index` WHERE cid=?', (cid,))
+        self.cursor.execute('SELECT title FROM `chaps` WHERE cid=?', (cid,))
         try:
             return self.cursor.fetchone()[0]
         except TypeError:
             # 'NoneType' object is not subscriptable
             return None
+
+
+    def get_index(self) -> Dict[str, str]:
+        self.cursor.execute('SELECT cid, title FROM `chaps`')
+        return dict(self.cursor.fetchall())
 
 
     def vol_count(self) -> int:
@@ -177,36 +175,27 @@ class Local(object):
         )
 
     
-    def set_catalog(self, catalog: Catalog):
+    def set_catalog(self, cat: Catalog):
         """
         更新小说的目录
         """
-        self.catalog = catalog
+        self.catalog = cat.catalog
         yaml.dump(
-            catalog,
+            cat.catalog,
             open(self.catalog_path, 'w', encoding='utf-8'),
             allow_unicode = True
         )
 
-
-    def set_index(self, index: dict):
-        """
-        更新章节名索引
-        """
         with self.conn:
             self.cursor.executemany(
-                'INSERT OR IGNORE INTO `index` (cid, title) VALUES (?, ?)',
-                index.items()
+                'REPLACE INTO `chaps` (cid, title) VALUES (?, ?)',
+                cat.get_index().items()
             )
             self.conn.commit()
 
 
     def prune(self):
         pass
-
-    
-    def __contains__(self, cid: str) -> bool:
-        return self.has_chap(cid)
 
 
 def get_local_shelf() -> Shelf:
@@ -231,5 +220,5 @@ def get_novel(code: Code) -> Novel:
         
 
 if __name__ == '__main__':
-    c = Code('test~book1')
+    c = Code('test~asar')
     a = Local(c)
