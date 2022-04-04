@@ -56,7 +56,7 @@ class Code(object):
 
 
     def __rich__(self):
-        return '[plum4]{}[/]{}[cyan]{}[/]'.format(
+        return '[cyan]{}[/]{}[cyan]{}[/]'.format(
             self.remote, conf.CODE_DELIM, self.nid
         )
 
@@ -79,11 +79,21 @@ class Info(object):
         self.code = code
         self.remote, self.nid = code
 
+        # 若刚初始化的本地数据未能 set_info，则标记为无效
+        # 此时 title 仍为默认值 None
+        self.valid = self.title is not None
+
 
     def __rich__(self):
-        return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
-            self.title, self.author, self.code.__rich__()
-        )
+        if not self.valid:
+            return f'[gray27]\[invalid novel][/] ({self.code.__rich__()})'
+
+        else:
+            return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
+                self.title,
+                self.author or '[gray27]anon[/]', # anonymous
+                self.code.__rich__()
+            )
 
 
     def dump(self) -> Dict:
@@ -97,11 +107,14 @@ class Info(object):
 
 
     def verbose(self):
-        return '{}\n\n[cyan]{}[/]\n\n上次更新于：{}'.format(
-            self.__rich__(),
-            self.intro.strip() or 'no intro.',
-            self.last_update or '----'
-        )
+        if not self.valid:
+            return self
+        else:
+            return '{}\n\n[cyan]{}[/]\n\n上次更新于：{}'.format(
+                self.__rich__(),
+                self.intro.strip() or 'no intro.',
+                self.last_update or '----'
+            )
 
 
 @dataclass

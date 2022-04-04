@@ -14,7 +14,7 @@ def main():
 
 
 @main.command('list')
-@click.option('--all', '-a',
+@click.option('-a', '--all',
     is_flag = True,
     help = '列出所有远程源，包括不可用的')
 def func(all):

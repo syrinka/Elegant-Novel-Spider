@@ -15,11 +15,14 @@ def main():
 
 @main.command('list')
 @opt_filter
-def func(filter):
+@click.option('-a', '--all',
+    is_flag = True,
+    help = '列出所有本地数据，包括无效的')
+def func(filter, all):
     """
     列出所有本地数据
     """
-    shelf = get_local_shelf()
+    shelf = get_local_shelf(all)
     shelf.apply_filter(filter)
     shelf.cache_shelf()
     echo(shelf)

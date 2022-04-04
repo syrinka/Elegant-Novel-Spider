@@ -193,7 +193,7 @@ class Local(object):
         pass
 
 
-def get_local_shelf() -> Shelf:
+def get_local_shelf(all=False) -> Shelf:
     shelf = Shelf()
     for remote in os.listdir(paths.LOCAL):
         for nid in os.listdir(join(paths.LOCAL, remote)):
@@ -201,7 +201,9 @@ def get_local_shelf() -> Shelf:
             _info = yaml.load(open(
                 path, 'r', encoding='utf-8'
             ), Loader=yaml.SafeLoader)
-            shelf += Info.load(_info)
+            info = Info.load(_info)
+            if info.valid or all:
+                shelf += info
 
     return shelf
 
