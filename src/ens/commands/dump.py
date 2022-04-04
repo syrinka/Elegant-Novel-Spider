@@ -50,7 +50,7 @@ def main(code, dumper, miss, output, **kw):
 
         for cid in vol['cids']:
             try:
-                title = local.get_chap_title(cid)
+                title = local.get_title(cid)
                 content = local.get_chap(cid)
             except ChapMissing:
                 if miss == 'skip':

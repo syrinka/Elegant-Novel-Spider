@@ -135,13 +135,9 @@ class Local(object):
             self.conn.commit()
 
 
-    def get_chap_title(self, cid: str) -> str:
+    def get_title(self, cid: str) -> str:
         self.cursor.execute('SELECT title FROM `chaps` WHERE cid=?', (cid,))
-        try:
-            return self.cursor.fetchone()[0]
-        except TypeError:
-            # 'NoneType' object is not subscriptable
-            return None
+        return self.cursor.fetchone()[0]
 
 
     def get_index(self) -> Dict[str, str]:
