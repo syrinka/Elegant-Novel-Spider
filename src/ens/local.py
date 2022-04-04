@@ -86,7 +86,8 @@ class Local(object):
             dict.fromkeys(cls.INFO_KEYS),
             open(info_path, 'w')
         )
-        open(catalog_path, 'w')
+        # catalog 默认值为空列表
+        open(catalog_path, 'w').write('[]')
         sqlite3.connect(db_path).cursor().execute(_sql_chap)
 
         return cls(code)
