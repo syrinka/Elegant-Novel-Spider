@@ -14,7 +14,7 @@ from ens.console import echo
 def main(code, local):
     if local:
         novel = get_novel(code)
-        echo(novel.as_info())
+        echo(novel.verbose())
     else:
         remote = get_remote(code.remote)
-        echo(remote(code).get_info())
+        echo(remote(code).get_info().verbose())

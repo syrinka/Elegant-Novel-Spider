@@ -96,7 +96,7 @@ class Novel(object):
         return cls(**data)
 
 
-    def as_info(self):
+    def verbose(self):
         return '{}\n\n[cyan]{}[/]\n\n上次更新于：{}'.format(
             self.__rich__(),
             self.intro.strip() or 'no intro.',
