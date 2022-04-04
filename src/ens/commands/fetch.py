@@ -2,7 +2,7 @@ import click
 
 from ens.local import Local
 from ens.remote import get_remote
-from ens.console import echo, doing, Track
+from ens.console import echo, log, doing, Track
 from ens.merge import catalog_lose, merge_catalog
 from ens.typing import *
 from ens.exceptions import *
@@ -44,6 +44,7 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     try:
         local = Local(code)
     except LocalNotFound:
+        log('local initialize')
         local = Local.init(code)
 
     try:
@@ -52,7 +53,7 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     except FetchError:
         raise FetchError('Fail to get remote info.')
 
-    # merge info info TODO
+    # merge info TODO
     local.set_info(info) # 更新信息
 
     try:

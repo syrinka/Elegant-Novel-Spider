@@ -6,7 +6,8 @@ from ens.exceptions import *
 
 
 _dependencies = {
-    'fetch': ('get_info', 'get_catalog', 'get_content')
+    'fetch': ('get_info', 'get_catalog', 'get_content'),
+    'info': ('get_info',)
 }
 
 
