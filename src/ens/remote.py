@@ -6,7 +6,7 @@ from ens.exceptions import *
 
 
 _dependencies = {
-    'fetch': ('get_info', 'get_catalog', 'get_index', 'get_content')
+    'fetch': ('get_info', 'get_catalog', 'get_content')
 }
 
 
@@ -61,10 +61,6 @@ class Remote(object):
 
 
     def get_catalog(self) -> Catalog:
-        raise NotImplementedError
-
-
-    def get_index(self) -> Dict[str, int]:
         raise NotImplementedError
 
 

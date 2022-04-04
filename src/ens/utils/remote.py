@@ -10,6 +10,7 @@ class CatalogMaker(object):
     """
     def __init__(self) -> None:
         self.catalog = list()
+        self.index = {}
 
 
     def vol(self, name: str):
@@ -17,8 +18,9 @@ class CatalogMaker(object):
         return self
 
 
-    def chap(self, cid: str):
+    def chap(self, cid: str, title: str):
         self.catalog[-1]['cids'].append(cid)
+        self.index[cid][title]
         return self
 
 

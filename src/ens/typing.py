@@ -222,15 +222,27 @@ class RemoteNovel(object):
         )
 
 
-Catalog = NewType('Catalog', List[Dict[str, Union[str, List[str]]]])
-"""
-- name: vol1
-    cids: 
-    - cid1
-    - cid2
-    - ...
-- ...
-"""
+class Catalog(object):
+    """
+    c = Catalog()
+    c.vol(...)
+    c.chap(...)
+    c.chap(...)
+    """
+    def __init__(self) -> None:
+        self.catalog = list()
+        self.index = {}
+
+
+    def vol(self, name: str):
+        self.catalog.append({'name': name, 'cids': []})
+        return self
+
+
+    def chap(self, cid: str, title: str):
+        self.catalog[-1]['cids'].append(cid)
+        self.index[cid] = title
+        return self
 
 
 @dataclass
@@ -240,7 +252,6 @@ class DumpMetadata(object):
     chap_count: int
     char_count: int
     path: str
-
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import time
 
 from ens.remote import Remote, RemoteNovel
-from ens.utils.remote import *
+from ens.typing import Catalog
 
 
 class Test(Remote):
@@ -13,15 +13,14 @@ class Test(Remote):
 
 
     def get_catalog(self) -> Catalog:
-        c = CatalogMaker()
-        c.vol('第一章').chap('001').chap('002')
-        return c.dump()
+        c = Catalog()
+        c.vol('第一章')
+        for i in range(100):
+            c.chap(f'{i:0>3}', f't-[{i}]')
 
-
-    def get_index(self) -> Dict[str, int]:
-        return {'001': 'NUM-1', '002': 'NUM-2'}
+        return c
 
 
     def get_content(self, cid: str) -> str:
-        time.sleep(2)
-        return 'YESYESYES'
+        time.sleep(0.1)
+        return 'YESYESYES' + cid

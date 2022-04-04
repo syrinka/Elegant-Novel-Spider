@@ -58,21 +58,14 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     try:
         with doing('Getting catalog'):
-            catalog = remote.get_catalog()
+            c = remote.get_catalog()
     except FetchError:
         raise FetchError('Fail to get catalog.')
 
     # merge catalog
 
-    local.set_catalog(catalog)
-
-    try:
-        with doing('Getting index'):
-            index = remote.get_index()
-    except FetchError:
-        raise FetchError('Fail to get index.')
-
-    local.set_index(index)
+    local.set_catalog(c.catalog)
+    local.set_index(c.index)
 
     if mode == 'update':
         # 如为 update 模式，则只抓取缺失章节
@@ -82,7 +75,7 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     track = Track(cids, 'Fetching')
     for cid in track:
-        track.update_desc(index[cid])
+        track.update_desc(c.index[cid])
 
         content = remote.get_content(cid)
         
