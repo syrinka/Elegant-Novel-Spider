@@ -79,3 +79,7 @@ class TopicNotFound(ENSError):
 
 class MergeError(ENSError):
     pass
+
+
+class BadFilter(ENSError):
+    pass

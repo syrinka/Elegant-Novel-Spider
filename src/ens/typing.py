@@ -92,6 +92,8 @@ class FilterRule(object):
 
     def __post_init__(self, rule_str):
         rule = self._rule_format.match(rule_str)
+        if rule is None:
+            raise BadFilter(rule_str)
         self.attr = rule['attr']
         self.aget = attrgetter(rule['attr'])
         self.mode = rule['mode'] or conf.EMPTY_RULE_MODE
