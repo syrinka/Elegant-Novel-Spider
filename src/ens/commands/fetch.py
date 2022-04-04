@@ -3,6 +3,7 @@ import click
 from ens.local import Local
 from ens.remote import get_remote
 from ens.console import echo, doing, Track
+from ens.merge import catalog_lose, merge_catalog
 from ens.typing import *
 from ens.exceptions import *
 from ens.utils.command import *
@@ -52,7 +53,7 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
         raise FetchError('Fail to get remote info.')
 
     novel = r_novel.as_novel()
-    # merge novel info
+    # merge novel info TODO
 
     local.set_info(novel) # 更新信息
 
@@ -63,6 +64,11 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
         raise FetchError('Fail to get catalog.')
 
     # merge catalog
+    if catalog_lose(local.catalog, cat.catalog):
+        echo('[alert]检测到目录发生了减量更新')
+        index = local.get_index()
+        cat.catalog = merge_catalog(local.catalog, cat.catalog, index)
+
     local.set_catalog(cat)
 
     if mode == 'update':
@@ -71,11 +77,9 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     else:
         cids = local.spine()
 
-    index = local.get_index()
-
     track = Track(cids, 'Fetching')
     for cid in track:
-        track.update_desc(index[cid])
+        track.update_desc(local.get_title(cid))
 
         content = remote.get_content(cid)
         
