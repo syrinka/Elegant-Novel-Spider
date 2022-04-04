@@ -12,6 +12,7 @@ Options:
 [bright_blue]Management[/]
   local   本地数据
   remote  远程源
+  dumper  输出类型
 
 [bright_magenta]Others[/]
   topic

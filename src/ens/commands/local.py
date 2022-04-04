@@ -1,6 +1,6 @@
 import click
 
-from ens.local import Local, get_local_shelf
+from ens.local import get_local_shelf
 from ens.console import echo
 from ens.utils.command import *
 
