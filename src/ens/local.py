@@ -31,8 +31,6 @@ class Local(object):
         except LocalNotExists:
             local = Local.init(code)
     """
-    INFO_KEYS = ('remote', 'nid', 'title', 'author', 'intro', 'last_update')
-
     def __init__(self, code: Code, *, path=None):
         if path is not None:
             self.path = path
@@ -49,7 +47,7 @@ class Local(object):
         _info = yaml.load(open(
             self.info_path, 'r', encoding='utf-8'
         ), Loader=yaml.SafeLoader)
-        self.info = Novel(**_info)
+        self.info = Novel.load(_info)
 
         self.catalog = yaml.load(open(
             self.catalog_path, 'r', encoding='utf-8'
@@ -83,7 +81,7 @@ class Local(object):
         db_path = join(path, 'data.db')
 
         yaml.dump(
-            dict.fromkeys(cls.INFO_KEYS),
+            Novel(code).as_dict(),
             open(info_path, 'w')
         )
         # catalog 默认值为空列表
@@ -113,17 +111,17 @@ class Local(object):
 
 
     def has_chap(self, cid: str) -> bool:
-        self.cursor.execute('SELECT content IS NULL FROM `chaps` WHERE cid=?', (cid,))
-        return not self.cursor.fetchone()[0]
+        self.cursor.execute('SELECT cid FROM `chaps` WHERE cid=? AND content IS NOT NULL', (cid,))
+        return self.cursor.fetchone() is not None
 
 
     def get_chap(self, cid: str) -> str:
         self.cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
-        try:
-            return self.cursor.fetchone()[0]
-        except TypeError:
-            # 'NoneType' object is not subscriptable
+        content = self.cursor.fetchone()[0]
+        if content is None:
             raise ChapMissing(cid)
+        else:
+            return content
 
 
     def set_chap(self, cid: str, content: str) -> str:
@@ -166,7 +164,7 @@ class Local(object):
         """
         self.info = info
         yaml.dump(
-            info.as_dict(),
+            info.dump(),
             open(self.info_path, 'w', encoding='utf-8'),
             allow_unicode = True
         )
@@ -185,7 +183,7 @@ class Local(object):
 
         with self.conn:
             self.cursor.executemany(
-                'REPLACE INTO `chaps` (cid, title) VALUES (?, ?)',
+                'INSERT OR IGNORE INTO `chaps` (cid, title) VALUES (?, ?)',
                 cat.get_index().items()
             )
             self.conn.commit()
@@ -213,9 +211,9 @@ def get_novel(code: Code) -> Novel:
     _info = yaml.load(open(
         path, 'r', encoding='utf-8'
     ), Loader=yaml.SafeLoader)
-    return Novel(**_info)
+    return Novel.load(_info)
         
 
 if __name__ == '__main__':
-    c = Code('test~asar')
+    c = Code('test~123')
     a = Local(c)

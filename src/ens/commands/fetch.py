@@ -48,14 +48,12 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     try:
         with doing('Getting Info'):
-            r_novel = remote.get_info()
+            info = remote.get_info()
     except FetchError:
         raise FetchError('Fail to get remote info.')
 
-    novel = r_novel.as_novel()
     # merge novel info TODO
-
-    local.set_info(novel) # 更新信息
+    local.set_info(info) # 更新信息
 
     try:
         with doing('Getting catalog'):

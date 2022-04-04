@@ -1,8 +1,12 @@
 import re
 from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
-from typing import List, Dict, Tuple, Literal, Union, NewType, Type, Callable
 from datetime import datetime
+from typing import (
+    List, Dict, Tuple,
+    Literal, Union,
+    Type, NewType, Callable
+)
 
 import ens.config as conf
 from ens.status import Status
@@ -11,11 +15,14 @@ from ens.exceptions import *
 
 @dataclass
 class Code(object):
+    """
+    Code('a~book') == Code(('a', 'book'))
+    """
     _code_format = re.compile(
         r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)'
     )
 
-    code_str: InitVar[str]
+    init: InitVar[Union[str, Tuple]]
 
     remote: str = field(init=False)
     nid: str = field(init=False)
@@ -36,12 +43,16 @@ class Code(object):
         return iter((self.remote, self.nid))
 
 
-    def __post_init__(self, code_str: str):
-        match = self._code_format.match(code_str)
-        if match is None:
-            raise InvalidCode(code_str)
+    def __post_init__(self, init: Union[str, Tuple]):
+        if isinstance(init, tuple):
+            self.remote, self.nid = init
 
-        self.remote, self.nid = match[1], match[2]
+        else:
+            match = self._code_format.match(init)
+            if match is None:
+                raise InvalidCode(init)
+
+            self.remote, self.nid = match[1], match[2]
 
 
     def __rich__(self):
@@ -52,12 +63,21 @@ class Code(object):
 
 @dataclass
 class Novel(object):
-    remote: str
-    nid: str
-    title: str
-    author: str
-    intro: str = None
+    code: InitVar[Code]
+    remote: str = field(init=False)
+    nid: str = field(init=False)
+    
+    title: str = None
+    author: str = None
+    intro: str = ''
+    tags: list = field(default_factory=list)
     last_update: datetime = None
+    finish: bool = None
+
+
+    def __post_init__(self, code):
+        self.code = code
+        self.remote, self.nid = code
 
 
     def __rich__(self):
@@ -66,13 +86,14 @@ class Novel(object):
         )
 
 
-    @property
-    def code(self) -> Code:
-        return Code(self.remote + conf.CODE_DELIM + self.nid)
-
-
-    def as_dict(self):
+    def dump(self) -> Dict:
         return asdict(self)
+
+
+    @classmethod
+    def load(cls, data):
+        data['code'] = Code((data.pop('remote'), data.pop('nid')))
+        return cls(**data)
 
 
     def as_info(self):
@@ -173,65 +194,6 @@ class Shelf(object):
         status.save()
 
 
-@dataclass
-class RemoteNovel(object):
-    code: Code
-    title: str
-    author: str
-    intro: str = ''
-    chap_count: int = None
-    tags: set = field(default_factory=set)
-    point: float = None
-    fav: int = None
-    last_update: datetime = None
-    finish: bool = None
-    expand: dict = field(default_factory=dict)
-
-
-    def __rich__(self):
-        text = ''
-        def push(i='', style=None, nl=True):
-            nonlocal text
-            if style:
-                text += '[{}]{}[/]'.format(style, i)
-            else:
-                text += i
-            if nl:
-                text += '\n'
-
-        push('{}'.format(self.title), 'green', nl=False)
-        if self.point != None:
-            push(' <{}>'.format(self.point), 'yellow', nl=False)
-        if self.fav != None:
-            push(' ♥{}'.format(self.fav), 'bright_red', nl=False)
-        push()
-        if self.author is not None:
-            push(self.author, 'bright_magenta')
-        else:
-            push('佚名')
-        if self.chapters != None:
-            push('{}章'.format(self.chap_count))
-        if self.tags:
-            push(' '.join('[{}]'.format(tag.strip()) for tag in self.tags))
-        else:
-            push('No tag')
-        push(self.intro or 'No intro', 'cyan')
-        for i, j in self.expand.items():
-            push('{}: {}'.format(i, j))
-        if self.last_update is not None:
-            push('最后一次更新于 {}'.format(self.last_update))
-        if self.finish:
-            push('已完结', 'green')
-        return text[:-1] # 去掉最后一个换行符
-
-
-    def as_novel(self) -> Novel:
-        return Novel(
-            self.code.remote, self.code.nid,
-            self.title, self.author, self.intro, self.last_update
-        )
-
-
 class Catalog(object):
     """
     c = Catalog()
@@ -269,4 +231,5 @@ class DumpMetadata(object):
 
 
 if __name__ == '__main__':
-    pass
+    a = Novel('a~b', 'A', 'B')
+    print(a)

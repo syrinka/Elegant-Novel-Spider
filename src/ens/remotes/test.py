@@ -1,14 +1,14 @@
 import time
 
-from ens.remote import Remote, RemoteNovel
-from ens.typing import Catalog
+from ens.remote import Remote
+from ens.typing import Catalog, Novel
 
 
 class Test(Remote):
-    def get_info(self) -> RemoteNovel:
-        return RemoteNovel(
+    def get_info(self) -> Novel:
+        return Novel(
             self.code, 'A Good Book {}'.format(self.code.nid),
-            'Anonymous'
+            'Anonymous', intro='A Marvo book.'
         )
 
 

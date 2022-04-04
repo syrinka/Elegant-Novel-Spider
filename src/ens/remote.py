@@ -56,7 +56,7 @@ class Remote(object):
         return status
 
 
-    def get_info(self) -> RemoteNovel:
+    def get_info(self) -> Novel:
         raise NotImplementedError
 
 
