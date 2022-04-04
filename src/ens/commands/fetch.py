@@ -52,7 +52,7 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     except FetchError:
         raise FetchError('Fail to get remote info.')
 
-    # merge novel info TODO
+    # merge info info TODO
     local.set_info(info) # 更新信息
 
     try:

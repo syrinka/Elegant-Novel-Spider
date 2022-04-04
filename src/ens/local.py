@@ -47,7 +47,7 @@ class Local(object):
         _info = yaml.load(open(
             self.info_path, 'r', encoding='utf-8'
         ), Loader=yaml.SafeLoader)
-        self.info = Novel.load(_info)
+        self.info = Info.load(_info)
 
         self.catalog = yaml.load(open(
             self.catalog_path, 'r', encoding='utf-8'
@@ -81,7 +81,7 @@ class Local(object):
         db_path = join(path, 'data.db')
 
         yaml.dump(
-            Novel(code).as_dict(),
+            Info(code).as_dict(),
             open(info_path, 'w')
         )
         # catalog 默认值为空列表
@@ -158,7 +158,7 @@ class Local(object):
         return cnt
 
 
-    def set_info(self, info: Novel):
+    def set_info(self, info: Info):
         """
         更新小说的信息
         """
@@ -201,17 +201,17 @@ def get_local_shelf() -> Shelf:
             _info = yaml.load(open(
                 path, 'r', encoding='utf-8'
             ), Loader=yaml.SafeLoader)
-            shelf += Novel(**_info)
+            shelf += Info(**_info)
 
     return shelf
 
 
-def get_novel(code: Code) -> Novel:
+def get_local_info(code: Code) -> Info:
     path = join(paths.LOCAL, code.remote, code.nid, 'info.yml')
     _info = yaml.load(open(
         path, 'r', encoding='utf-8'
     ), Loader=yaml.SafeLoader)
-    return Novel.load(_info)
+    return Info.load(_info)
         
 
 if __name__ == '__main__':

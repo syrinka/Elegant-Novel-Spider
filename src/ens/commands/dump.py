@@ -1,6 +1,6 @@
 import click
 
-from ens.local import Local, get_novel
+from ens.local import Local, get_local_info
 from ens.paths import DUMP, join
 from ens.typing import *
 from ens.utils.command import *
@@ -35,7 +35,7 @@ def main(code, dumper, miss, output, **kw):
     )
 
     meta = DumpMetadata(
-        get_novel(code),
+        get_local_info(code),
         local.vol_count(),
         local.chap_count(),
         local.chap_count(),

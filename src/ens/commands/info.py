@@ -1,7 +1,7 @@
 import click
 
 from ens.utils.command import arg_code
-from ens.local import get_novel
+from ens.local import get_local_info
 from ens.remote import get_remote
 from ens.console import echo
 
@@ -13,8 +13,9 @@ from ens.console import echo
     default = True)
 def main(code, local):
     if local:
-        novel = get_novel(code)
-        echo(novel.verbose())
+        info = get_local_info(code)
     else:
-        remote = get_remote(code.remote)
-        echo(remote(code).get_info().verbose())
+        remote = get_remote(code.remote)(code)
+        info = remote.get_info()
+
+    echo(info.verbose())

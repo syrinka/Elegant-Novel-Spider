@@ -62,7 +62,7 @@ class Code(object):
 
 
 @dataclass
-class Novel(object):
+class Info(object):
     code: InitVar[Code]
     remote: str = field(init=False)
     nid: str = field(init=False)
@@ -130,8 +130,8 @@ class FilterRule(object):
         self.rev = bool(rule['not'])
 
 
-    def __call__(self, novel: Novel) -> bool:
-        v0 = self.aget(novel)
+    def __call__(self, info: Info) -> bool:
+        v0 = self.aget(info)
         v1 = self.value
 
         if   self.mode == '=':  res = v0 == v1
@@ -152,9 +152,9 @@ class ShelfFilter(object):
     mode: Literal['all', 'any'] = 'all'
 
 
-    def __call__(self, novel) -> bool:
+    def __call__(self, info) -> bool:
         judge = all if self.mode == 'all' else any
-        return judge(rule(novel) for rule in self.rules)
+        return judge(rule(info) for rule in self.rules)
 
     
     def __repr__(self):
@@ -164,28 +164,28 @@ class ShelfFilter(object):
 @dataclass
 class Shelf(object):
     name: Union[str, None] = None
-    novels: List[Novel] = field(default_factory=list)
+    infos: List[Info] = field(default_factory=list)
 
 
-    def __add__(self, novel):
-        self.novels.append(novel)
+    def __add__(self, info):
+        self.infos.append(info)
         return self
 
 
     def __rich_console__(self, console, opt):
         if self.name is not None:
             yield f'\[{self.name}]'
-        for i, novel in enumerate(self.novels):
-            yield '#{}  {}'.format(i+1, novel.__rich__())
+        for i, info in enumerate(self.infos):
+            yield '#{}  {}'.format(i+1, info.__rich__())
 
 
     @property
     def codes(self) -> List[Code]:
-        return list(n.code for n in self.novels)
+        return list(n.code for n in self.infos)
 
 
     def apply_filter(self, ffunc: ShelfFilter):
-        self.novels = list(filter(ffunc, self.novels))
+        self.infos = list(filter(ffunc, self.infos))
 
 
     def cache_shelf(self):
@@ -223,7 +223,7 @@ class Catalog(object):
 
 @dataclass
 class DumpMetadata(object):
-    info: Novel
+    info: Info
     vol_count: int
     chap_count: int
     char_count: int
@@ -231,5 +231,5 @@ class DumpMetadata(object):
 
 
 if __name__ == '__main__':
-    a = Novel('a~b', 'A', 'B')
+    a = Info('a~b', 'A', 'B')
     print(a)
