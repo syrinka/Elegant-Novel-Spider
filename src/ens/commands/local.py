@@ -18,8 +18,6 @@ def main():
 def func(filter):
     """
     列出所有本地数据
-
-    Alias: ls
     """
     shelf = get_local_shelf()
     shelf.apply_filter(filter)
