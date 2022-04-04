@@ -36,7 +36,7 @@ def flatten(catalog: Catalog, index: dict = None) -> str:
         piece.append(f'# {vol["name"]}')
         for cid in vol['cids']:
             if index is not None:
-                piece.append(f'. {index[cid]} ({cid})')
+                piece.append(f'. {index.get(cid, "[新章节]")} ({cid})')
             else:
                 piece.append(f'. {cid}')
     
@@ -74,9 +74,7 @@ def merge_catalog(old, new, index) -> Catalog:
 
 
 if __name__ == '__main__':
-    class Mirror:
-        def __getitem__(self, key):
-            return 'title-'+key
+    index = {i: 'Chap'+i for i in '12345'}
 
     c1 = [
         {
@@ -88,12 +86,12 @@ if __name__ == '__main__':
     c2 = [
         {
             'name': '备注',
-            'cids': ['4']
+            'cids': ['5']
         },
         {
             'name': '格林在地下城',
-            'cids': ['1', '2', '3']
+            'cids': ['1', '2', '3', '4', '6']
         }
     ]
 
-    print(merge_catalog(c1, c2, Mirror()))
+    print(merge_catalog(c1, c2, index))
