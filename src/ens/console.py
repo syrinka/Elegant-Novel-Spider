@@ -90,7 +90,8 @@ class Track(object):
             '[magenta]{task.percentage:>6.1f}%',
             '{task.description}',
             refresh_per_second = 20,
-            console = console
+            console = console,
+            transient = True
         )
         self.jobs = jobs
         self.task_id = self.progress.add_task(desc, total=len(jobs))
