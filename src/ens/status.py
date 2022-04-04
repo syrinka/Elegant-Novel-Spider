@@ -21,7 +21,7 @@ class Status(object):
         return self.scope + '.' + key
 
 
-    def get(self, key, default):
+    def get(self, key, default=None):
         return self._data.get(self._k(key), default)
 
 
