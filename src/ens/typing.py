@@ -75,6 +75,14 @@ class Novel(object):
         return asdict(self)
 
 
+    def as_info(self):
+        return '{}\n\n[cyan]{}[/]\n\n上次更新于：{}'.format(
+            self.__rich__(),
+            self.intro.strip() or 'no intro.',
+            self.last_update or '----'
+        )
+
+
 @dataclass
 class FilterRule(object):
     _rule_format = re.compile(
