@@ -30,12 +30,15 @@ def merge(old, new) -> str:
         raise MergeError
 
 
-def flatten(catalog: Catalog, index: dict) -> str:
+def flatten(catalog: Catalog, index: dict = None) -> str:
     piece = []
     for vol in catalog:
         piece.append(f'# {vol["name"]}')
         for cid in vol['cids']:
-            piece.append(f'. {index[cid]} ({cid})')
+            if index is not None:
+                piece.append(f'. {index[cid]} ({cid})')
+            else:
+                piece.append(f'. {cid}')
     
     return '\n'.join(piece)
 
