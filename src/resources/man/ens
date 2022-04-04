@@ -1,4 +1,4 @@
-[cyan]E[/]xtendable [cyan]N[/]ovel [cyan]S[/]pider -- aka. [cyan]ens[/]
+[cyan]E[/]xtendable [cyan]N[/]ovel [cyan]S[/]pider -- v1.0.0
 
 Usage: ens [OPTIONS] COMMAND [ARGS]...
 
@@ -8,6 +8,7 @@ Options:
 [gold1]Core[/]
   fetch   抓取
   dump    输出
+  info    信息
 
 [bright_blue]Management[/]
   local   本地数据
