@@ -128,7 +128,7 @@ class FilterRule(object):
     rule_str: InitVar[str]
 
     attr: Callable = field(init=False)
-    mode: Literal['=', '^=', '@=', '*='] = field(init=False)
+    mode: Literal['=', '==', '^=', '@=', '*='] = field(init=False)
     value: Literal['remote', 'author', 'title', 'intro'] = field(init=False)
 
 
@@ -147,7 +147,8 @@ class FilterRule(object):
         v0 = self.aget(info)
         v1 = self.value
 
-        if   self.mode == '=':  res = v0 == v1
+        if   self.mode == '=':  res = v1 in v0
+        elif self.mode == '==': res = v0 == v1
         elif self.mode == '^=': res = v0.startswith(v1)
         elif self.mode == '@=': res = v0.endswith(v1)
         elif self.mode == '*=': res = v1 in v0
@@ -176,7 +177,6 @@ class ShelfFilter(object):
 
 @dataclass
 class Shelf(object):
-    name: Union[str, None] = None
     infos: List[Info] = field(default_factory=list)
 
 
@@ -186,8 +186,6 @@ class Shelf(object):
 
 
     def __rich_console__(self, console, opt):
-        if self.name is not None:
-            yield f'\[{self.name}]'
         for i, info in enumerate(self.infos):
             yield '#{}  {}'.format(i+1, info.__rich__())
 
