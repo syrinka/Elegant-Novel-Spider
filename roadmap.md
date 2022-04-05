@@ -26,16 +26,6 @@
     - 数据缓存
 
 
-## Cli
-- fetch
-- local
-  - list(search)
-  - rm
-- remote
-  - list
-  - status
-- reader
-
 ## 命名
 |code|format|
 |--|--|
@@ -56,3 +46,28 @@
     - cid3
 - name: name
   cid
+
+## Todo
+- [ ] 分离 config 文件
+- [ ] 完善异常提示
+  - [ ] 将 fetch 的抓取异常分类
+- [ ] local
+  - [ ] prune 清理不在目录里的章节数据
+  - [ ] remove 删除指定小说 / 无效小说
+- [ ] info
+  - [ ] merge info
+  - [ ] lock info
+- [ ] isolated
+  - [ ] 禁止孤立小说执行特定命令
+  - [ ] 手动标记为孤立小说
+  - [ ] 正常小说转化为孤立小说的机制
+- [ ] 全文搜索
+  - [ ] 显示章节
+  - [ ] 显示上下文
+- [ ] gui
+  - [ ] 移植网页阅读器过来
+    - [ ] 目录分页显示
+    - [ ] 全文搜索
+    - [ ] 书签（待定）
+    - [ ] 文本修订
+  - [ ] 在 gui 里执行 fetch 命令
