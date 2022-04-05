@@ -24,13 +24,6 @@ CREATE TABLE IF NOT EXISTS `chaps` (
 class Local(object):
     """
     本地库
-    Usage:
-        local = Local(code)
-        local = Local.from_path(path)
-        try:
-            local = Local(code)
-        except LocalNotExists:
-            local = Local.init(code)
     """
     def __init__(self, code: Code, *, path=None):
         if path is not None:
@@ -101,7 +94,6 @@ class Local(object):
         rmtree(path)
 
 
-    @property
     def spine(self) -> List[str]:
         """
         获取目录的脊，由所有 cid 组成
@@ -111,8 +103,7 @@ class Local(object):
             spine.extend(vol['cids'])
         return spine
 
-    
-    @property
+
     def nav(self):
         nav_node = namedtuple('nav', 'type title cid')
         index = self.get_index()
@@ -164,12 +155,12 @@ class Local(object):
 
 
     def chap_count(self) -> int:
-        return len(self.spine)
+        return len(self.spine())
 
 
     def char_count(self) -> int:
         cnt = 0
-        for cid in self.spine:
+        for cid in self.spine():
             cnt += len(self.get_chap(cid))
         return cnt
 

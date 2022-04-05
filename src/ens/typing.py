@@ -195,8 +195,11 @@ class Shelf(object):
         return list(n.code for n in self.infos)
 
 
-    def apply_filter(self, ffunc: ShelfFilter):
-        self.infos = list(filter(ffunc, self.infos))
+    def filter(self, ffunc: ShelfFilter, inplace=False):
+        if inplace:
+            self.infos = list(filter(ffunc, self.infos))
+        else:
+            return self.__class__(list(filter(ffunc, self.infos)))
 
 
     def cache_shelf(self):

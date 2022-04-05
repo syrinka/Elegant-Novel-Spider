@@ -23,6 +23,6 @@ def func(filter, all):
     列出所有本地数据
     """
     shelf = get_local_shelf(all)
-    shelf.apply_filter(filter)
+    shelf = shelf.filter(filter)
     shelf.cache_shelf()
     echo(shelf)
