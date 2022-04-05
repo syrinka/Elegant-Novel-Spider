@@ -44,7 +44,14 @@ def novel(remote, nid):
 def chap(remote, nid, cid):
     local = get_local(remote, nid)
 
+    spine = local.spine()
+    pos = spine.index(cid)
+
     return render_template('chap.html',
+        ntitle = local.info.title,
         title = local.get_title(cid),
-        content = local.get_chap(cid)
+        content = local.get_chap(cid),
+        path = f'{remote}/{nid}',
+        prev = spine[pos-1] if pos != 0 else '',
+        next = spine[pos+1] if pos != len(spine)-1 else ''
     )

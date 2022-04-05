@@ -1,21 +1,28 @@
 <head>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     <link rel="stylesheet" href="/static/classic.css">
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/jquery.cookie@1.4.1/jquery.cookie.js"></script>
     <script src="/static/ens.js"></script>
 </head>
-<html>
+
+<body>
+    <section id="nav" class="contrast">
+        <a href="/shelf">◈</a>
+        <a href="/novel/{{path}}">{{ntitle}}</a>
+    </section>
     <section class="container">
         <article>
             <header>
                 <h2>{{title}}</h2>
             </header>
-            <article>
-                {% for line in content.splitlines() %}
-                    <p>{{line}}</p>
-                {% endfor %}
-            </article>
+            {% for line in content.splitlines() %}
+            <p>{{line}}</p>
+            {% endfor %}
         </article>
     </section>
-    <section class="edge" id="edge-prev" data-goto="{{prev}}"></section>
-    <section class="edge" id="edge-next" data-goto="{{next}}"></section>
-</html>
+    <section id="edge-prev" href="/chap/{{path}}/{{prev}}"></section>
+    <section id="edge-next" href="/chap/{{path}}/{{next}}"></section>
+    <button id="theme-switcher" class="contrast switcher"></button>
+</body>
+<script>dispatch()</script>

@@ -2,14 +2,17 @@
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     <link rel="stylesheet" href="/static/classic.css">
     <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/jquery.cookie@1.4.1/jquery.cookie.js"></script>
     <script src="/static/ens.js"></script>
 </head>
 <html>
     <section class="container">
         <article>
-            <input id="filter" type="search">
-            <div id="shelf"></div>
+            {% for info in shelf.infos %}
+                <a class="node" href="/novel/{{info.remote}}/{{info.nid}}">{{info.title}}</a>
+            {% endfor %}
         </article>
     </section>
+    <button id="theme-switcher" class="contrast switcher"></button>
 </html>
 <script>dispatch()</script>

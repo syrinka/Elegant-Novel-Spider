@@ -1,9 +1,15 @@
 <head>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     <link rel="stylesheet" href="/static/classic.css">
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://unpkg.com/jquery.cookie@1.4.1/jquery.cookie.js"></script>
     <script src="/static/ens.js"></script>
 </head>
+
 <html>
+    <section id="nav" class="contrast">
+        <a href="/shelf">◈</a>
+    </section>
     <section class="container">
         <article>
             <header>
@@ -11,15 +17,15 @@
                 <small>@{{info.author}}</small>
             </header>
             <p>{{info.intro}}</p>
-            <article>
-                {% for node in nav %}
-                    {% if node.type == 'chap' %}
-                        <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
-                    {% else %}
-                        <h4 class="node">{{node.title}}</h4>
-                    {% endif %}
-                {% endfor %}
-            </article>
+            {% for node in nav %}
+                {% if node.type == 'chap' %}
+                    <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
+                {% else %}
+                    <h4 class="node">{{node.title}}</h4>
+                {% endif %}
+            {% endfor %}
         </article>
     </section>
+    <button id="theme-switcher" class="contrast switcher"></button>
 </html>
+<script>dispatch()</script>
