@@ -26,27 +26,6 @@
     - 数据缓存
 
 
-## 命名
-|code|format|
-|--|--|
-|remote| a-z A-Z 0-9 -_. |
-|novel_id| a-z A-Z 0-9 -_. |
-|code|$remote ~ $novel_id|
-
-## local 格式
-- metadata.yml
-- index.yml
-- chaps.db
-
-## Index
-- name: name
-  cids: 
-    - cid1
-    - cid2
-    - cid3
-- name: name
-  cid
-
 ## Todo
 - [ ] 分离 config 文件
 - [ ] 完善异常提示
@@ -68,6 +47,8 @@
   - [ ] 移植网页阅读器过来
     - [ ] 目录分页显示
     - [ ] 全文搜索
-    - [ ] 书签（待定）
     - [ ] 文本修订
+    - [x] 日夜模式切换
   - [ ] 在 gui 里执行 fetch 命令
+- [ ] 逻辑优化
+  - [ ] get_local_shelf 时可能存在的性能问题
