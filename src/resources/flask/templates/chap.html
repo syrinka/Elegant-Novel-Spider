@@ -1,0 +1,21 @@
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="/static/classic.css">
+    <script src="/static/ens.js"></script>
+</head>
+<html>
+    <section class="container">
+        <article>
+            <header>
+                <h2>{{title}}</h2>
+            </header>
+            <article>
+                {% for line in content.splitlines() %}
+                    <p>{{line}}</p>
+                {% endfor %}
+            </article>
+        </article>
+    </section>
+    <section class="edge" id="edge-prev" data-goto="{{prev}}"></section>
+    <section class="edge" id="edge-next" data-goto="{{next}}"></section>
+</html>

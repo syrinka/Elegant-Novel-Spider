@@ -2,6 +2,7 @@ import os
 import sqlite3
 from os.path import join, exists
 from shutil import rmtree
+from collections import namedtuple
 
 import yaml
 
@@ -100,6 +101,7 @@ class Local(object):
         rmtree(path)
 
 
+    @property
     def spine(self) -> List[str]:
         """
         获取目录的脊，由所有 cid 组成
@@ -108,6 +110,20 @@ class Local(object):
         for vol in self.catalog:
             spine.extend(vol['cids'])
         return spine
+
+    
+    @property
+    def nav(self):
+        nav_node = namedtuple('nav', 'type title cid')
+        index = self.get_index()
+        nav = []
+        for vol in self.catalog:
+            nav.append(nav_node('vol', vol['name'], None))
+            for cid in vol['cids']:
+                nav.append(
+                    nav_node('chap', index[cid], cid)
+                )
+        return nav
 
 
     def has_chap(self, cid: str) -> bool:
@@ -148,12 +164,12 @@ class Local(object):
 
 
     def chap_count(self) -> int:
-        return len(self.spine())
+        return len(self.spine)
 
 
     def char_count(self) -> int:
         cnt = 0
-        for cid in self.spine():
+        for cid in self.spine:
             cnt += len(self.get_chap(cid))
         return cnt
 

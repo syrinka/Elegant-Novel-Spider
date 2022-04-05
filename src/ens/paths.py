@@ -21,3 +21,5 @@ REMOTE_RES = join(RES, 'remote-res')
 STATUS = join(RES, 'status.yml')
 TOPIC = join(RES, 'topic')
 MANUAL = join(RES, 'man')
+
+FLASK_PATH = join(RES, 'flask')

@@ -1,0 +1,25 @@
+<head>
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="stylesheet" href="/static/classic.css">
+    <script src="/static/ens.js"></script>
+</head>
+<html>
+    <section class="container">
+        <article>
+            <header>
+                <h2>{{info.title}}</h2>
+                <small>@{{info.author}}</small>
+            </header>
+            <p>{{info.intro}}</p>
+            <article>
+                {% for node in nav %}
+                    {% if node.type == 'chap' %}
+                        <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
+                    {% else %}
+                        <h4 class="node">{{node.title}}</h4>
+                    {% endif %}
+                {% endfor %}
+            </article>
+        </article>
+    </section>
+</html>
