@@ -13,7 +13,7 @@
     <section class="container">
         <article>
             <header>
-                <h2>{{info.title}}</h2>
+                <h1>{{info.title}}</h1>
                 <small>@{{info.author}}</small>
             </header>
             <p>{{info.intro}}</p>
@@ -21,7 +21,7 @@
                 {% if node.type == 'chap' %}
                     <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
                 {% else %}
-                    <h4 class="node">{{node.title}}</h4>
+                    <h3 class="node">{{node.title}}</h3>
                 {% endif %}
             {% endfor %}
         </article>

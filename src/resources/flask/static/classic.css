@@ -1,6 +1,20 @@
 .node {
     display: block;
-    margin: 15px 0px;
+    padding: .8rem 0;
+    margin: 1.2rem;
+    color: var(--h5-color);
+}
+
+a.node {
+    padding-left: .8rem;
+    border: 1px solid var(--card-border-color);
+    border-radius: .8rem;
+}
+
+a.node:hover {
+    color: var(--primary-hover); 
+    background-color: var(--card-border-color);
+    text-decoration: none;
 }
 
 .container {
