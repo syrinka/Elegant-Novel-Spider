@@ -42,7 +42,7 @@ function bind_theme_switcher() {
         $('html').attr('data-theme',
             (index, attr) => {
                 var theme = $.cookie('theme') == 'light' ? 'dark' : 'light'
-                $.cookie('theme', theme)
+                $.cookie('theme', theme, {path: '/'})
                 return theme
             }
         )
@@ -61,7 +61,12 @@ function bind_filter_input() {
 
 function bind_edge(){
     $('[id^=edge]').on('click', function(e){
-        window.location.pathname = $(this).attr('href')
+        var href = $(this).attr('href')
+        if (href) {
+            window.location.pathname = href
+        } else {
+            alert('已经到底了！')
+        }
     })
 
     $(document).on('keydown', function(e){
