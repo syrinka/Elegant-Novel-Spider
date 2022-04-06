@@ -17,13 +17,13 @@
             <header>
                 <h1>{{title}}</h1>
             </header>
-            {% for line in content.splitlines() %}
+            {%- for line in content.splitlines() %}
             <p>{{line}}</p>
-            {% endfor %}
+            {%- endfor %}
         </article>
     </section>
-    <section id="edge-prev" href="/chap/{{path}}/{{prev}}"></section>
-    <section id="edge-next" href="/chap/{{path}}/{{next}}"></section>
+    <section id="edge-prev" href="{{prev}}"></section>
+    <section id="edge-next" href="{{next}}"></section>
     <button id="theme-switcher" class="contrast switcher"></button>
 </body>
 <script>dispatch()</script>

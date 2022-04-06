@@ -46,12 +46,14 @@ def chap(remote, nid, cid):
 
     spine = local.spine()
     pos = spine.index(cid)
+    prev = spine[pos-1] if pos != 0 else None
+    next = spine[pos+1] if pos != len(spine)-1 else None
 
     return render_template('chap.html',
         ntitle = local.info.title,
         title = local.get_title(cid),
         content = local.get_chap(cid),
         path = f'{remote}/{nid}',
-        prev = spine[pos-1] if pos != 0 else '',
-        next = spine[pos+1] if pos != len(spine)-1 else ''
+        prev = f'/chap/{remote}/{nid}/{prev}' if prev else '',
+        next = f'/chap/{remote}/{nid}/{next}' if next else ''
     )

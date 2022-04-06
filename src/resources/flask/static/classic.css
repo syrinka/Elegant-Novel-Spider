@@ -80,3 +80,8 @@ a.node:hover {
     color: var(--contrast-inverse);
     background-color: var(--contrast);
 }
+
+
+article p {
+    white-space: pre-wrap;
+}

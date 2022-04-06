@@ -15,16 +15,22 @@
         <article>
             <header>
                 <h1>{{info.title}}</h1>
-                <small>@{{info.author}}</small>
+                <cite>@{{info.author}}</cite>
             </header>
-            <p>{{info.intro}}</p>
-            {% for node in nav %}
-                {% if node.type == 'chap' %}
+            <div>
+                {%- for line in info.intro.splitlines() %}
+                <p>{{line}}</p>
+                {%- endfor %}
+            </div>
+            <div>
+                {%- for node in nav %}
+                    {%- if node.type == 'chap' %}
                     <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
-                {% else %}
+                    {%- else %}
                     <h3 class="node">{{node.title}}</h3>
-                {% endif %}
-            {% endfor %}
+                    {%- endif %}
+                {%- endfor %}
+            </div>
         </article>
     </section>
     <button id="theme-switcher" class="contrast switcher"></button>
