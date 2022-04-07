@@ -80,7 +80,11 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     for cid in track:
         track.update_desc(local.get_title(cid))
 
-        content = remote.get_content(cid)
+        try:
+            content = remote.get_content(cid)
+        except FetchError as e:
+            echo(e)
+            continue
         
         if mode == 'update':
             local.set_chap(cid, content)

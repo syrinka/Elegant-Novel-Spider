@@ -14,18 +14,7 @@ class ENSError(Exception):
         return f'[red]{self.__class__.__name__}[/] {self.msg}'
 
 
-class StatusError(ENSError):
-    pass
-
-
-class InvalidCode(ENSError):
-    msg = 'Fail to parse code: {}.'
-
-
-class BadCodeIndex(ENSError):
-    msg = 'Expect code index to be in range 1~{}, receive {}'
-
-
+# Local
 class LocalError(ENSError):
     pass
 
@@ -42,24 +31,37 @@ class ChapMissing(LocalError):
     pass
 
 
-
+# Remote
 class RemoteError(ENSError):
     pass
 
 
 class RemoteNotFound(RemoteError):
-    msg = 'Given remote {} not found.'
+    msg = '远程源 {} 不存在'
 
 
 class DuplicateRemote(RemoteError):
     pass
 
 
+# Fetch
 class FetchError(RemoteError):
     pass
 
 
+class ChapError(FetchError):
+    msg = '章节 {} 抓取失败, Reason: {}'
 
+
+class ChapInvalid(FetchError):
+    msg = '章节 {} 已失效'
+
+
+class ChapUnauth(FetchError):
+    msg = '章节 {} 无访问权限'
+
+
+# Dumper
 class DumpError(ENSError):
     pass
 
@@ -72,9 +74,17 @@ class DuplicateDumper(DumpError):
     pass
 
 
-class TopicNotFound(ENSError):
+# Misc
+class StatusError(ENSError):
     pass
 
+
+class InvalidCode(ENSError):
+    msg = 'Fail to parse code: {}'
+
+
+class BadCodeIndex(ENSError):
+    msg = 'Expect code index to be in range 1~{}, receive {}'
 
 
 class MergeError(ENSError):
@@ -82,4 +92,8 @@ class MergeError(ENSError):
 
 
 class BadFilter(ENSError):
+    pass
+
+
+class TopicNotFound(ENSError):
     pass
