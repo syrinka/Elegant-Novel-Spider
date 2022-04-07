@@ -35,7 +35,7 @@
   - [ ] 将 fetch 的抓取异常分类
 - [ ] local
   - [ ] prune 清理不在目录里的章节数据
-  - [ ] remove 删除指定小说 / 无效小说
+  - [x] remove 删除指定小说 / 无效小说
 - [ ] info
   - [ ] merge info
   - [ ] lock info

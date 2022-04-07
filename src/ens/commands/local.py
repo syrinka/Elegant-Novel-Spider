@@ -1,6 +1,6 @@
 import click
 
-from ens.local import get_local_shelf
+from ens.local import Local, get_local_shelf, get_local_info
 from ens.console import echo
 from ens.utils.command import *
 
@@ -26,3 +26,16 @@ def func(filter, all):
     shelf = shelf.filter(filter)
     shelf.cache_shelf()
     echo(shelf)
+
+
+@main.command('remove')
+@arg_code
+@click.option('-y', '--yes',
+    is_flag = True,
+    help = '确定确定确定')
+def func(code, yes):
+    info = get_local_info(code)
+    echo(info)
+    if yes or click.confirm('确定要删除它吗？'):
+        Local.remove(code)
+        echo('删除成功')
