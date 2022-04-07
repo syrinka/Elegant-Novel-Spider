@@ -11,6 +11,9 @@ def main():
 @main.command('code')
 @arg_code
 def func(code):
+    """
+    测试 code 的解析结果
+    """
     print(code)
 
 

@@ -10,7 +10,8 @@ from ens.console import echo
 @arg_code
 @click.option('-l/-r', '--local/--remote', 'local',
     is_flag = True,
-    default = True)
+    default = True,
+    help = '查看本地/远程信息')
 def main(code, local):
     if local:
         info = get_local_info(code)

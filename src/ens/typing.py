@@ -208,6 +208,16 @@ class Shelf(object):
         status.save()
 
 
+    def dump(self):
+        return [i.dump() for i in self.infos]
+
+
+    @classmethod
+    def load(cls, data):
+        return cls([Info.load(d) for d in data])
+
+
+
 class Catalog(object):
     """
     c = Catalog()
