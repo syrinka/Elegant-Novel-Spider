@@ -43,24 +43,24 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     try:
         local = Local(code)
+        echo(local.info)
     except LocalNotFound:
         log('local initialize')
+
         local = Local.init(code)
+        try:
+            with doing('Getting Info'):
+                info = remote.get_info()
+        except FetchError:
+            raise FetchError('Fail to get remote info.')
 
-    try:
-        with doing('Getting Info'):
-            info = remote.get_info()
-    except FetchError:
-        raise FetchError('Fail to get remote info.')
+        echo(info.verbose())
+        if not click.confirm('是这本吗？', default=True):
+            del local
+            Local.remove(code)
+            raise Abort
 
-    echo(info)
-    if info.init and not click.confirm('是这本吗？', default=True):
-        del local
-        Local.remove(code)
-        raise click.Abort
-
-    # merge info TODO
-    local.set_info(info) # 更新信息
+        local.set_info(info) # 更新信息
 
     try:
         with doing('Getting catalog'):
