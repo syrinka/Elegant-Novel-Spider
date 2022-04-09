@@ -25,7 +25,7 @@ class Local(object):
     """
     本地库
     """
-    def __init__(self, code: Code, *, path=None):
+    def __init__(self, code: Code, *, path=None, init=False):
         if path is not None:
             self.path = path
         else:
@@ -33,6 +33,9 @@ class Local(object):
             if not exists(path):
                 raise LocalNotFound(code)
             self.path = path
+
+        # 覆盖了 init 方法
+        self.init = init
         
         self.info_path = join(path, 'info.yml')
         self.catalog_path = join(path, 'catalog.yml')
@@ -82,7 +85,7 @@ class Local(object):
         open(catalog_path, 'w').write('[]')
         sqlite3.connect(db_path).cursor().execute(_sql_chap)
 
-        return cls(code)
+        return cls(code, init=True)
 
 
     @classmethod

@@ -53,6 +53,12 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
     except FetchError:
         raise FetchError('Fail to get remote info.')
 
+    echo(info)
+    if info.init and not click.confirm('是这本吗？', default=True):
+        del local
+        Local.remove(code)
+        raise click.Abort
+
     # merge info TODO
     local.set_info(info) # 更新信息
 
