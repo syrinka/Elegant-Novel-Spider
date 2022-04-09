@@ -1,13 +1,12 @@
 class ENSError(Exception):
     msg = None
     def __init__(self, *args, **kw):
-        if args or kw:
-            if self.msg is None and len(args) == 1:
-                self.msg = str(args[0])
-            else:
-                self.msg = self.msg.format(*args, **kw)
-        else:
+        if len(args) == 1:
+            self.msg = str(args[0])
+        elif self.msg is None:
             self.msg = 'An Error Occur.'
+        elif args or kw:
+            self.msg = self.msg.format(*args, **kw)
 
 
     def __rich__(self):
@@ -96,4 +95,8 @@ class BadFilter(ENSError):
 
 
 class TopicNotFound(ENSError):
+    pass
+
+
+class Abort(ENSError):
     pass
