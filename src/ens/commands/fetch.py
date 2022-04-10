@@ -76,6 +76,9 @@ def main(code: Code, mode: str, interval: float, retry: int, thread: int):
 
     local.set_catalog(cat)
 
+    # 根据章节的 access 字段初步筛选
+    cids = [cid for cid in local.spine() if cat.access.get(cid, 1)]
+
     if mode == 'update':
         # 如为 update 模式，则只抓取缺失章节
         cids = [cid for cid in local.spine() if not local.has_chap(cid)]
