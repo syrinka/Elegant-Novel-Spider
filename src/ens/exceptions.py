@@ -52,14 +52,6 @@ class ChapError(FetchError):
     msg = '章节 {} 抓取失败, Reason: {}'
 
 
-class ChapInvalid(FetchError):
-    msg = '章节 {} 已失效'
-
-
-class ChapUnauth(FetchError):
-    msg = '章节 {} 无访问权限'
-
-
 # Dumper
 class DumpError(ENSError):
     pass
