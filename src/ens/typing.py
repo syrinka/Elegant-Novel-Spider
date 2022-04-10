@@ -1,7 +1,6 @@
 import re
 from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
-from datetime import datetime
 from typing import (
     List, Dict, Tuple,
     Literal, Union,
@@ -71,7 +70,6 @@ class Info(object):
     author: str = None
     intro: str = ''
     tags: list = field(default_factory=list)
-    last_update: datetime = None
     finish: bool = None
 
 
@@ -110,10 +108,9 @@ class Info(object):
         if not self.valid:
             return self
         else:
-            return '{}\n\n[cyan]{}[/]\n\n上次更新于：{}'.format(
+            return '{}\n\n[cyan]{}[/]'.format(
                 self.__rich__(),
-                self.intro.strip() or 'no intro.',
-                self.last_update or '----'
+                self.intro.strip() or 'no intro.'
             )
 
 
