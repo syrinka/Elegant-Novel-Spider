@@ -193,7 +193,7 @@ class Local(object):
         with self.conn:
             self.cursor.executemany(
                 'INSERT OR IGNORE INTO `chaps` (cid, title) VALUES (?, ?)',
-                cat.get_index().items()
+                cat.index.items()
             )
             self.conn.commit()
 
