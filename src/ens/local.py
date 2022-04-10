@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import time
 from os.path import join, exists
 from shutil import rmtree
 from collections import namedtuple
@@ -8,6 +9,7 @@ import yaml
 
 import ens.paths as paths
 import ens.config as conf
+from ens.console import log
 from ens.typing import *
 from ens.exceptions import *
 
@@ -202,6 +204,8 @@ class Local(object):
 
 def get_local_shelf(all=False) -> Shelf:
     shelf = Shelf()
+
+    time1 = time.time()
     for remote in os.listdir(paths.LOCAL):
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
@@ -211,6 +215,8 @@ def get_local_shelf(all=False) -> Shelf:
             info = Info.load(_info)
             if info.valid or all:
                 shelf += info
+    time2 = time.time()
+    log('get local shelf in {:.4f}s'.format(time2 - time1))
 
     return shelf
 
