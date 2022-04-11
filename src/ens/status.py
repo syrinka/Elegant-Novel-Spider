@@ -27,6 +27,7 @@ class Status(object):
 
     def set(self, key, value):
         self._data[self._k(key)] = value
+        return self
 
 
     def has(self, key):
@@ -45,9 +46,10 @@ class Status(object):
         del self._data[self._k(key)]
 
 
-    def save(self):
+    @classmethod
+    def save(cls):
         yaml.dump(
-            self._data,
+            cls._data,
             open(STATUS, 'w', encoding='utf-8'),
             allow_unicode = True
         )
