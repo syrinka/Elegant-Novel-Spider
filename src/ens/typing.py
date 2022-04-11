@@ -237,7 +237,7 @@ class Catalog(object):
         self.catalog[-1]['cids'].append(cid)
         self.index[cid] = title
         if access is not None:
-            self.access = access
+            self.access[cid] = access
         return self
 
 
