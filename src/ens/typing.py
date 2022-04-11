@@ -233,11 +233,9 @@ class Catalog(object):
         return self
 
 
-    def chap(self, cid: str, title: str, access=None):
+    def chap(self, cid: str, title: str):
         self.catalog[-1]['cids'].append(cid)
         self.index[cid] = title
-        if access is not None:
-            self.access[cid] = access
         return self
 
 
