@@ -28,11 +28,11 @@ from ens.utils.command import *
     default = 3,
     help = '抓取单章时最大尝试次数，为 0 则持续尝试 [3]')
 @click.option('-t', '--thread', # TODO 多线程执行
-    type = click.IntRange(min=1),
-    default = 1,
+    type = click.IntRange(min=2),
+    default = None,
     hidden = True,
     help = '同时执行的线程数')
-def main(code: Code, mode: str, interval: float, retry: int, thread: int):
+def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread: int):
     """
     抓取小说
     """
