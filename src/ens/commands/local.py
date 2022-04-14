@@ -35,7 +35,7 @@ def func(filter, all):
     help = '确定确定确定')
 def func(code, yes):
     info = get_local_info(code)
-    echo(info)
+    echo(info.verbose())
     if yes or click.confirm('确定要删除它吗？'):
         Local.remove(code)
         echo('删除成功')

@@ -40,7 +40,7 @@ def flatten(catalog: Catalog, index: dict = None) -> str:
             else:
                 piece.append(f'. {cid}')
     
-    return '\n'.join(piece)
+    return '\n'.join(piece) + '\n'
 
 
 def unflatten(s) -> Catalog:
