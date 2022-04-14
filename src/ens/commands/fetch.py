@@ -1,9 +1,11 @@
+from threading import Thread, Lock
+
 import click
 
 from ens.local import Local
 from ens.remote import get_remote
 from ens.console import echo, log, doing, Track
-from ens.merge import catalog_lose, merge_catalog
+from ens.merge import catalog_lose, merge_catalog, merge
 from ens.typing import *
 from ens.exceptions import *
 from ens.utils.command import *
@@ -11,6 +13,9 @@ from ens.utils.command import *
 
 @click.command('fetch')
 @arg_code
+@click.option('--info',
+    is_flag = True,
+    help = '只更新 info')
 @click.option('-m', '--mode',
     type = click.Choice(['update', 'flush', 'diff']),
     default = 'update',
@@ -44,6 +49,23 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
     try:
         local = Local(code)
         echo(local.info)
+
+        if info:
+            try:
+                with doing('Getting Info'):
+                    info = remote.get_info()
+            except FetchError:
+                raise FetchError('Fail to get remote info.')
+
+            old = yaml_dump(local.info.dump())
+            new = yaml_dump(info.dump())
+            merged = merge(old, new)
+            info = Info.load(yaml_load(merged))
+            local.set_info(info)
+
+            echo('Info 更新成功！')
+            return
+
     except LocalNotFound:
         log('local initialize')
 
@@ -70,31 +92,22 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
 
     # merge catalog
     if catalog_lose(local.catalog, cat.catalog):
-        echo('[alert]检测到目录发生了减量更新')
+        echo('[alert]检测到目录发生了减量更新，即将进行手动合并')
         index = local.get_index()
-        cat.catalog = merge_catalog(local.catalog, cat.catalog, index)
+        try:
+            cat.catalog = merge_catalog(local.catalog, cat.catalog, index)
+        except MergeError:
+            echo('放弃合并，本次抓取终止')
+            raise Abort
 
     local.set_catalog(cat)
 
-    # 根据章节的 access 字段初步筛选
-    cids = [cid for cid in local.spine() if cat.access.get(cid, 1)]
-
+    cids = [cid for cid in local.spine()]
     if mode == 'update':
         # 如为 update 模式，则只抓取缺失章节
-        cids = [cid for cid in local.spine() if not local.has_chap(cid)]
-    else:
-        cids = local.spine()
+        cids = [cid for cid in cids if not local.has_chap(cid)]
 
-    track = Track(cids, 'Fetching')
-    for cid in track:
-        track.update_desc(local.get_title(cid))
-
-        try:
-            content = remote.get_content(cid)
-        except FetchError as e:
-            echo(e)
-            continue
-        
+    def save(local, cid, content):
         if mode == 'update':
             local.set_chap(cid, content)
 
@@ -103,5 +116,46 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
 
         elif mode == 'diff':
             raise NotImplementedError('Not support for now!') # TODO
+
+    track = Track(cids, 'Fetching')
+    if thread is None:
+        for cid in track:
+            track.update_desc(local.get_title(cid))
+
+            try:
+                content = remote.get_content(cid)
+            except FetchError as e:
+                echo(e)
+                continue
+
+            save(local, cid, content)
+
+    else:
+        cids = iter(track)
+        sync = Lock()
+        def worker():
+            local = Local(code)
+            while True:
+                try:
+                    with sync:
+                        cid = next(cids)
+
+                    track.update_desc(local.get_title(cid))
+                    try:
+                        content = remote.get_content(cid)
+                    except FetchError as e:
+                        echo(e)
+                        continue
+                    save(local, cid, content)
+
+                except StopIteration:
+                    break
+
+        threads = [Thread(target=worker) for i in range(thread)]
+        echo('{} threads online'.format(thread))
+        for th in threads:
+            th.start()
+        for th in threads:
+            th.join()
 
     echo('Done.', style='good')
