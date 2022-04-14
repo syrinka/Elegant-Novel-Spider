@@ -68,7 +68,7 @@ class Info(object):
     
     title: str = None
     author: str = None
-    intro: str = ''
+    intro: str = None
     tags: list = field(default_factory=list)
     finish: bool = None
 
@@ -110,7 +110,7 @@ class Info(object):
         else:
             return '{}\n\n[cyan]{}[/]'.format(
                 self.__rich__(),
-                self.intro.strip() or 'no intro.'
+                (self.intro or 'no intro.').strip()
             )
 
 
