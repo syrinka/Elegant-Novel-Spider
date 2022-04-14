@@ -2,7 +2,7 @@ import click
 
 from ens.console import echo
 from ens.remote import Remote, all_remotes
-from ens.utils.command import *
+from ens.utils.command import arg_remote
 
 
 @click.group('remote')

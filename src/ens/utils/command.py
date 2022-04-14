@@ -1,5 +1,4 @@
 import click
-import yaml
 
 import ens.config as conf
 from ens.console import echo
@@ -9,14 +8,6 @@ from ens.dumper import get_dumper
 from ens.typing import Code, FilterRule, ShelfFilter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
-
-
-def yaml_dump(obj):
-    return yaml.dump(obj, allow_unicode=True)
-
-
-def yaml_load(str):
-    return yaml.load(str, Loader=yaml.SafeLoader)
 
 
 def _code_callback(ctx, param, code):

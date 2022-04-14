@@ -1,6 +1,6 @@
 import click
 
-from ens.utils.command import *
+from ens.utils.command import arg_code, opt_filter
 
 
 @click.group('test')

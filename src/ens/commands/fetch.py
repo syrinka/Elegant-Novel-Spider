@@ -6,9 +6,10 @@ from ens.local import Local
 from ens.remote import get_remote
 from ens.console import echo, log, doing, Track
 from ens.merge import catalog_lose, merge_catalog, merge
+from ens.utils import yaml_load, yaml_dump
+from ens.utils.command import arg_code
 from ens.typing import *
 from ens.exceptions import *
-from ens.utils.command import *
 
 
 @click.command('fetch')

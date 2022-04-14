@@ -2,7 +2,7 @@ import click
 
 from ens.local import Local, get_local_shelf, get_local_info
 from ens.console import echo
-from ens.utils.command import *
+from ens.utils.command import arg_code, opt_filter
 
 
 @click.group('local')

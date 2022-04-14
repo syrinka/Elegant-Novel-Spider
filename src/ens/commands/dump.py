@@ -2,8 +2,8 @@ import click
 
 from ens.local import Local, get_local_info
 from ens.paths import DUMP, join
+from ens.utils.command import arg_code, arg_dumper
 from ens.typing import *
-from ens.utils.command import *
 from ens.exceptions import *
 
 
