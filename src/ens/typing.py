@@ -77,21 +77,13 @@ class Info(object):
         self.code = code
         self.remote, self.nid = code
 
-        # 若刚初始化的本地数据未能 set_info，则标记为无效
-        # 此时 title 仍为默认值 None
-        self.valid = self.title is not None
-
 
     def __rich__(self):
-        if not self.valid:
-            return f'[gray27]\[invalid novel][/] ({self.code.__rich__()})'
-
-        else:
-            return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
-                self.title,
-                self.author or '[gray27]anon[/]', # anonymous
-                self.code.__rich__()
-            )
+        return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
+            self.title,
+            self.author or '[gray27]anon[/]', # anonymous
+            self.code.__rich__()
+        )
 
 
     def dump(self) -> Dict:

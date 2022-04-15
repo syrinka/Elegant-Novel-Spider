@@ -74,8 +74,12 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         try:
             with doing('Getting Info'):
                 info = remote.get_info()
-        except FetchError:
-            raise FetchError('Fail to get remote info.')
+        except FetchError as e:
+            echo(e)
+            echo('[alert]抓取 Info 失败')
+            del local
+            Local.remove(code)
+            raise Abort
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):

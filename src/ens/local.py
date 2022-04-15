@@ -202,7 +202,7 @@ class Local(object):
         pass
 
 
-def get_local_shelf(all=False) -> Shelf:
+def get_local_shelf() -> Shelf:
     shelf = Shelf()
 
     time1 = time.time()
@@ -212,9 +212,7 @@ def get_local_shelf(all=False) -> Shelf:
             _info = yaml.load(open(
                 path, 'r', encoding='utf-8'
             ), Loader=yaml.SafeLoader)
-            info = Info.load(_info)
-            if info.valid or all:
-                shelf += info
+            shelf += Info.load(_info)
     time2 = time.time()
     log('get local shelf in {:.4f}s'.format(time2 - time1))
 
