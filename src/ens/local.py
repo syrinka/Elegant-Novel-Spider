@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS `chaps` (
 class Local(object):
     """
     本地库
+    @raise LocalNotFound 如果本地库不存在
+    @raise LocalAlreadyExists 如果通过 Local.init 尝试创建已存在的本地库
+    @raise InvalidLocal
     """
     def __init__(self, code: Code, *, path=None):
         if path is not None:
@@ -40,17 +43,20 @@ class Local(object):
         self.catalog_path = join(path, 'catalog.yml')
         self.db_path = join(path, 'data.db')
 
-        _info = yaml.load(open(
-            self.info_path, 'r', encoding='utf-8'
-        ), Loader=yaml.SafeLoader)
-        self.info = Info.load(_info)
+        try:
+            _info = yaml.load(open(
+                self.info_path, 'r', encoding='utf-8'
+            ), Loader=yaml.SafeLoader)
+            self.info = Info.load(_info)
 
-        self.catalog = yaml.load(open(
-            self.catalog_path, 'r', encoding='utf-8'
-        ), Loader=yaml.SafeLoader)
+            self.catalog = yaml.load(open(
+                self.catalog_path, 'r', encoding='utf-8'
+            ), Loader=yaml.SafeLoader)
 
-        self.conn = sqlite3.connect(self.db_path)
-        self.cursor = self.conn.cursor()
+            self.conn = sqlite3.connect(self.db_path)
+            self.cursor = self.conn.cursor()
+        except FileNotFoundError:
+            raise InvalidLocal(code)
 
     
     @classmethod
@@ -76,10 +82,8 @@ class Local(object):
         catalog_path = join(path, 'catalog.yml')
         db_path = join(path, 'data.db')
 
-        yaml.dump(
-            Info(code).dump(),
-            open(info_path, 'w')
-        )
+        yaml.dump(Info(code).dump(), open(info_path, 'w'))
+
         # catalog 默认值为空列表
         open(catalog_path, 'w').write('[]')
         sqlite3.connect(db_path).cursor().execute(_sql_chap)
@@ -167,15 +171,17 @@ class Local(object):
         return cnt
 
 
-    def set_info(self, info: Info):
+    def set_info(self, info: Info = None):
         """
         更新小说的信息
         """
-        self.info = info
+        if info is not None:
+            self.info.update(info)
         yaml.dump(
             info.dump(),
             open(self.info_path, 'w', encoding='utf-8'),
-            allow_unicode = True
+            allow_unicode = True,
+            sort_keys = False
         )
 
     
@@ -196,6 +202,14 @@ class Local(object):
                 cat.index.items()
             )
             self.conn.commit()
+
+
+    def isolate(self):
+        """
+        标记该小说为孤立小说
+        """
+        self.info.isolated = True
+        self.set_info()
 
 
     def prune(self):

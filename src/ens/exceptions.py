@@ -26,6 +26,10 @@ class LocalAlreadyExists(LocalError):
     pass
 
 
+class InvalidLocal(LocalError):
+    pass
+
+
 class ChapMissing(LocalError):
     pass
 
