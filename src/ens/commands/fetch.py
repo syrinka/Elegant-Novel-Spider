@@ -56,7 +56,8 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
                 with doing('Getting Info'):
                     info = remote.get_info()
             except FetchError:
-                raise FetchError('Fail to get remote info.')
+                echo('抓取 Info 失败')
+                echo('该小说可能已被孤立')
 
             old = yaml_dump(local.info.dump())
             new = yaml_dump(info.dump())

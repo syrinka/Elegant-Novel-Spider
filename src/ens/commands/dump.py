@@ -1,5 +1,6 @@
 import click
 
+from ens.console import echo
 from ens.local import Local, get_local_info
 from ens.paths import DUMP, join
 from ens.utils.command import arg_code, opt_dumper
