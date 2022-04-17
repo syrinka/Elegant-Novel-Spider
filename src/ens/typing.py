@@ -72,6 +72,11 @@ class Info(object):
     tags: list = field(default_factory=list)
     finish: bool = None
 
+    # metadata
+    star: bool = None
+    isolated: bool = None
+    bookmarks: Dict[str, str] = None
+
 
     def __post_init__(self, code):
         self.code = code
@@ -94,6 +99,10 @@ class Info(object):
     def load(cls, data):
         data['code'] = Code((data.pop('remote'), data.pop('nid')))
         return cls(**data)
+
+
+    def update(self, info):
+        self.__dict__.update(info.__dict__)
 
 
     def verbose(self):
@@ -206,7 +215,6 @@ class Shelf(object):
         return cls([Info.load(d) for d in data])
 
 
-
 class Catalog(object):
     """
     c = Catalog()
@@ -241,5 +249,7 @@ class DumpMetadata(object):
 
 
 if __name__ == '__main__':
-    a = Info('a~b', 'A', 'B')
-    print(a)
+    a = Info(Code('a~b'))
+    b = Info(Code('a~b'), title='beta')
+    a.update(b)
+    print(a.dump())
