@@ -50,9 +50,12 @@ arg_remote = click.argument('remote',
 )
 
 
-arg_dumper = click.argument('dumper',
+opt_dumper = click.option('-d', '--dumper',
     default = conf.DEFAULT_DUMPER,
-    callback = lambda c, p, v: get_dumper(v)
+    metavar = 'DUMPER',
+    help = '选择输出类型，详见 topic:dump',
+    show_default = True,
+    callback = lambda c, p, v: get_dumper(v),
 )
 
 

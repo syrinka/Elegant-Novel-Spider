@@ -2,14 +2,14 @@ import click
 
 from ens.local import Local, get_local_info
 from ens.paths import DUMP, join
-from ens.utils.command import arg_code, arg_dumper
+from ens.utils.command import arg_code, opt_dumper
 from ens.typing import *
 from ens.exceptions import *
 
 
 @click.command('dump', short_help='输出')
 @arg_code
-@arg_dumper
+@opt_dumper
 @click.option('-m', '--miss',
     type = click.Choice(['skip', 'stop', 'warn']),
     default = 'stop',
