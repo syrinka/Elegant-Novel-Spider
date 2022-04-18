@@ -37,10 +37,6 @@
 - [ ] local
   - [ ] prune 清理不在目录里的章节数据
   - [x] remove 删除指定小说 / 无效小说
-- [ ] info
-  - [ ] merge info
-  - [ ] lock info
-  - [ ] update info
 - [ ] isolate
   - [ ] 禁止孤立小说执行特定命令
   - [ ] 手动标记为孤立小说
@@ -65,3 +61,17 @@
 - spine 中的每章节都应该在 index 中出现，但反之不一定
 - index 的更新应该是增量的，不会覆盖。覆盖 index 应该需要手动执行
 - spine 中的章节都应该是可以抓取的，无法抓取才是异常
+
+## Info 包含字段
+小说本体部分
+- remote
+- nid
+- title
+- author
+- intro
+- finish
+
+metadata 部分
+- star
+- isolated
+- tags

@@ -69,12 +69,13 @@ class Info(object):
     title: str = None
     author: str = None
     intro: str = None
-    tags: list = field(default_factory=list)
     finish: bool = None
 
     # metadata
     star: bool = False
     isolated: bool = False
+    comment: str = None
+    tags: list = field(default_factory=list)
 
 
     def __post_init__(self, code):
