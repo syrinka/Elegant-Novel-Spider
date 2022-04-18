@@ -73,9 +73,8 @@ class Info(object):
     finish: bool = None
 
     # metadata
-    star: bool = None
-    isolated: bool = None
-    bookmarks: Dict[str, str] = None
+    star: bool = False
+    isolated: bool = False
 
 
     def __post_init__(self, code):
