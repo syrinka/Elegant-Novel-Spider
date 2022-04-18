@@ -106,13 +106,10 @@ class Info(object):
 
 
     def verbose(self):
-        if not self.valid:
-            return self
-        else:
-            return '{}\n\n[cyan]{}[/]'.format(
-                self.__rich__(),
-                (self.intro or 'no intro.').strip()
-            )
+        return '{}\n\n[cyan]{}[/]'.format(
+            self.__rich__(),
+            (self.intro or 'no intro.').strip()
+        )
 
 
 @dataclass

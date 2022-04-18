@@ -178,7 +178,7 @@ class Local(object):
         if info is not None:
             self.info.update(info)
         yaml.dump(
-            info.dump(),
+            self.info.dump(),
             open(self.info_path, 'w', encoding='utf-8'),
             allow_unicode = True,
             sort_keys = False
