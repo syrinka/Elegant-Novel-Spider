@@ -6,9 +6,9 @@ from ens.exceptions import MergeError
 from ens.typing import *
 
 
-def merge(old, new) -> str:
-    path1 = 'old-content'
-    path2 = 'new-content'
+def merge(old, new, ext='.yml') -> str:
+    path1 = f'old-content{ext}'
+    path2 = f'new-content{ext}'
 
     with open(path1, 'w', encoding='utf-8') as f:
         f.write(old)
@@ -27,7 +27,7 @@ def merge(old, new) -> str:
     if ret == 0:
         return final
     else:
-        raise MergeError
+        raise MergeError(f'Return code: {ret}')
 
 
 def flatten(catalog: Catalog, index: dict = None) -> str:
