@@ -10,32 +10,34 @@ from ens.paths import MANUAL, join
 from ens.exceptions import *
 
 
-def _code_callback(ctx, param, code):
+def translate_code(code: str) -> str:
     if code.startswith(conf.CODE_INDEX_INDICATOR):
         index = int(code.removeprefix(conf.CODE_INDEX_INDICATOR))
 
         stat = Status('sys')
         if index == 0 and conf.ZERO_MEANS_LAST:
             try:
-                code = stat['last-cache']
+                return stat['last-cache']
             except KeyError:
                 raise StatusError('last-cache not exists.')
                 
         else:
             try:
-                code = stat['shelf-cache'][index - 1]
+                return stat['shelf-cache'][index - 1]
             except IndexError:
                 raise BadCodeIndex(len(stat['shelf-cache']), index)
             except KeyError:
                 raise StatusError('shelf-cache not exists.')
 
     else:
-        pass
-    
+        return code
+
+
+def _code_callback(ctx, param, code):
+    code = translate_code(code)    
     stat = Status('sys')
     stat.set('last-cache', code)
     stat.save()
-
     return Code(code)
 
 
