@@ -1,10 +1,11 @@
 import click
 
+from ens import echo, Shelf
 from ens.local import Local, get_local_shelf, get_local_info
-from ens.console import echo
-from ens.utils.command import arg_code, opt_filter
+from ens.utils.command import manual, arg_code, opt_filter
 
 
+@manual('ens-local')
 @click.group('local')
 def main():
     """
@@ -15,11 +16,17 @@ def main():
 
 @main.command('list')
 @opt_filter
-def func(filter):
+@click.option('-s', '--star',
+    is_flag = True,
+    help = 'Starred only.')
+def func(filter, star):
     """
     列出所有本地库
     """
     shelf = get_local_shelf()
+    if star:
+        shelf = Shelf(list(i for i in shelf.infos if i.star))
+
     shelf = shelf.filter(filter)
     shelf.cache_shelf()
     echo(shelf)
@@ -36,6 +43,13 @@ def func(code, yes):
     if yes or click.confirm('确定要删除它吗？'):
         Local.remove(code)
         echo('删除成功')
+
+
+@main.command('info')
+@arg_code
+def func(code):
+    info = get_local_info(code)
+    echo(info.verbose())
 
 
 @main.command('star')

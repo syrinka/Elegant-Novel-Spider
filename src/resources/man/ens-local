@@ -1,0 +1,13 @@
+Usage: ens local [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+[gold1]Commands[/]
+  list         列出所有本地库
+  remove       删除本地库
+  info         查看小说信息
+
+[bright_blue]Modify[/]
+  [grey27](un)[/]star
+  [grey27](un)[/]isolate
