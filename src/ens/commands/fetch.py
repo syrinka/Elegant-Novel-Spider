@@ -42,6 +42,9 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
     """
     抓取小说
     """
+    if mode=='diff' and thread is not None:
+        raise FetchError('暂不支持 mode=diff 与多线程的组合')
+
     try:
         remote = get_remote(code.remote)(code)
     except RemoteNotFound:
@@ -114,7 +117,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         # 如为 update 模式，则只抓取缺失章节
         cids = [cid for cid in cids if not local.has_chap(cid)]
 
-    def save(local, cid, content):
+    def save(local: Local, cid, content):
         if mode == 'update':
             local.set_chap(cid, content)
 
@@ -122,7 +125,17 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
             local.set_chap(cid, content)
 
         elif mode == 'diff':
-            raise NotImplementedError('Not support for now!') # TODO
+            old = local.get_chap(cid)
+            if old != content:
+                title = local.get_title(cid)
+                echo(f'检测到章节内容变动：{title} ({cid})')
+                try:
+                    content = merge(old, content)
+                except MergeError:
+                    echo('[yellow]放弃合并，章节内容未变动')
+                else:
+                    echo('[green]合并完成')
+                    local.set_chap(cid, content)
 
     track = Track(cids, 'Fetching')
     if thread is None:

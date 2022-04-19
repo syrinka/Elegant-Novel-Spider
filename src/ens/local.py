@@ -148,7 +148,7 @@ class Local(object):
         with self.conn() as (conn, cursor):
             cursor.execute(
                 'UPDATE `chaps` SET content=? WHERE cid=?',
-                (content, cid)
+                (content.strip(), cid) # 去掉多余的换行
             )
             conn.commit()
 
