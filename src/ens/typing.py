@@ -84,10 +84,12 @@ class Info(object):
 
 
     def __rich__(self):
-        return '[green]{}[/]  [magenta]@{}[/] ({})'.format(
+        return '[green]{}[/]  [magenta]@{}[/] ({}) {} {}'.format(
             self.title,
             self.author or '[gray27]anon[/]', # anonymous
-            self.code.__rich__()
+            self.code.__rich__(),
+            '[gray27]isolated[/]' if self.isolated else '',
+            '[bright_yellow]★[/]' if self.star else ''
         )
 
 

@@ -36,3 +36,35 @@ def func(code, yes):
     if yes or click.confirm('确定要删除它吗？'):
         Local.remove(code)
         echo('删除成功')
+
+
+@main.command('star')
+@arg_code
+def func(code):
+    local = Local(code)
+    local.info.star = True
+    local.set_info()
+
+
+@main.command('unstar')
+@arg_code
+def func(code):
+    local = Local(code)
+    local.info.star = False
+    local.set_info()
+
+
+@main.command('isolate')
+@arg_code
+def func(code):
+    local = Local(code)
+    local.info.isolated = True
+    local.set_info()
+
+
+@main.command('unisolate')
+@arg_code
+def func(code):
+    local = Local(code)
+    local.info.isolated = False
+    local.set_info()
