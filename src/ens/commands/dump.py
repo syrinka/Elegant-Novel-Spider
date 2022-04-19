@@ -46,7 +46,7 @@ def main(code, dumper, miss, output, **kw):
     dumper = dumper()
     dumper.init(meta)
 
-    for vol in local.catalog:
+    for vol in local.catalog():
         dumper.feed('vol', vol['name'])
 
         for cid in vol['cids']:

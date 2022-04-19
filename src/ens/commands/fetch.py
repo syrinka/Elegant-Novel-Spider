@@ -97,11 +97,12 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         raise FetchError('Fail to get catalog.')
 
     # merge catalog
-    if catalog_lose(local.catalog, cat.catalog):
+    local_catalog = local.catalog()
+    if catalog_lose(local_catalog, cat.catalog):
         echo('[alert]检测到目录发生了减量更新，即将进行手动合并')
         index = local.get_index()
         try:
-            cat.catalog = merge_catalog(local.catalog, cat.catalog, index)
+            cat.catalog = merge_catalog(local_catalog, cat.catalog, index)
         except MergeError:
             echo('放弃合并，本次抓取终止')
             raise Abort

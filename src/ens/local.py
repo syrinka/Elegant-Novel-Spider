@@ -4,11 +4,11 @@ import time
 from os.path import join, exists
 from shutil import rmtree
 from collections import namedtuple
-
-import yaml
+from contextlib import contextmanager
 
 import ens.paths as paths
 import ens.config as conf
+from ens.utils import yaml_load, yaml_dump
 from ens.console import log
 from ens.typing import *
 from ens.exceptions import *
@@ -44,17 +44,8 @@ class Local(object):
         self.db_path = join(path, 'data.db')
 
         try:
-            _info = yaml.load(open(
-                self.info_path, 'r', encoding='utf-8'
-            ), Loader=yaml.SafeLoader)
+            _info = yaml_load(path=self.info_path)
             self.info = Info.load(_info)
-
-            self.catalog = yaml.load(open(
-                self.catalog_path, 'r', encoding='utf-8'
-            ), Loader=yaml.SafeLoader)
-
-            self.conn = sqlite3.connect(self.db_path)
-            self.cursor = self.conn.cursor()
         except FileNotFoundError:
             raise InvalidLocal(code)
 
@@ -82,7 +73,7 @@ class Local(object):
         catalog_path = join(path, 'catalog.yml')
         db_path = join(path, 'data.db')
 
-        yaml.dump(Info(code).dump(), open(info_path, 'w'))
+        yaml_dump(Info(code).dump(), info_path)
 
         # catalog 默认值为空列表
         open(catalog_path, 'w').write('[]')
@@ -100,12 +91,16 @@ class Local(object):
         rmtree(path)
 
 
+    def catalog(self) -> Dict:
+        return yaml_load(path=self.catalog_path)
+
+
     def spine(self) -> List[str]:
         """
         获取目录的脊，由所有 cid 组成
         """
         spine = []
-        for vol in self.catalog:
+        for vol in self.catalog():
             spine.extend(vol['cids'])
         return spine
 
@@ -114,7 +109,7 @@ class Local(object):
         nav_node = namedtuple('nav', 'type title cid')
         index = self.get_index()
         nav = []
-        for vol in self.catalog:
+        for vol in self.catalog():
             nav.append(nav_node('vol', vol['name'], None))
             for cid in vol['cids']:
                 nav.append(
@@ -123,14 +118,26 @@ class Local(object):
         return nav
 
 
+    @contextmanager
+    def conn(self):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        yield conn, cursor
+        cursor.close()
+        conn.close()
+
+
     def has_chap(self, cid: str) -> bool:
-        self.cursor.execute('SELECT cid FROM `chaps` WHERE cid=? AND content IS NOT NULL', (cid,))
-        return self.cursor.fetchone() is not None
+        with self.conn() as (conn, cursor):
+            cursor.execute('SELECT cid FROM `chaps` WHERE cid=? AND content IS NOT NULL', (cid,))
+            return cursor.fetchone() is not None
 
 
     def get_chap(self, cid: str) -> str:
-        self.cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
-        content = self.cursor.fetchone()[0]
+        with self.conn() as (conn, cursor):
+            cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
+            content = cursor.fetchone()[0]
+
         if content is None:
             raise ChapMissing(cid)
         else:
@@ -138,26 +145,28 @@ class Local(object):
 
 
     def set_chap(self, cid: str, content: str) -> str:
-        with self.conn:
-            self.cursor.execute(
+        with self.conn() as (conn, cursor):
+            cursor.execute(
                 'UPDATE `chaps` SET content=? WHERE cid=?',
                 (content, cid)
             )
-            self.conn.commit()
+            conn.commit()
 
 
     def get_title(self, cid: str) -> str:
-        self.cursor.execute('SELECT title FROM `chaps` WHERE cid=?', (cid,))
-        return self.cursor.fetchone()[0]
+        with self.conn() as (conn, cursor):
+            cursor.execute('SELECT title FROM `chaps` WHERE cid=?', (cid,))
+            return cursor.fetchone()[0]
 
 
     def get_index(self) -> Dict[str, str]:
-        self.cursor.execute('SELECT cid, title FROM `chaps`')
-        return dict(self.cursor.fetchall())
+        with self.conn() as (conn, cursor):
+            cursor.execute('SELECT cid, title FROM `chaps`')
+            return dict(cursor.fetchall())
 
 
     def vol_count(self) -> int:
-        return len(self.catalog)
+        return len(self.catalog())
 
 
     def chap_count(self) -> int:
@@ -177,31 +186,21 @@ class Local(object):
         """
         if info is not None:
             self.info.update(info)
-        yaml.dump(
-            self.info.dump(),
-            open(self.info_path, 'w', encoding='utf-8'),
-            allow_unicode = True,
-            sort_keys = False
-        )
+        yaml_dump(self.info.dump(), self.info_path)
 
     
     def set_catalog(self, cat: Catalog):
         """
         更新小说的目录
         """
-        self.catalog = cat.catalog
-        yaml.dump(
-            cat.catalog,
-            open(self.catalog_path, 'w', encoding='utf-8'),
-            allow_unicode = True
-        )
+        yaml_dump(cat.catalog, self.catalog_path)
 
-        with self.conn:
-            self.cursor.executemany(
+        with self.conn() as (conn, cursor):
+            cursor.executemany(
                 'INSERT OR IGNORE INTO `chaps` (cid, title) VALUES (?, ?)',
                 cat.index.items()
             )
-            self.conn.commit()
+            conn.commit()
 
 
     def isolate(self):
@@ -223,9 +222,7 @@ def get_local_shelf() -> Shelf:
     for remote in os.listdir(paths.LOCAL):
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
-            _info = yaml.load(open(
-                path, 'r', encoding='utf-8'
-            ), Loader=yaml.SafeLoader)
+            _info = yaml_load(path=path)
             shelf += Info.load(_info)
     time2 = time.time()
     log('get local shelf in {:.4f}s'.format(time2 - time1))
@@ -236,9 +233,7 @@ def get_local_shelf() -> Shelf:
 def get_local_info(code: Code) -> Info:
     path = join(paths.LOCAL, code.remote, code.nid, 'info.yml')
     try:
-        _info = yaml.load(open(
-            path, 'r', encoding='utf-8'
-        ), Loader=yaml.SafeLoader)
+        _info = yaml_load(path=path)
     except FileNotFoundError:
         raise LocalNotFound(code)
         
