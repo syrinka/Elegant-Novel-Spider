@@ -11,7 +11,7 @@ Options:
   info    信息
 
 [bright_blue]Management[/]
-  local   本地数据
+  local   本地库
   remote  远程源
   dumper  输出类型
 

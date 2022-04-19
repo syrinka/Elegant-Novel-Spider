@@ -8,7 +8,7 @@ from ens.utils.command import arg_code, opt_filter
 @click.group('local')
 def main():
     """
-    本地数据 (Local) 管理
+    本地库 (Local) 管理
     """
     pass
 
@@ -17,7 +17,7 @@ def main():
 @opt_filter
 def func(filter):
     """
-    列出所有本地数据
+    列出所有本地库
     """
     shelf = get_local_shelf()
     shelf = shelf.filter(filter)
