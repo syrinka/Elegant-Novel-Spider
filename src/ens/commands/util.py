@@ -1,8 +1,9 @@
 import click
 
-from ens.console import echo
+from ens.cli import ens_cli
+from ens.console import echo, log
 from ens.status import Status
-from ens.utils.command import arg_code, opt_filter
+from ens.utils.command import arg_code, opt_filter, translate_code
 
 
 @click.group('util')
@@ -28,14 +29,31 @@ def func(filter):
     echo(filter)
 
 
-@main.command('code-cache')
-def func():
+@main.command('batch-exec')
+@click.argument('exec',
+    required = False,
+    nargs = -1)
+@click.option('-c', '--code', 'codes',
+    multiple = True)
+@click.option('-s', '--stop',
+    is_flag = True,
+    help = 'Stop at first exception.')
+@click.option('-n', '--dry',
+    is_flag = True)
+def func(exec, codes, stop, dry):
     """
-    last-cache and shelf-cache
+    对批量小说执行同一个命令
     """
-    stat = Status('sys')
-    echo('# last-cache')
-    echo(stat['last-cache'])
-    echo('# shelf-cache')
-    for i, code in enumerate(stat['shelf-cache']):
-        echo(f'{i+1} {code}')
+    for code in codes:
+        code = translate_code(code)
+
+        cmd = ' '.join(exec) + ' ' + code
+        echo(f'batch exec: [green]{cmd}')
+
+        if not dry:
+            try:
+                ens_cli.main(exec + (code,), standalone_mode=False)
+            except Exception as e:
+                echo(e)
+                if stop:
+                    break
