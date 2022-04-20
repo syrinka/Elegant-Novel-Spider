@@ -1,7 +1,6 @@
 import click
 
-from ens.dumper import Dumper
-from ens.console import echo
+from ens import echo, Dumper
 
 
 @click.group('dumper')

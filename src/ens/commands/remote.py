@@ -1,7 +1,6 @@
 import click
 
-from ens.console import echo
-from ens.remote import Remote
+from ens import echo, Remote
 from ens.utils.command import arg_remote
 
 

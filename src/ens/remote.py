@@ -1,8 +1,8 @@
 import pkgutil
 
 import ens.remotes as remotes
-from ens.typing import *
-from ens.exceptions import *
+from ens.typing import Code, Info, Catalog, Type
+from ens.exceptions import DuplicateRemote, RemoteNotFound
 
 
 _dependencies = {

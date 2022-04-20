@@ -1,9 +1,7 @@
 import click
 
+from ens import echo, get_local_info, get_remote
 from ens.utils.command import arg_code
-from ens.local import get_local_info
-from ens.remote import get_remote
-from ens.console import echo
 
 
 @click.command('info')

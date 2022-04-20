@@ -1,8 +1,7 @@
 import click
 
 from ens.cli import ens_cli
-from ens.console import echo, log
-from ens.status import Status
+from ens import echo, log, Status
 from ens.utils.command import arg_code, opt_filter, translate_code
 
 

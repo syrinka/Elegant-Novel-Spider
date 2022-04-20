@@ -1,7 +1,7 @@
 import click
 
-from ens import echo, Shelf
-from ens.local import Local, get_local_shelf, get_local_info
+from ens import echo
+from ens import Local, Shelf, get_local_shelf, get_local_info
 from ens.utils.command import manual, arg_code, opt_filter
 
 

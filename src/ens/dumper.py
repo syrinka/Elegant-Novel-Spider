@@ -1,8 +1,8 @@
 import pkgutil
 
 import ens.dumpers as dumpers
-from ens.exceptions import *
-from ens.typing import *
+from ens.typing import DumpMetadata, Literal, Type
+from ens.exceptions import DuplicateDumper, DumperNotFound
 
 
 class Dumper(object):

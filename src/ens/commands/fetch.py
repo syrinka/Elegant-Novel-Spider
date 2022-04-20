@@ -2,14 +2,18 @@ from threading import Thread, Lock
 
 import click
 
-from ens.local import Local
-from ens.remote import get_remote
-from ens.console import echo, log, doing, Track
+from ens import echo, log, doing, Track
+from ens import Code, Info, Local, get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils import yaml_load, yaml_dump
 from ens.utils.command import arg_code
-from ens.typing import *
-from ens.exceptions import *
+from ens.exceptions import (
+    FetchError,
+    LocalNotFound,
+    RemoteNotFound,
+    MergeError,
+    Abort
+)
 
 
 @click.command('fetch')
