@@ -6,15 +6,14 @@ from ens.typing import *
 
 
 class Dumper(object):
-    _dumpers = dict()
-    name = None
+    all_dumpers = dict()
     ext = None
 
     def __init_subclass__(cls) -> None:
-        cls.name = cls.name or cls.__name__.lower()
-        if cls.name in cls._dumpers:
-            raise DuplicateDumper(cls.name)
-        cls._dumpers[cls.name] = cls
+        name = cls.__module__.rsplit('.', 1)[-1]
+        if name in cls.all_dumpers:
+            raise DuplicateDumper(name)
+        cls.all_dumpers[name] = cls
 
 
     def init(self, meta: DumpMetadata):
@@ -39,16 +38,11 @@ class Dumper(object):
 
 def get_dumper(name) -> Type[Dumper]:
     try:
-        return Dumper._dumpers[name]
+        return Dumper.all_dumpers[name]
     except KeyError:
         raise DumperNotFound(name)
 
 
-all_dumpers = {}
 for ff, name, ispkg in pkgutil.iter_modules(dumpers.__path__):
-    if name not in dumpers.disabled:
-        all_dumpers[name] = True
-        name = 'ens.dumpers.' + name
-        ff.find_module(name).load_module(name)
-    else:
-        all_dumpers[name] = False
+    name = 'ens.dumpers.' + name
+    ff.find_module(name).load_module(name)

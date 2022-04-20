@@ -3,7 +3,6 @@ from ens.dumper import Dumper
 
 
 class TXTDumper(Dumper):
-    name = 'txt'
     ext = '.txt'
 
     def init(self, meta):

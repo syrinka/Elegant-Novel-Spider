@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo
-from ens.remote import Remote, all_remotes
+from ens.remote import Remote
 from ens.utils.command import arg_remote
 
 
@@ -14,19 +14,12 @@ def main():
 
 
 @main.command('list')
-@click.option('-a', '--all',
-    is_flag = True,
-    help = '列出所有远程源，包括不可用的')
-def func(all):
+def func():
     """
     列出可用的远程源
     """
-    for i in all_remotes:
-        if not all and all_remotes[i]:
-            echo(i)
-        else:
-            style = 'good' if all_remotes[i] else 'bad'
-            echo(i, style=style)
+    for i in Remote.all_remotes.keys():
+        echo(i)
 
 
 @main.command('status')

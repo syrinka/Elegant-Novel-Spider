@@ -39,7 +39,6 @@ class Volume(object):
 
 
 class EPUBDumper(Dumper):
-    name = 'epub'
     ext = '.epub'
 
     def init(self, meta):

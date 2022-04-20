@@ -16,8 +16,7 @@ class Remote(object):
     与远程源进行交互的逻辑类
     远程源需继承此类并重写若干函数
     """
-    _remotes = dict()
-    name = None
+    all_remotes = dict()
 
     def __init__(self, code: Code):
         self.code = code
@@ -26,10 +25,10 @@ class Remote(object):
 
 
     def __init_subclass__(cls) -> None:
-        cls.name = cls.name or cls.__name__.lower()
-        if cls.name in cls._remotes:
-            raise DuplicateRemote(cls.name)
-        cls._remotes[cls.name] = cls
+        name = cls.__module__.rsplit('.', 1)[-1]
+        if name in cls.all_remotes:
+            raise DuplicateRemote(name)
+        cls.all_remotes[name] = cls
 
 
     def __remote_init__(self, code: Code):
@@ -74,16 +73,11 @@ def get_remote(name) -> Type[Remote]:
     获取远程源对应的逻辑类
     """
     try:
-        return Remote._remotes[name]
+        return Remote.all_remotes[name]
     except KeyError:
         raise RemoteNotFound(name)
 
 
-all_remotes = {}
 for ff, name, ispkg in pkgutil.iter_modules(remotes.__path__):
-    if name not in remotes.disabled:
-        all_remotes[name] = True
-        name = 'ens.remotes.' + name
-        ff.find_module(name).load_module(name)
-    else:
-        all_remotes[name] = False
+    name = 'ens.remotes.' + name
+    ff.find_module(name).load_module(name)

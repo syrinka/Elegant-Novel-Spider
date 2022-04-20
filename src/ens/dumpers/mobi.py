@@ -6,7 +6,6 @@ from ens.dumpers.epub import EPUBDumper
 
 
 class MOBIDumper(Dumper):
-    name = 'mobi'
     ext = '.mobi'
 
     def init(self, meta) -> None:
