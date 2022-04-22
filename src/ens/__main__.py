@@ -1,5 +1,5 @@
 from ens.console import console
-from ens.exceptions import ENSError, Abort
+from ens.exceptions import ENSError
 
 if __name__ == '__main__':
 
@@ -7,8 +7,6 @@ if __name__ == '__main__':
     
     try:
         ens_cli()
-    except Abort:
-        console.print('Aborted!')
     except ENSError as e:
         console.print(e)
     except Exception as e:
