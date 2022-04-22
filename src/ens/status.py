@@ -10,11 +10,15 @@ class Status(object):
         self.scope = scope
 
         if self._data is None:
-            # 将数据写入类中，确保所有实例访问的是相同的 status data
-            self.__class__._data = yaml.load(
-                open(STATUS, encoding='utf-8'),
-                Loader = yaml.SafeLoader
-            ) or dict()
+            try:
+                # 将数据写入类中，确保所有实例访问的是相同的 status data
+                self.__class__._data = yaml.load(
+                    open(STATUS, encoding='utf-8'),
+                    Loader = yaml.SafeLoader
+                ) or dict()
+            except FileNotFoundError:
+                open(STATUS, 'w', encoding='utf-8') # create file
+                self.__class__._data = dict()
 
 
     def _k(self, key):
