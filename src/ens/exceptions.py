@@ -38,7 +38,7 @@ class Isolated(LocalError):
     """
     若在 fetch 过程中抛出了该异常，则标明正在抓取的小说已为孤立小说
     """
-    pass
+    msg = '该小说可能已被孤立 {}'
 
 
 
@@ -91,7 +91,7 @@ class BadCodeIndex(ENSError):
 
 
 class MergeError(ENSError):
-    pass
+    msg = 'Merge fail, status code {}'
 
 
 class BadFilter(ENSError):

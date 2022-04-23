@@ -9,6 +9,7 @@ from ens.utils import yaml_load, yaml_dump
 from ens.utils.command import arg_code
 from ens.exceptions import (
     FetchError,
+    Isolated,
     LocalNotFound,
     RemoteNotFound,
     MergeError,
@@ -64,7 +65,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
                     info = remote.get_info()
             except FetchError:
                 echo('抓取 Info 失败')
-                echo('该小说可能已被孤立')
+                raise Isolated(code)
 
             old = yaml_dump(local.info.dump())
             new = yaml_dump(info.dump())
