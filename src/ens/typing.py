@@ -158,7 +158,7 @@ class FilterRule(object):
 
 
 @dataclass
-class ShelfFilter(object):
+class Filter(object):
     rules: List[FilterRule]
     mode: Literal['all', 'any'] = 'all'
 
@@ -192,7 +192,7 @@ class Shelf(object):
         return list(n.code for n in self.infos)
 
 
-    def filter(self, ffunc: ShelfFilter, inplace=False):
+    def filter(self, ffunc: Filter, inplace=False):
         if inplace:
             self.infos = list(filter(ffunc, self.infos))
         else:

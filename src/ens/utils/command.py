@@ -5,7 +5,7 @@ from ens.console import echo
 from ens.status import Status
 from ens.remote import get_remote
 from ens.dumper import get_dumper
-from ens.typing import Code, FilterRule, ShelfFilter
+from ens.typing import Code, FilterRule, Filter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
 
@@ -71,7 +71,7 @@ def _filter_callback(ctx, param, rules):
 
     mode = 'all' if ctx.params.pop('filter_mode') else 'any'
 
-    return ShelfFilter(opt_rules + pos_rules, mode)
+    return Filter(opt_rules + pos_rules, mode)
 
 
 def opt_filter(cmd):
