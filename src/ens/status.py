@@ -39,7 +39,7 @@ class Status(object):
 
 
     def __getitem__(self, key):
-        return self.get(key)
+        return self._data[self._k(key)]
 
     
     def __setitem__(self, key, value):
