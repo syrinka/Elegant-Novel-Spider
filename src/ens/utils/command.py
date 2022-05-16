@@ -12,7 +12,10 @@ from ens.exceptions import *
 
 def translate_code(code: str) -> str:
     if code.startswith(conf.CODE_INDEX_INDICATOR):
-        index = int(code.removeprefix(conf.CODE_INDEX_INDICATOR))
+        try:
+            index = int(code.removeprefix(conf.CODE_INDEX_INDICATOR))
+        except ValueError:
+            raise InvalidCode(code)
 
         stat = Status('sys')
         if index == 0 and conf.ZERO_MEANS_LAST:
