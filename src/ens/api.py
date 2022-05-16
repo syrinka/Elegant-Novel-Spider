@@ -49,10 +49,15 @@ def chap(remote, nid, cid):
     prev = spine[pos-1] if pos != 0 else None
     next = spine[pos+1] if pos != len(spine)-1 else None
 
+    try:
+        content = local.get_chap(cid)
+    except ChapMissing:
+        content = '[内容丢失]'
+
     return render_template('chap.html',
         ntitle = local.info.title,
         title = local.get_title(cid),
-        content = local.get_chap(cid),
+        content = content,
         path = f'{remote}/{nid}',
         prev = f'/chap/{remote}/{nid}/{prev}' if prev else '',
         next = f'/chap/{remote}/{nid}/{next}' if next else ''
