@@ -51,7 +51,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         raise FetchError('暂不支持 mode=diff 与多线程的组合')
 
     try:
-        remote = get_remote(code.remote)(code)
+        remote = get_remote(code.remote)()
     except RemoteNotFound:
         raise
 

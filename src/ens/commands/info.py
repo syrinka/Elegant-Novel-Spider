@@ -14,7 +14,7 @@ def main(code, local):
     if local:
         info = get_local_info(code)
     else:
-        remote = get_remote(code.remote)(code)
+        remote = get_remote(code.remote)()
         info = remote.get_info()
 
     echo(info.verbose())
