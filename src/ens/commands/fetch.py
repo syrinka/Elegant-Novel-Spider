@@ -62,7 +62,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         if info:
             try:
                 with doing('Getting Info'):
-                    info = remote.get_info()
+                    info = remote.get_info(code)
             except FetchError:
                 echo('抓取 Info 失败')
                 raise Isolated(code)
@@ -82,7 +82,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
         local = Local.init(code)
         try:
             with doing('Getting Info'):
-                info = remote.get_info()
+                info = remote.get_info(code)
         except FetchError as e:
             echo(e)
             echo('[alert]抓取 Info 失败')
@@ -100,7 +100,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
 
     try:
         with doing('Getting catalog'):
-            cat = remote.get_catalog()
+            cat = remote.get_catalog(code)
     except FetchError:
         raise FetchError('Fail to get catalog.')
 
@@ -148,7 +148,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
             track.update_desc(local.get_title(cid))
 
             try:
-                content = remote.get_content(cid)
+                content = remote.get_content(code, cid)
             except FetchError as e:
                 echo(e)
                 continue
@@ -167,7 +167,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
 
                     track.update_desc(local.get_title(cid))
                     try:
-                        content = remote.get_content(cid)
+                        content = remote.get_content(code, cid)
                     except FetchError as e:
                         echo(e)
                         continue
