@@ -124,9 +124,9 @@ class FilterRule(object):
 
     rule_str: InitVar[str]
 
-    attr: Callable = field(init=False)
+    attr: Literal['remote', 'author', 'title', 'intro'] = field(init=False)
     mode: Literal['=', '==', '^=', '@=', '*='] = field(init=False)
-    value: Literal['remote', 'author', 'title', 'intro'] = field(init=False)
+    value: str = field(init=False)
 
 
     def __post_init__(self, rule_str):
@@ -134,22 +134,24 @@ class FilterRule(object):
         if rule is None:
             raise BadFilter(rule_str)
         self.attr = rule['attr']
-        self.aget = attrgetter(rule['attr'])
         self.mode = rule['mode'] or conf.EMPTY_RULE_MODE
         self.value = rule['value']
         self.rev = bool(rule['not'])
 
-
-    def __call__(self, info: Info) -> bool:
-        v0 = self.aget(info)
-        v1 = self.value
-
+    
+    def compare(self, v0, v1) -> bool:
         if   self.mode == '=':  res = v1 in v0
         elif self.mode == '==': res = v0 == v1
         elif self.mode == '^=': res = v0.startswith(v1)
         elif self.mode == '@=': res = v0.endswith(v1)
         elif self.mode == '*=': res = v1 in v0
         return res ^ self.rev
+
+
+    def __call__(self, info: Info) -> bool:
+        v0 = getattr(info, self.attr)
+        v1 = self.value
+        return self.compare(v0, v1)
 
     def __repr__(self):
         return '{} {} {}'.format(
