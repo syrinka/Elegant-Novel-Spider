@@ -2,5 +2,6 @@ local/
 dump/
 
 src/resources/status.yml
+src/ens/remotes/*
 
 **/__pycache__/
