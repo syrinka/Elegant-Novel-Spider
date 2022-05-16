@@ -174,6 +174,20 @@ class Filter(object):
         return '\n'.join(str(rule) for rule in self.rules)
 
 
+    def remote_in_scope(self, remote) -> bool:
+        """
+        判断某个远端源是否能通过过滤器
+        在 get_local_shelf 时剔除必然被过滤的远端源，加快速度
+        """
+        for rule in self.rules:
+            if rule.attr == 'remote':
+                v0 = rule.value
+                v1 = remote
+                if not rule.compare(v0, v1):
+                    return False
+        return True
+
+
 @dataclass
 class Shelf(object):
     infos: List[Info] = field(default_factory=list)

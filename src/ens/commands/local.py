@@ -23,11 +23,10 @@ def func(filter, star):
     """
     列出所有本地库
     """
-    shelf = get_local_shelf()
+    shelf = get_local_shelf(filter)
     if star:
         shelf = Shelf(list(i for i in shelf.infos if i.star))
 
-    shelf = shelf.filter(filter)
     shelf.cache_shelf()
     echo(shelf)
 

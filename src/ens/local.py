@@ -215,15 +215,22 @@ class Local(object):
         pass
 
 
-def get_local_shelf() -> Shelf:
+def get_local_shelf(filter: Filter=None) -> Shelf:
     shelf = Shelf()
 
     time1 = time.time()
     for remote in os.listdir(paths.LOCAL):
+        if filter:
+            if not filter.remote_in_scope(remote):
+                continue
+
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
-            _info = yaml_load(path=path)
-            shelf += Info.load(_info)
+            info = Info.load(yaml_load(path=path))
+            if filter:
+                if not filter(info):
+                    continue
+            shelf += info
     time2 = time.time()
     log('get local shelf in {:.4f}s'.format(time2 - time1))
 
