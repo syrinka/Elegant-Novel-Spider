@@ -5,9 +5,9 @@ from ens.typing import Catalog, Info
 
 
 class Test(Remote):
-    def get_info(self) -> Info:
+    def get_info(self, code) -> Info:
         return Info(
-            self.code, 'A Good Book {}'.format(self.code.nid),
+            code, 'A Good Book {}'.format(self.code.nid),
             'Anonymous', intro='A Marvo book.'
         )
 
@@ -21,6 +21,6 @@ class Test(Remote):
         return c
 
 
-    def get_content(self, cid: str) -> str:
+    def get_content(self, code, cid: str) -> str:
         time.sleep(0.1)
         return 'YESYESYES' + cid

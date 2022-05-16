@@ -18,9 +18,8 @@ class Remote(object):
     """
     all_remotes = dict()
 
-    def __init__(self, code: Code):
-        self.code = code
-        self.__remote_init__(code)
+    def __init__(self):
+        self.__remote_init__()
         pass
 
 
@@ -31,7 +30,7 @@ class Remote(object):
         cls.all_remotes[name] = cls
 
 
-    def __remote_init__(self, code: Code):
+    def __remote_init__(self):
         pass
 
 
@@ -56,15 +55,15 @@ class Remote(object):
         return status
 
 
-    def get_info(self) -> Info:
+    def get_info(self, code: Code) -> Info:
         raise NotImplementedError
 
 
-    def get_catalog(self) -> Catalog:
+    def get_catalog(self, code: Code) -> Catalog:
         raise NotImplementedError
 
 
-    def get_content(self, cid: str) -> str:
+    def get_content(self, code: Code, cid: str) -> str:
         raise NotImplementedError
 
 
