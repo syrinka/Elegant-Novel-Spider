@@ -217,7 +217,7 @@ class Shelf(object):
 
     def cache_shelf(self):
         status = Status('sys')
-        status.set('shelf-cache', [str(code) for code in self.codes])
+        status.set('cache-shelf', [str(code) for code in self.codes])
         status.save()
 
 

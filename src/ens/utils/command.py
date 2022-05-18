@@ -20,17 +20,17 @@ def translate_code(code: str) -> str:
         stat = Status('sys')
         if index == 0 and conf.ZERO_MEANS_LAST:
             try:
-                return stat['last-cache']
+                return stat['cache-last']
             except KeyError:
-                raise StatusError('last-cache not exists.')
+                raise StatusError('cache-last not exists.')
                 
         else:
             try:
-                return stat['shelf-cache'][index - 1]
+                return stat['cache-shelf'][index - 1]
             except IndexError:
-                raise BadCodeIndex(len(stat['shelf-cache']), index)
+                raise BadCodeIndex(len(stat['cache-shelf']), index)
             except KeyError:
-                raise StatusError('shelf-cache not exists.')
+                raise StatusError('cache-shelf not exists.')
 
     else:
         return code
@@ -39,7 +39,7 @@ def translate_code(code: str) -> str:
 def _code_callback(ctx, param, code):
     code = translate_code(code)    
     stat = Status('sys')
-    stat.set('last-cache', code)
+    stat.set('cache-last', code)
     stat.save()
     return Code(code)
 
