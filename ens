@@ -2,5 +2,5 @@
 import os, sys
 os.chdir('src')
 os.system(
-    ' '.join(('python3 -m ens', *sys.argv))
+    ' '.join(('python3 -m ens', *sys.argv[1:]))
 )
