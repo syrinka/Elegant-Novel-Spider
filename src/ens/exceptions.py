@@ -48,10 +48,6 @@ class RemoteError(ENSError):
 
 
 class RemoteNotFound(RemoteError):
-    msg = '远程源 {} 不存在'
-
-
-class DuplicateRemote(RemoteError):
     pass
 
 
@@ -70,10 +66,6 @@ class DumpError(ENSError):
 
 
 class DumperNotFound(DumpError):
-    pass
-
-
-class DuplicateDumper(DumpError):
     pass
 
 

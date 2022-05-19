@@ -1,8 +1,9 @@
 import pkgutil
+from warnings import warn
 
 import ens.remotes as remotes
 from ens.typing import Code, Info, Catalog, Type
-from ens.exceptions import DuplicateRemote, RemoteNotFound
+from ens.exceptions import RemoteNotFound
 
 
 _dependencies = {
@@ -26,7 +27,7 @@ class Remote(object):
     def __init_subclass__(cls) -> None:
         name = cls.__module__.rsplit('.', 1)[-1]
         if name in cls.all_remotes:
-            raise DuplicateRemote(name)
+            warn(f'Duplicate remote {name}, may lead to unexpected behaviour.')
         cls.all_remotes[name] = cls
 
 

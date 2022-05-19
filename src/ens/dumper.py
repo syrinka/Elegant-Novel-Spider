@@ -1,8 +1,9 @@
 import pkgutil
+from warnings import warn
 
 import ens.dumpers as dumpers
 from ens.typing import DumpMetadata, Literal, Type
-from ens.exceptions import DuplicateDumper, DumperNotFound
+from ens.exceptions import DumperNotFound
 
 
 class Dumper(object):
@@ -12,7 +13,7 @@ class Dumper(object):
     def __init_subclass__(cls) -> None:
         name = cls.__module__.rsplit('.', 1)[-1]
         if name in cls.all_dumpers:
-            raise DuplicateDumper(name)
+            warn(f'Duplicate dumper {name}, may lead to unexpected behaviour.')
         cls.all_dumpers[name] = cls
 
 
