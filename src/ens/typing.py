@@ -21,7 +21,7 @@ class Code(object):
         r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)'
     )
 
-    init: InitVar[Union[str, Tuple]]
+    code_data: InitVar[Union[str, Tuple]]
 
     remote: str = field(init=False)
     nid: str = field(init=False)
@@ -42,14 +42,14 @@ class Code(object):
         return iter((self.remote, self.nid))
 
 
-    def __post_init__(self, init: Union[str, Tuple]):
-        if isinstance(init, tuple):
-            self.remote, self.nid = init
+    def __post_init__(self, code_data: Union[str, Tuple]):
+        if isinstance(code_data, tuple):
+            self.remote, self.nid = code_data
 
         else:
-            match = self._code_format.match(init)
+            match = self._code_format.match(code_data)
             if match is None:
-                raise InvalidCode(init)
+                raise InvalidCode(code_data)
 
             self.remote, self.nid = match[1], match[2]
 
