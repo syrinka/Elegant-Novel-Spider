@@ -1,4 +1,5 @@
 from threading import Thread, Lock
+from time import sleep
 
 import click
 
@@ -9,6 +10,7 @@ from ens.utils import yaml_load, yaml_dump
 from ens.utils.command import arg_code
 from ens.exceptions import (
     FetchError,
+    GetContentFail,
     LocalNotFound,
     RemoteNotFound,
     MergeError,
@@ -64,7 +66,7 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
                     info = remote.get_info(code)
             except FetchError:
                 echo('抓取 Info 失败')
-                raise Isolated(code)
+                # raise Isolated(code) @TODO
 
             old = yaml_dump(local.info.dump())
             new = yaml_dump(info.dump())
@@ -167,7 +169,8 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
                     track.update_desc(local.get_title(cid))
                     try:
                         content = remote.get_content(code, cid)
-                    except FetchError as e:
+                    except GetContentFail as e:
+                        title = cat.index[e.cid] #@TODO
                         echo(e)
                         continue
                     save(local, cid, content)
@@ -176,10 +179,20 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
                     break
 
         threads = [Thread(target=worker) for i in range(thread)]
-        echo('{} threads online'.format(thread))
-        for th in threads:
-            th.start()
-        for th in threads:
-            th.join()
+        log('{} threads online'.format(thread))
+
+        try:
+            for th in threads:
+                th.setDaemon(True)
+                th.start()
+            while True:
+                sleep(0.5)
+                stat = 0
+                for th in threads:
+                    stat |= th.is_alive()
+                if not stat:
+                    break
+        except KeyboardInterrupt:
+            raise Abort
 
     echo('Done.', style='good')
