@@ -1,16 +1,16 @@
+from dataclasses import dataclass
+from typing import Union, Tuple
+
+
 class ENSError(Exception):
     msg = None
-    def __init__(self, *args, **kw):
-        if len(args) == 1:
-            self.msg = str(args[0])
-        elif self.msg is None:
-            self.msg = 'An Error Occur.'
-        elif args or kw:
-            self.msg = self.msg.format(*args, **kw)
-
 
     def __rich__(self):
-        return f'[red]{self.__class__.__name__}[/] {self.msg}'
+        if self.msg is None:
+            msg = self.args
+        else:
+            msg = self.msg.format(** self.__dict__)
+        return f'[red]{self.__class__.__name__}[/] {msg}'
 
 
 # Local
@@ -34,13 +34,6 @@ class ChapMissing(LocalError):
     pass
 
 
-class Isolated(LocalError):
-    """
-    若在 fetch 过程中抛出了该异常，则标明正在抓取的小说已为孤立小说
-    """
-    msg = '该小说可能已被孤立 {}'
-
-
 
 # Remote
 class RemoteError(ENSError):
@@ -57,7 +50,7 @@ class FetchError(RemoteError):
 
 
 class ChapError(FetchError):
-    msg = '章节 {} 抓取失败, Reason: {}'
+    pass
 
 
 # Dumper
@@ -74,16 +67,23 @@ class StatusError(ENSError):
     pass
 
 
+@dataclass
 class InvalidCode(ENSError):
-    msg = 'Fail to parse code: {}'
+    code_data: Union[str, Tuple]
+    msg = 'Fail to parse code: {code_data}'
 
 
+@dataclass
 class BadCodeIndex(ENSError):
-    msg = 'Expect code index to be in range 1~{}, receive {}'
+    index: int
+    max_index: int
+    msg = 'Expect code index to be in range 1~{max_index}, receive {index}'
 
 
+@dataclass
 class MergeError(ENSError):
-    msg = 'Merge fail, status code {}'
+    status: int
+    msg = 'Merge fail, status code {status}'
 
 
 class BadFilter(ENSError):

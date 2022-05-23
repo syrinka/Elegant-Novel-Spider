@@ -28,7 +28,7 @@ def translate_code(code: str) -> str:
             try:
                 return stat['cache-shelf'][index - 1]
             except IndexError:
-                raise BadCodeIndex(len(stat['cache-shelf']), index)
+                raise BadCodeIndex(index, len(stat['cache-shelf']))
             except KeyError:
                 raise StatusError('cache-shelf not exists.')
 

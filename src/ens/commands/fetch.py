@@ -9,7 +9,6 @@ from ens.utils import yaml_load, yaml_dump
 from ens.utils.command import arg_code
 from ens.exceptions import (
     FetchError,
-    Isolated,
     LocalNotFound,
     RemoteNotFound,
     MergeError,
