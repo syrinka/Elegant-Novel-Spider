@@ -1,6 +1,10 @@
 #!/bin/env python3
 import os, sys
+
 os.chdir('src')
-os.system(
-    ' '.join(('python3 -m ens', *sys.argv[1:]))
-)
+cmd = ' '.join(('python3 -m ens', *sys.argv[1:]))
+
+try:
+    os.system(cmd)
+except:
+    pass
