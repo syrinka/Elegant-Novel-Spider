@@ -1,3 +1,4 @@
+from __future__ import annotations
 import re
 from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
@@ -9,7 +10,9 @@ from typing import (
 
 import ens.config as conf
 from ens.status import Status
-from ens.exceptions import *
+from ens.exceptions import (
+    BadFilter, BadCodeIndex, InvalidCode
+)
 
 
 @dataclass
@@ -98,7 +101,7 @@ class Info(object):
 
 
     @classmethod
-    def load(cls, data):
+    def load(cls, data: Dict) -> Info:
         data['code'] = Code((data.pop('remote'), data.pop('nid')))
         return cls(**data)
 

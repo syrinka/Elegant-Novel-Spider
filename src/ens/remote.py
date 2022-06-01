@@ -65,6 +65,9 @@ class Remote(object):
 
 
     def get_content(self, code: Code, cid: str) -> str:
+        """
+        @raise GetContentFail
+        """
         raise NotImplementedError
 
 

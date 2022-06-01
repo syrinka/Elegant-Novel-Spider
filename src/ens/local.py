@@ -134,6 +134,10 @@ class Local(object):
 
 
     def get_chap(self, cid: str) -> str:
+        """
+        @return chap_content
+        @raise ChapMissing
+        """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
             content = cursor.fetchone()[0]

@@ -1,13 +1,24 @@
 from dataclasses import dataclass
 from typing import Union, Tuple
+from typing import NewType, Type
+
+
+# dummy type
+Code = NewType('Code', Type)
 
 
 class ENSError(Exception):
-    msg = None
+    """
+    异常基类
+    当不知道该抛出什么异常时，就抛它
+
+    @param msg: str - 回显信息
+    """
+    msg: str = None
 
     def __rich__(self):
         if self.msg is None:
-            msg = self.args
+            msg = ', '.join(self.args)
         else:
             msg = self.msg.format(** self.__dict__)
         return f'[red]{self.__class__.__name__}[/] {msg}'
@@ -18,12 +29,14 @@ class LocalError(ENSError):
     pass
 
 
+@dataclass
 class LocalNotFound(LocalError):
-    pass
+    code: Code
 
 
+@dataclass
 class LocalAlreadyExists(LocalError):
-    pass
+    code: Code
 
 
 class InvalidLocal(LocalError):
@@ -49,8 +62,10 @@ class FetchError(RemoteError):
     pass
 
 
-class ChapError(FetchError):
-    pass
+@dataclass
+class GetContentFail(FetchError):
+    cid: str
+    reason: str = None
 
 
 # Dumper
@@ -70,14 +85,13 @@ class StatusError(ENSError):
 @dataclass
 class InvalidCode(ENSError):
     code_data: Union[str, Tuple]
-    msg = 'Fail to parse code: {code_data}'
 
 
 @dataclass
 class BadCodeIndex(ENSError):
     index: int
     max_index: int
-    msg = 'Expect code index to be in range 1~{max_index}, receive {index}'
+    msg = 'Expect 1~{max_index}, receive {index}'
 
 
 @dataclass
@@ -91,8 +105,11 @@ class BadFilter(ENSError):
 
 
 class TopicNotFound(ENSError):
-    pass
+    topic: str
 
 
+@dataclass
 class Abort(ENSError):
-    pass
+    reason: str = None
+    msg = '{reason}'
+
