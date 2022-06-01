@@ -4,7 +4,7 @@ from typing import NewType, Type
 
 
 # dummy type
-Code = NewType('Code', Type)
+Code_ = NewType('Code', Type)
 
 
 class ENSError(Exception):
@@ -31,12 +31,12 @@ class LocalError(ENSError):
 
 @dataclass
 class LocalNotFound(LocalError):
-    code: Code
+    code: Code_
 
 
 @dataclass
 class LocalAlreadyExists(LocalError):
-    code: Code
+    code: Code_
 
 
 class InvalidLocal(LocalError):
