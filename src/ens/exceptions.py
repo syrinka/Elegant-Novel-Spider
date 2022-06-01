@@ -29,12 +29,10 @@ class LocalError(ENSError):
     pass
 
 
-@dataclass
 class LocalNotFound(LocalError):
     code: Code_
 
 
-@dataclass
 class LocalAlreadyExists(LocalError):
     code: Code_
 
@@ -54,7 +52,7 @@ class RemoteError(ENSError):
 
 
 class RemoteNotFound(RemoteError):
-    pass
+    remote: str
 
 
 # Fetch
@@ -62,7 +60,6 @@ class FetchError(RemoteError):
     pass
 
 
-@dataclass
 class GetContentFail(FetchError):
     cid: str
     reason: str = None
@@ -82,7 +79,6 @@ class StatusError(ENSError):
     pass
 
 
-@dataclass
 class InvalidCode(ENSError):
     code_data: Union[str, Tuple]
 
@@ -91,25 +87,24 @@ class InvalidCode(ENSError):
 class BadCodeIndex(ENSError):
     index: int
     max_index: int
-    msg = 'Expect 1~{max_index}, receive {index}'
+    msg = 'Expect 1~[p]{max_index}[/], receive [p]{index}[/]'
 
 
 @dataclass
 class MergeError(ENSError):
     status: int
-    msg = 'Merge fail, status code {status}'
+    msg = 'Merge fail, status code [p]{status}[/]'
 
 
-class BadFilter(ENSError):
-    pass
+@dataclass
+class BadFilterRule(ENSError):
+    expr: str
+    msg = '非法的过滤规则 [p]{expr}[/], 修正后重试'
 
 
 class TopicNotFound(ENSError):
     topic: str
 
 
-@dataclass
 class Abort(ENSError):
     reason: str = None
-    msg = '{reason}'
-

@@ -64,7 +64,8 @@ def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread:
             try:
                 with doing('Getting Info'):
                     info = remote.get_info(code)
-            except FetchError:
+            except FetchError as e:
+                echo(e)
                 echo('抓取 Info 失败')
                 # raise Isolated(code) @TODO
 

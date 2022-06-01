@@ -1,17 +1,15 @@
 from __future__ import annotations
 import re
-from operator import attrgetter
 from dataclasses import dataclass, field, InitVar, asdict
 from typing import (
     List, Dict, Tuple,
-    Literal, Union,
-    Type, NewType, Callable
+    Literal, Union
 )
 
 import ens.config as conf
 from ens.status import Status
 from ens.exceptions import (
-    BadFilter, BadCodeIndex, InvalidCode
+    BadFilterRule, InvalidCode
 )
 
 
@@ -19,6 +17,8 @@ from ens.exceptions import (
 class Code(object):
     """
     Code('a~book') == Code(('a', 'book'))
+
+    @raise InvalidCode
     """
     _code_format = re.compile(
         r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)'
@@ -119,6 +119,9 @@ class Info(object):
 
 @dataclass
 class FilterRule(object):
+    """
+    @raise BadFilterRule
+    """
     _rule_format = re.compile(
         r'(?P<attr>(?:remote)|(?:author)|(?:title)|(?:intro))'
         r'(?P<not>!?)(?P<mode>(?:[\^\@\*]?=)|)'
@@ -135,7 +138,7 @@ class FilterRule(object):
     def __post_init__(self, rule_str):
         rule = self._rule_format.match(rule_str)
         if rule is None:
-            raise BadFilter(rule_str)
+            raise BadFilterRule(rule_str)
         self.attr = rule['attr']
         self.mode = rule['mode'] or conf.EMPTY_RULE_MODE
         self.value = rule['value']

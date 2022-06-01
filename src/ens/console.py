@@ -32,7 +32,8 @@ theme = Theme({
     'bad': 'red',
     'good': 'green',
     'alert': 'yellow',
-    'fatal': 'red'
+    'fatal': 'red',
+    'p': 'bright_white', # param
 })
 console = Console(highlight=False, theme=theme)
 
