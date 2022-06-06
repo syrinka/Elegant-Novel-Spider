@@ -30,7 +30,7 @@ def merge(old, new, ext='.yml') -> str:
         raise MergeError(f'Return code: {ret}')
 
 
-def flatten(catalog: Dict, index: Dict = None) -> str:
+def flatten(catalog: List, index: Dict = None) -> str:
     piece = []
     for vol in catalog:
         piece.append(f'# {vol["name"]}')
@@ -43,7 +43,7 @@ def flatten(catalog: Dict, index: Dict = None) -> str:
     return '\n'.join(piece) + '\n'
 
 
-def unflatten(s: str) -> Dict:
+def unflatten(s: str) -> List:
     catalog = []
     for i in s.split('\n'):
         if i.startswith('# '):
@@ -68,7 +68,7 @@ def catalog_lose(old, new) -> bool:
     return False
 
 
-def merge_catalog(old, new, index) -> Dict:
+def merge_catalog(old, new, index) -> List:
     old, new = flatten(old, index), flatten(new, index)
     return unflatten(merge(old, new))
 
