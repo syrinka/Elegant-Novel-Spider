@@ -1,7 +1,7 @@
 import click
 
 import ens.config as conf
-from ens.console import echo
+from ens.console import echo, pager
 from ens.status import Status
 from ens.remote import get_remote
 from ens.dumper import get_dumper
@@ -97,6 +97,28 @@ def opt_filter(cmd):
         is_eager = True, is_flag=True, default=True,
         hidden=True)(cmd)
 
+    return cmd
+
+
+class _fake_pager(object):
+    def __enter__(self):
+        pass
+
+
+    def __exit__(self, *args):
+        pass
+
+
+def _pager_callback(ctx, param, value):
+    if value:
+        return pager()
+    else:
+        return _fake_pager()
+
+
+def opt_pager(cmd):
+    click.option('-p', '--pager',
+        is_flag=True, callback=_pager_callback)(cmd)
     return cmd
 
 

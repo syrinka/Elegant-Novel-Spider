@@ -56,6 +56,20 @@ def run(path, *args):
     return p.wait()
 
 
+def edit(text, ext='.txt') -> str:
+    path = f'tmp-edit{ext}'
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text)
+
+    p = subprocess.Popen(['notepad', path])
+    p.wait()
+
+    with open(path, encoding='utf-8') as f:
+        final = f.read()
+    
+    return final
+
+
 @contextmanager
 def pager(title=None):
     with console.capture() as cap:

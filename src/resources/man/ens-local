@@ -9,5 +9,8 @@ Options:
   info         查看小说信息
 
 [bright_blue]Modify[/]
+  show-catalog
+  show-content
+  edit-content
   [grey27](un)[/]star
   [grey27](un)[/]isolate

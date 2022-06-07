@@ -1,8 +1,9 @@
 import click
 
-from ens import echo
+from ens import echo, edit
 from ens import Local, Shelf, get_local_shelf, get_local_info
-from ens.utils.command import manual, arg_code, opt_filter
+from ens.merge import flatten
+from ens.utils.command import manual, arg_code, opt_filter, opt_pager
 
 
 @manual('ens-local')
@@ -49,6 +50,40 @@ def func(code, yes):
 def func(code):
     info = get_local_info(code)
     echo(info.verbose())
+
+
+@main.command('show-catalog')
+@arg_code
+@opt_pager
+def func(code, pager):
+    local = Local(code)
+    with pager:
+        echo(flatten(local.catalog(), local.get_index()))
+
+
+@main.command('show-content')
+@arg_code
+@click.argument('cid')
+@opt_pager
+def func(code, cid, pager):
+    local = Local(code)
+    title = local.get_title(cid)
+    content = local.get_chap(cid)
+    with pager:
+        echo(title)
+        echo(content)
+
+
+@main.command('edit-content')
+@arg_code
+@click.argument('cid')
+def func(code, cid):
+    local = Local(code)
+    title = local.get_title(cid)
+    content = local.get_chap(cid)
+    echo(f'Editing: {title}')
+    
+    local.set_chap(cid, edit(content))
 
 
 @main.command('star')
