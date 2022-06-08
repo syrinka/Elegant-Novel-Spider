@@ -57,7 +57,7 @@ def run(path, *args):
 
 
 def edit(text, ext='.txt') -> str:
-    path = f'tmp-edit{ext}'
+    fd, path = tempfile.mkstemp()
     with open(path, 'w', encoding='utf-8') as f:
         f.write(text)
 
@@ -66,7 +66,9 @@ def edit(text, ext='.txt') -> str:
 
     with open(path, encoding='utf-8') as f:
         final = f.read()
-    
+
+    os.close(fd)
+    os.remove(path)
     return final
 
 

@@ -1,5 +1,6 @@
 import os
 import difflib
+from tempfile import mkstemp
 
 from ens.console import run
 from ens.exceptions import MergeError
@@ -7,8 +8,8 @@ from ens.typing import *
 
 
 def merge(old, new, ext='.yml') -> str:
-    path1 = f'old-content{ext}'
-    path2 = f'new-content{ext}'
+    fd1, path1 = mkstemp(ext)
+    fd2, path2 = mkstemp(ext)
 
     with open(path1, 'w', encoding='utf-8') as f:
         f.write(old)
@@ -16,11 +17,14 @@ def merge(old, new, ext='.yml') -> str:
     with open(path2, 'w', encoding='utf-8') as f:
         f.write(new)
 
-    ret = run('smerge/smerge.exe', 'mergetool', path1, path2)
+    # 解除对 path2 的占用，使 smerge 能写入文件
+    os.close(fd2)
+    ret = run('smerge/smerge.exe', 'mergetool', path1, path2, '-o', path2)
 
-    with open(path1, encoding='utf-8') as f:
+    with open(path2, encoding='utf-8') as f:
             final = f.read()
 
+    os.close(fd1)
     os.remove(path1)
     os.remove(path2)
 
