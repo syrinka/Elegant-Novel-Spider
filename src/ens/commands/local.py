@@ -20,7 +20,8 @@ def main():
 @click.option('-s', '--star',
     is_flag = True,
     help = 'Starred only.')
-def func(filter, star):
+@opt_pager
+def func(filter, star, pager):
     """
     列出所有本地库
     """
@@ -29,7 +30,8 @@ def func(filter, star):
         shelf = Shelf(list(i for i in shelf.infos if i.star))
 
     shelf.cache_shelf()
-    echo(shelf)
+    with pager:
+        echo(shelf)
 
 
 @main.command('remove')
