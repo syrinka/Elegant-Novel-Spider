@@ -15,7 +15,7 @@ from ens.exceptions import *
 
 
 _sql_chap = '''
-CREATE TABLE IF NOT EXISTS `chaps` (
+CREATE TABLE IF NOT EXISTS `data` (
     cid VARCHAR(128),
     content TEXT,
     PRIMARY KEY (cid)
@@ -77,11 +77,11 @@ class LocalStorage(object):
         """
         初始化一个本地库
         """
-        p1 = join(paths.LOCAL, code.remote)
-        if not exists(p1):
-            os.mkdir(p1)
+        _path = join(paths.LOCAL, code.remote)
+        if not exists(_path):
+            os.mkdir(_path)
         
-        path = join(p1, code.nid)
+        path = join(paths.LOCAL, code.remote, code.nid)
         if exists(path):
             raise LocalAlreadyExists(code)
         os.mkdir(path)
@@ -98,16 +98,6 @@ class LocalStorage(object):
         """
         path = join(paths.LOCAL, *code)
         rmtree(path)
-
-
-    def spine(self) -> List[str, str]:
-        """
-        获取目录的脊，由所有 cid 组成
-        """
-        spine = []
-        for vol in self.catalog():
-            spine.extend(vol['cids'])
-        return spine
 
 
     def nav(self):
@@ -134,7 +124,7 @@ class LocalStorage(object):
 
     def has_chap(self, cid: str) -> bool:
         with self.conn() as (conn, cursor):
-            cursor.execute('SELECT cid FROM `chaps` WHERE cid=? AND content IS NOT NULL', (cid,))
+            cursor.execute('SELECT cid FROM `data` WHERE cid=?', (cid,))
             return cursor.fetchone() is not None
 
 
@@ -144,7 +134,7 @@ class LocalStorage(object):
         @raise ChapMissing
         """
         with self.conn() as (conn, cursor):
-            cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
+            cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
             content = cursor.fetchone()[0]
 
         if content is None:
@@ -156,60 +146,24 @@ class LocalStorage(object):
     def set_chap(self, cid: str, content: str) -> str:
         with self.conn() as (conn, cursor):
             cursor.execute(
-                'UPDATE `chaps` SET content=? WHERE cid=?',
+                'UPDATE `data` SET content=? WHERE cid=?',
                 (content.strip(), cid) # 去掉多余的换行
             )
             conn.commit()
 
 
-    def get_title(self, cid: str) -> str:
-        with self.conn() as (conn, cursor):
-            cursor.execute('SELECT title FROM `chaps` WHERE cid=?', (cid,))
-            return cursor.fetchone()[0]
-
-
-    def get_index(self) -> Dict[str, str]:
-        with self.conn() as (conn, cursor):
-            cursor.execute('SELECT cid, title FROM `chaps`')
-            return dict(cursor.fetchall())
-
-
-    def vol_count(self) -> int:
-        return len(self.catalog())
-
-
-    def chap_count(self) -> int:
-        return len(self.spine())
-
-
-    def char_count(self) -> int:
-        cnt = 0
-        for cid in self.spine():
-            cnt += len(self.get_chap(cid))
-        return cnt
-
-
-    def set_info(self, info: Info = None):
-        """
-        更新小说的信息
-        """
+    def update_info(self, info: Info = None):
+        """更新小说的信息"""
         if info is not None:
-            self.info.update(info)
-        yaml_dump(self.info.dump(), self.info_path)
+            self.info = info
+        self.write_file('info.yml', self.info.dump())
 
     
-    def set_catalog(self, cat: Catalog):
-        """
-        更新小说的目录
-        """
-        yaml_dump(cat.catalog, self.catalog_path)
-
-        with self.conn() as (conn, cursor):
-            cursor.executemany(
-                'INSERT OR IGNORE INTO `chaps` (cid, title) VALUES (?, ?)',
-                cat.index.items()
-            )
-            conn.commit()
+    def update_catalog(self, catalog: Catalog = None):
+        """更新小说的目录"""
+        if catalog is not None:
+            self.catalog = catalog
+        self.write_file('catalog.yml', self.catalog.dump())
 
 
     def isolate(self):
@@ -235,7 +189,7 @@ def get_local_shelf(filter: Filter=None) -> Shelf:
 
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
-            info = Info.load(yaml_load(path=path))
+            info = Info.load(open(path, encoding='utf-8')).read()
             if filter:
                 if not filter(info):
                     continue
@@ -249,11 +203,9 @@ def get_local_shelf(filter: Filter=None) -> Shelf:
 def get_local_info(code: Code) -> Info:
     path = join(paths.LOCAL, code.remote, code.nid, 'info.yml')
     try:
-        _info = yaml_load(path=path)
+        return Info.load(open(path, encoding='utf-8')).read()
     except FileNotFoundError:
         raise LocalNotFound(code)
-        
-    return Info.load(_info)
         
 
 if __name__ == '__main__':
