@@ -1,13 +1,14 @@
 import os
 import difflib
 from tempfile import mkstemp
+from typing import List
 
-from ens.models import *
+from ens.models import Catalog
 from ens.exceptions import MergeError
 from ens.utils.misc import flatten, unflatten, call, executable_exists
 
 
-def merge(old, new, ext='.yml') -> str:
+def merge(old: str, new: str, ext='.txt') -> str:
     fd1, path1 = mkstemp(ext)
     fd2, path2 = mkstemp(ext)
 
@@ -34,41 +35,32 @@ def merge(old, new, ext='.yml') -> str:
         raise MergeError(f'Return code: {ret}')
 
 
-def catalog_lose(old, new) -> bool:
+def catalog_lose(old: Catalog, new: Catalog) -> bool:
     """
     检查目录是否发生了减量更新
     """
-    diff = difflib.ndiff(flatten(old), flatten(new))
+    diff = difflib.ndiff(old.dump(), new.dump())
     for line in diff:
         if line.startswith('-'):
             return True
     return False
 
 
-def merge_catalog(old, new, index) -> List:
-    old, new = flatten(old, index), flatten(new, index)
-    return unflatten(merge(old, new))
+def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
+    return Catalog.load(
+        merge(old.dump(), new.dump())
+    )
 
 
 if __name__ == '__main__':
-    index = {i: 'Chap'+i for i in '12345'}
+    from ens.utils.misc import CatalogBuilder
 
-    c1 = [
-        {
-            'name': '格林在地下城',
-            'cids': ['1','2','3','4','5']
-        }
-    ]
+    c1 = CatalogBuilder().vol('格林在地下城') \
+        .chap('1', 'aa').chap('2', 'bb').chap('3', 'cc').build()
 
-    c2 = [
-        {
-            'name': '备注',
-            'cids': ['5']
-        },
-        {
-            'name': '格林在地下城',
-            'cids': ['1', '2', '3', '4', '6']
-        }
-    ]
+    c2 = CatalogBuilder().vol('备注') \
+        .chap('5', 'note') \
+        .vol('格林在地下城') \
+        .chap('1', 'aa').chap('2', 'bb').build()
 
-    print(merge_catalog(c1, c2, index))
+    print(merge_catalog(c1, c2))

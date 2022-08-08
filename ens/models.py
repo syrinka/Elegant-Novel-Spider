@@ -3,7 +3,7 @@ import re
 from dataclasses import dataclass, field, InitVar, asdict
 from typing import (
     List, Dict, Tuple,
-    Literal, Union
+    Literal, Union, Iterable
 )
 
 import ens.config as conf
@@ -236,30 +236,6 @@ class Shelf(object):
         return cls([Info.load(d) for d in data])
 
 
-class Catalog(object):
-    """
-    c = Catalog()
-    c.vol(...)
-    c.chap(...)
-    c.chap(...)
-    """
-    def __init__(self) -> None:
-        self.catalog = list()
-        self.index = {}
-        self.access = {}
-
-
-    def vol(self, name: str):
-        self.catalog.append({'name': name, 'cids': []})
-        return self
-
-
-    def chap(self, cid: str, title: str):
-        self.catalog[-1]['cids'].append(cid)
-        self.index[cid] = title
-        return self
-
-
 @dataclass
 class DumpMetadata(object):
     info: Info
@@ -267,6 +243,39 @@ class DumpMetadata(object):
     chap_count: int
     char_count: int
     path: str
+
+
+@dataclass
+class Catalog(object):
+    catalog: List[
+        Dict[
+            Literal['cids', 'name'], Union[str, List[Iterable[str]]]
+        ]
+    ]
+
+    def dump(self):
+        piece = []
+        for vol in self.catalog:
+            piece.append(f'# {vol["name"]}')
+            for cid, title in vol['cids']:
+                piece.append(f'. {title} ({cid})')
+        
+        return '\n'.join(piece) + '\n'
+
+    @classmethod
+    def load(cls, data: str):
+        catalog = []
+        pattern = re.compile(r'. (?P<title>.+) \((?P<cid>.+)\)')
+        for i in data.strip().split('\n'):
+            if i.startswith('# '):
+                catalog.append({
+                    'name': i[2:],
+                    'cids': []
+                })
+            elif i.startswith('. '):
+                m = pattern.match(i)
+                catalog[-1]['cids'].append((m['cid'], m['title']))
+        return catalog
 
 
 if __name__ == '__main__':

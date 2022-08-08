@@ -2,6 +2,8 @@ import yaml
 import subprocess
 from typing import List, Dict, Iterable
 
+from ens.models import Catalog
+
 
 def flatten(catalog: List, index: Dict = None) -> str:
     piece = []
@@ -65,3 +67,28 @@ def yaml_load(str=None, *, path=None):
         return yaml.load(file, Loader=yaml.SafeLoader)
     else:
         return yaml.load(str, Loader=yaml.SafeLoader)
+
+
+class CatalogBuilder(object):
+    """
+    c = Catalog()
+    c.vol(...)
+    c.chap(...)
+    c.chap(...)
+    """
+    def __init__(self):
+        self.catalog = list()
+
+
+    def vol(self, name: str):
+        self.catalog.append({'name': name, 'cids': []})
+        return self
+
+
+    def chap(self, cid: str, title: str):
+        self.catalog[-1]['cids'].append((cid, title))
+        return self
+
+
+    def build(self) -> Catalog:
+        return Catalog(self.catalog)
