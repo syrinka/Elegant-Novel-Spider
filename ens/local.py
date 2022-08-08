@@ -187,7 +187,7 @@ def get_local_shelf(filter: Filter=None) -> Shelf:
 
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
-            info = Info.load(open(path, encoding='utf-8')).read()
+            info = Info.load(open(path, encoding='utf-8').read())
             if filter:
                 if not filter(info):
                     continue

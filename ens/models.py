@@ -68,7 +68,7 @@ class Info(object):
 
 
     def dump(self) -> str:
-        return yaml.dump(asdict(self), allow_uninovel=True, sort_keys=False)
+        return yaml.dump(asdict(self), allow_unicode=True, sort_keys=False)
 
 
     @classmethod
