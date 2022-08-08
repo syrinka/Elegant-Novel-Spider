@@ -30,11 +30,11 @@ class LocalError(ENSError):
 
 
 class LocalNotFound(LocalError):
-    code: Code_
+    pass
 
 
 class LocalAlreadyExists(LocalError):
-    code: Code_
+    pass
 
 
 class InvalidLocal(LocalError):
