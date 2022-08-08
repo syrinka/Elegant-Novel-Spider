@@ -1,12 +1,3 @@
-from dataclasses import dataclass
-from typing import Union, Tuple
-from typing import NewType, Type
-
-
-# dummy type
-Novel_ = NewType('Novel', Type)
-
-
 class ENSError(Exception):
     """
     异常基类
@@ -18,9 +9,9 @@ class ENSError(Exception):
 
     def __rich__(self):
         if self.msg is None:
-            msg = ', '.join(self.args)
+            msg = self.args[0]
         else:
-            msg = self.msg.format(** self.__dict__)
+            msg = self.msg.format(*self.args)
         return f'[red]{self.__class__.__name__}[/] {msg}'
 
 
@@ -52,11 +43,13 @@ class RemoteError(ENSError):
 
 
 class RemoteNotFound(RemoteError):
-    remote: str
+    """@param name"""
+    pass
 
 
 # Fetch
 class FetchError(RemoteError):
+    """@param reason"""
     pass
 
 
@@ -66,40 +59,31 @@ class DumpError(ENSError):
 
 
 class DumperNotFound(DumpError):
+    """@param name"""
     pass
 
 
 # Misc
 class StatusError(ENSError):
+    """@param msg"""
     pass
 
 
 class InvalidNovel(ENSError):
-    novel_data: Union[str, Tuple]
+    """@param bad_novel"""
+    pass
 
 
-@dataclass
-class BadNovelIndex(ENSError):
-    index: int
-    max_index: int
-    msg = 'Expect 1~[p]{max_index}[/], receive [p]{index}[/]'
-
-
-@dataclass
 class MergeError(ENSError):
-    status: int
-    msg = 'Merge fail, status novel [p]{status}[/]'
+    """@param status"""
+    msg = 'Merge fail, return code {0}'
 
 
-@dataclass
 class BadFilterRule(ENSError):
-    expr: str
-    msg = '非法的过滤规则 [p]{expr}[/], 修正后重试'
-
-
-class TopicNotFound(ENSError):
-    topic: str
+    """@param rule"""
+    msg = '非法的过滤规则 {0}'
 
 
 class Abort(ENSError):
-    reason: str = None
+    """@param reason"""
+    pass

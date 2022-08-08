@@ -60,7 +60,7 @@ class Status(object):
 
 
 if __name__ == '__main__':
-    status = Status('sys')
+    status = Status('ens')
     
     status['a'] = 5
     print(status['a'])

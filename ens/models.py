@@ -196,7 +196,7 @@ class Shelf(object):
 
 
     def cache_shelf(self):
-        status = Status('sys')
+        status = Status('ens')
         status.set('cache-shelf', [str(novel) for novel in self.novels])
         status.save()
 

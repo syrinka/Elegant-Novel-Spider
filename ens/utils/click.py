@@ -18,7 +18,7 @@ def translate_novel(novel: str) -> str:
         except ValueError:
             raise InvalidNovel(novel)
 
-        stat = Status('sys')
+        stat = Status('ens')
         if index == 0 and conf.ZERO_MEANS_LAST:
             try:
                 return stat['cache-last']
@@ -29,7 +29,7 @@ def translate_novel(novel: str) -> str:
             try:
                 return stat['cache-shelf'][index - 1]
             except IndexError:
-                raise BadNovelIndex(index, len(stat['cache-shelf']))
+                raise StatusError(f'Cache index out of range, max index {len(stat["cache-shelf"])-1}')
             except KeyError:
                 raise StatusError('cache-shelf not exists.')
 
@@ -45,7 +45,7 @@ def _novel_callback(ctx, param, novel):
     if m is None:
         raise InvalidNovel(novel)
 
-    stat = Status('sys')
+    stat = Status('ens')
     stat.set('cache-last', novel)
     stat.save()
     return Novel(m[1], m[2])
