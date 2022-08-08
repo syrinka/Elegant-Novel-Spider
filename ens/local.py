@@ -6,7 +6,6 @@ from shutil import rmtree
 from collections import namedtuple
 from contextlib import contextmanager
 
-import yaml
 import ens.paths as paths
 import ens.config as conf
 from ens.console import log

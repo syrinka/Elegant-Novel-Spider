@@ -5,7 +5,7 @@ from typing import List
 
 from ens.models import Catalog
 from ens.exceptions import MergeError
-from ens.utils.misc import call, executable_exists
+from ens.utils.exec import call, executable_exists
 
 
 def merge(old: str, new: str, ext='.txt') -> str:
@@ -56,7 +56,7 @@ def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
 
 
 if __name__ == '__main__':
-    from ens.utils.misc import CatalogBuilder
+    from ens.utils.exec import CatalogBuilder
 
     c1 = CatalogBuilder().vol('格林在地下城') \
         .chap('1', 'aa').chap('2', 'bb').chap('3', 'cc').build()

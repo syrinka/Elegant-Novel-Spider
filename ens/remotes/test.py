@@ -2,7 +2,7 @@ import time
 
 from ens.remote import Remote
 from ens.models import Catalog, Info
-from ens.utils.misc import CatalogBuilder
+from ens.utils.remote import CatalogBuilder
 
 
 class Test(Remote):

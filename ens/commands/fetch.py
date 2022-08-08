@@ -21,7 +21,7 @@ from ens.exceptions import (
 
 @click.command()
 @arg_novel
-@click.option('--info',
+@click.option('--info', 'update_info',
     is_flag = True,
     help = '只更新 info')
 @click.option('-m', '--mode',
@@ -45,7 +45,7 @@ from ens.exceptions import (
     default = None,
     hidden = True,
     help = '同时执行的线程数')
-def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thread: int):
+def fetch(novel: Novel, update_info: bool, mode: str, interval: float, retry: int, thread: int):
     """
     抓取小说
     """
@@ -61,7 +61,7 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
         local = LocalStorage(novel)
         echo(local.info)
 
-        if info:
+        if update_info:
             try:
                 with doing('Getting Info'):
                     info = remote.get_info(novel)
@@ -111,7 +111,6 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
     old_cat = local.catalog
     if catalog_lose(old_cat, new_cat):
         echo('[alert]检测到目录发生了减量更新，即将进行手动合并')
-        index = local.get_index()
         try:
             new_cat = merge_catalog(old_cat, new_cat)
         except MergeError:
