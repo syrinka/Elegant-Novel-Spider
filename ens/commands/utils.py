@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo, log
-from ens.status import Status
+from ens.cache import Cache
 from ens.utils.click import arg_novel, opt_filter, translate_novel
 
 

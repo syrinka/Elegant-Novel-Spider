@@ -9,7 +9,7 @@ from typing import (
 
 import yaml
 from ens.config import config
-from ens.status import Status
+from ens.cache import Cache
 from ens.exceptions import (
     BadFilterRule, InvalidNovel
 )
@@ -196,9 +196,9 @@ class Shelf(object):
 
 
     def cache_shelf(self):
-        status = Status('ens')
-        status.set('cache-shelf', [str(novel) for novel in self.novels])
-        status.save()
+        cache = Cache('ens')
+        cache.set('cache-shelf', [str(novel) for novel in self.novels])
+        cache.save()
 
 
     def dump(self):

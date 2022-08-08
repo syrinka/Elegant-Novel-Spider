@@ -1,9 +1,9 @@
 import yaml
 
-from ens.paths import STATUS
+from ens.paths import CACHE
 
 
-class Status(object):
+class Cache(object):
     _data = None
 
     def __init__(self, scope):
@@ -13,11 +13,11 @@ class Status(object):
             try:
                 # 将数据写入类中，确保所有实例访问的是相同的 status data
                 self.__class__._data = yaml.load(
-                    open(STATUS, encoding='utf-8'),
+                    open(CACHE, encoding='utf-8'),
                     Loader = yaml.SafeLoader
                 ) or dict()
             except FileNotFoundError:
-                open(STATUS, 'w', encoding='utf-8') # create file
+                open(CACHE, 'w', encoding='utf-8') # create file
                 self.__class__._data = dict()
 
 
@@ -54,15 +54,6 @@ class Status(object):
     def save(cls):
         yaml.dump(
             cls._data,
-            open(STATUS, 'w', encoding='utf-8'),
+            open(CACHE, 'w', encoding='utf-8'),
             allow_unicode = True
         )
-
-
-if __name__ == '__main__':
-    status = Status('ens')
-    
-    status['a'] = 5
-    print(status['a'])
-    del status['a']
-    status.save()

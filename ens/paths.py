@@ -3,7 +3,7 @@ from os.path import join, dirname
 
 # 工作目录
 CWD = dirname(dirname(__file__))
-STATUS = join(CWD, '.ens.status')
+CACHE = join(CWD, '.ens.cache')
 LOCAL = join(CWD, 'local')
 DUMP = join(CWD, 'dump')
 
