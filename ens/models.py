@@ -8,7 +8,7 @@ from typing import (
 )
 
 import yaml
-import ens.config as conf
+from ens.config import config
 from ens.status import Status
 from ens.exceptions import (
     BadFilterRule, InvalidNovel
@@ -22,7 +22,7 @@ class Novel(object):
 
 
     def __repr__(self):
-        return self.remote + conf.CODE_DELIM + self.nid
+        return self.remote + config.CODE_DELIM + self.nid
 
 
     def __eq__(self, other):
@@ -38,7 +38,7 @@ class Novel(object):
 
     def __rich__(self):
         return '[cyan]{}[/]{}[cyan]{}[/]'.format(
-            self.remote, conf.CODE_DELIM, self.nid
+            self.remote, config.CODE_DELIM, self.nid
         )
 
 
@@ -114,7 +114,7 @@ class FilterRule(object):
         if rule is None:
             raise BadFilterRule(rule_str)
         self.attr = rule['attr']
-        self.mode = rule['mode'] or conf.EMPTY_RULE_MODE
+        self.mode = rule['mode'] or config.EMPTY_RULE_MODE
         self.value = rule['value']
         self.rev = bool(rule['not'])
 

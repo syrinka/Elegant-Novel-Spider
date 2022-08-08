@@ -12,7 +12,7 @@ from rich.progress import (
     BarColumn
 )
 
-import ens.config as conf
+from ens.config import config
 from ens.exceptions import *
 
 
@@ -41,7 +41,7 @@ doing = console.status
 
 
 def log(*obj):
-    if conf.DEBUG:
+    if config.DEBUG:
         console.log(*obj)
 
 

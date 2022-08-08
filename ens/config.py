@@ -1,10 +1,15 @@
-DEBUG = False
+from pydantic import BaseSettings
 
-CODE_DELIM = '~'
 
-CODE_INDEX_INDICATOR = '#'
-ZERO_MEANS_LAST = True
+class Config(BaseSettings):
+    DEBUG: bool = False
+    CODE_DELIM: str = '~'
+    CODE_INDEX_INDICATOR: str = '#'
+    EMPTY_RULE_MODE: str = '*='
+    DEFAULT_DUMPER: str = 'txt'
 
-EMPTY_RULE_MODE = '*='
+    class Config(object):
+        env_file = '.ens.config'
 
-DEFAULT_DUMPER = 'txt'
+
+config = Config()

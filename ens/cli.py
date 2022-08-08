@@ -1,6 +1,6 @@
 import click
 
-import ens.config as conf
+from ens.config import config
 from ens.commands import mount
 from ens.utils.click import manual
 
@@ -13,6 +13,6 @@ from ens.utils.click import manual
 def ens_cli(ctx, debug):
     ctx.info_name = 'ens'
     if debug:
-        conf.DEBUG = debug
+        config.DEBUG = debug
 
 mount(ens_cli)

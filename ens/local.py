@@ -7,7 +7,7 @@ from collections import namedtuple
 from contextlib import contextmanager
 
 import ens.paths as paths
-import ens.config as conf
+from ens.config import config
 from ens.console import log
 from ens.models import *
 from ens.exceptions import *

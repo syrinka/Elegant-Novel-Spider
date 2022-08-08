@@ -1,7 +1,7 @@
 import re
 import click
 
-import ens.config as conf
+from ens.config import config
 from ens.console import echo, pager
 from ens.status import Status
 from ens.remote import get_remote
@@ -12,14 +12,14 @@ from ens.exceptions import *
 
 
 def translate_novel(novel: str) -> str:
-    if novel.startswith(conf.CODE_INDEX_INDICATOR):
+    if novel.startswith(config.CODE_INDEX_INDICATOR):
         try:
-            index = int(novel.removeprefix(conf.CODE_INDEX_INDICATOR))
+            index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
         except ValueError:
             raise InvalidNovel(novel)
 
         stat = Status('ens')
-        if index == 0 and conf.ZERO_MEANS_LAST:
+        if index == 0:
             try:
                 return stat['cache-last']
             except KeyError:
@@ -38,7 +38,7 @@ def translate_novel(novel: str) -> str:
 
 
 def _novel_callback(ctx, param, novel):
-    format = re.compile(r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)')
+    format = re.compile(r'([a-zA-Z0-9\-_\.]+)' + config.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)')
     novel = translate_novel(novel)
 
     m = format.match(novel)
@@ -63,7 +63,7 @@ arg_remote = click.argument('remote',
 
 
 opt_dumper = click.option('-d', '--dumper',
-    default = conf.DEFAULT_DUMPER,
+    default = config.DEFAULT_DUMPER,
     metavar = 'DUMPER',
     help = '选择输出类型，详见 topic:dump',
     show_default = True,
