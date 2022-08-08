@@ -3,7 +3,7 @@ import difflib
 from tempfile import mkstemp
 
 from ens.exceptions import MergeError
-from ens.typing import *
+from ens.models import *
 
 
 def merge(old, new, ext='.yml') -> str:

@@ -10,7 +10,7 @@ import ens.paths as paths
 import ens.config as conf
 from ens.utils import yaml_load, yaml_dump
 from ens.console import log
-from ens.typing import *
+from ens.models import *
 from ens.exceptions import *
 
 

@@ -3,7 +3,7 @@ from warnings import warn
 from typing import Type, Literal
 
 import ens.dumpers as dumpers
-from ens.typing import DumpMetadata
+from ens.models import DumpMetadata
 from ens.exceptions import DumperNotFound
 
 

@@ -1,7 +1,7 @@
 import time
 
 from ens.remote import Remote
-from ens.typing import Catalog, Info
+from ens.models import Catalog, Info
 
 
 class Test(Remote):

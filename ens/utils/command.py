@@ -5,7 +5,7 @@ from ens.console import echo, pager
 from ens.status import Status
 from ens.remote import get_remote
 from ens.dumper import get_dumper
-from ens.typing import Code, FilterRule, Filter
+from ens.models import Code, FilterRule, Filter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
 

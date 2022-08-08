@@ -3,7 +3,7 @@ import click
 from ens import echo, Local, get_local_info
 from ens.paths import DUMP, join
 from ens.utils.command import arg_code, opt_dumper
-from ens.typing import DumpMetadata
+from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
 
 

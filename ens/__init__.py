@@ -5,4 +5,4 @@ from ens.dumper import Dumper, get_dumper
 from ens.merge import merge
 from ens.console import echo, log, doing, edit, Track
 from ens.status import Status
-from ens.typing import Code, Shelf, Info
+from ens.models import Code, Shelf, Info

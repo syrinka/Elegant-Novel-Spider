@@ -3,7 +3,7 @@ from warnings import warn
 from typing import Type
 
 import ens.remotes as remotes
-from ens.typing import Code, Info, Catalog
+from ens.models import Code, Info, Catalog
 from ens.exceptions import RemoteNotFound
 
 
