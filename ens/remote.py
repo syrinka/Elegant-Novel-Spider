@@ -1,7 +1,7 @@
 import pkgutil
 import importlib
 from warnings import warn
-from typing import Type, List
+from typing import Type, Dict, List
 
 from ens.models import Code, Info, Catalog
 from ens.exceptions import RemoteNotFound
@@ -36,7 +36,7 @@ class Remote(object):
 
 
     @classmethod
-    def status(cls) -> dict:
+    def status(cls) -> Dict:
         """
         判断能否支持某个功能
         """

@@ -1,6 +1,6 @@
 import yaml
 import subprocess
-from typing import List, Dict
+from typing import List, Dict, Iterable
 
 
 def flatten(catalog: List, index: Dict = None) -> str:
@@ -30,14 +30,16 @@ def unflatten(s: str) -> List:
     return catalog
 
 
-def call(args, quiet=False):
+def call(args: Iterable[str], quiet=False) -> int:
+    """调用外部命令"""
     return subprocess.call(
         args, 
         stdout=subprocess.DEVNULL if quiet else None
     )
 
 
-def executable_exists(name):
+def executable_exists(name: str) -> bool:
+    """判断外部命令是否存在"""
     return call(['where', name], True) == 0
 
 
