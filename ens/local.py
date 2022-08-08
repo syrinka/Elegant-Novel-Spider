@@ -73,9 +73,7 @@ class LocalStorage(object):
     
     @classmethod
     def init(cls, novel: Novel):
-        """
-        初始化一个本地库
-        """
+        """初始化一个本地库"""
         _path = join(paths.LOCAL, novel.remote)
         if not exists(_path):
             os.mkdir(_path)
@@ -90,9 +88,7 @@ class LocalStorage(object):
 
     @classmethod
     def remove(cls, novel: Novel):
-        """
-        删除本地库
-        """
+        """删除本地库"""
         path = join(paths.LOCAL, *novel)
         rmtree(path)
 
@@ -126,9 +122,9 @@ class LocalStorage(object):
 
 
     def get_chap(self, cid: str) -> str:
-        """
+        """获取章节文本
         @return chap_content
-        @raise ChapMissing
+        @raise ChapMissing 当本地存储中没有对应章节的数据
         """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
@@ -164,9 +160,7 @@ class LocalStorage(object):
 
 
     def isolate(self):
-        """
-        标记该小说为孤立小说
-        """
+        """标记该小说为孤立小说"""
         self.info.isolated = True
         self.set_info()
 
