@@ -8,7 +8,7 @@ from ens.exceptions import *
 
 
 def get_local(remote, nid):
-    novel = Novel((remote, nid))
+    novel = Novel(remote, nid)
     try:
         return LocalStorage(novel)
     except LocalNotFound:
@@ -36,7 +36,7 @@ def novel(remote, nid):
     
     return render_template('novel.html',
         info = local.info,
-        nav = local.nav()
+        nav = local.unravel()
     )
 
 
@@ -44,8 +44,8 @@ def novel(remote, nid):
 def chap(remote, nid, cid):
     local = get_local(remote, nid)
 
-    spine = local.spine()
-    pos = spine.index(cid)
+    spine = local.catalog.spine
+    pos = spine.index(cid) #TODO fix it
     prev = spine[pos-1] if pos != 0 else None
     next = spine[pos+1] if pos != len(spine)-1 else None
 

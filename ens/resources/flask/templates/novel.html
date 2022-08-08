@@ -25,7 +25,7 @@
             <div>
                 {%- for node in nav %}
                     {%- if node.type == 'chap' %}
-                    <a class="node" href="/chap/{{info.remote}}/{{info.nid}}/{{node.cid}}">{{node.title}}</a>
+                    <a class="node" href="/chap/{{info.novel.remote}}/{{info.novel.nid}}/{{node.cid}}">{{node.title}}</a>
                     {%- else %}
                     <h3 class="node">{{node.title}}</h3>
                     {%- endif %}

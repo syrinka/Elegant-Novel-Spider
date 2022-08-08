@@ -10,7 +10,7 @@
     <section class="container">
         <article>
             {% for info in shelf.infos %}
-                <a class="node" href="/novel/{{info.remote}}/{{info.nid}}">{{info.title}}</a>
+                <a class="node" href="/novel/{{info.novel.remote}}/{{info.novel.nid}}">{{info.title}}</a>
             {% endfor %}
         </article>
     </section>

@@ -97,15 +97,14 @@ class LocalStorage(object):
         rmtree(path)
 
 
-    def nav(self):
-        nav_node = namedtuple('nav', 'type title cid')
-        index = self.get_index()
+    def unravel(self):
+        Node = namedtuple('Node', 'type cid title')
         nav = []
-        for vol in self.catalog():
-            nav.append(nav_node('vol', vol['name'], None))
-            for cid in vol['cids']:
+        for vol in self.catalog.catalog:
+            nav.append(Node('vol', None, vol['name']))
+            for chap in vol['chaps']:
                 nav.append(
-                    nav_node('chap', index[cid], cid)
+                    Node('chap', chap.cid, chap.title)
                 )
         return nav
 
