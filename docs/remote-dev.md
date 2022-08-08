@@ -6,7 +6,7 @@ from ens.remote import Remote
 from ens.models import Info, Catalog
 from ens.console import log
 from ens.utils.remote import CatalogBuilder
-from ens.exceptions import GetContentFail, FetchError
+from ens.exceptions import FetchError
 
 
 class Template(Remote):

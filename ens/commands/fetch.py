@@ -11,7 +11,6 @@ from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novel
 from ens.exceptions import (
     FetchError,
-    GetContentFail,
     LocalNotFound,
     RemoteNotFound,
     MergeError,
@@ -170,7 +169,7 @@ def fetch(novel: Novel, update_info: bool, mode: str, interval: float, retry: in
                     track.update_desc(local.get_title(chap.cid))
                     try:
                         content = remote.get_content(novel, chap.cid)
-                    except GetContentFail as e:
+                    except FetchError as e:
                         echo(e)
                         continue
                     save(local, chap.cid, content)

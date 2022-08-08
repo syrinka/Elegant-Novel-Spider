@@ -60,11 +60,6 @@ class FetchError(RemoteError):
     pass
 
 
-class GetContentFail(FetchError):
-    cid: str
-    reason: str = None
-
-
 # Dumper
 class DumpError(ENSError):
     pass

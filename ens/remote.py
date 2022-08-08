@@ -16,17 +16,8 @@ _dependencies = {
 class Remote(object):
     """
     与远程源进行交互的逻辑类
-    远程源需继承此类并重写若干函数
+    远程源应继承此类并重写若干函数
     """
-    def __init__(self):
-        self.__remote_init__()
-        pass
-
-
-    def __remote_init__(self):
-        pass
-
-
     @classmethod
     def _is_overrided(cls, funcname: str) -> bool:
         """
@@ -49,24 +40,28 @@ class Remote(object):
 
 
     def get_info(self, novel: Novel) -> Info:
+        """
+        @raise FetchError
+        """
         raise NotImplementedError
 
 
     def get_catalog(self, novel: Novel) -> Catalog:
+        """
+        @raise FetchError
+        """
         raise NotImplementedError
 
 
     def get_content(self, novel: Novel, cid: str) -> str:
         """
-        @raise GetContentFail
+        @raise FetchError
         """
         raise NotImplementedError
 
 
 def get_remote(name) -> Type[Remote]:
-    """
-    获取远程源对应的逻辑类
-    """
+    """获取远程源对应的逻辑类"""
     name = name.replace('_', '-')
     try:
         name = f'ens.remotes.{name}'
