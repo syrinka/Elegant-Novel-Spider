@@ -5,10 +5,13 @@ from typing import List
 
 from ens.models import Catalog
 from ens.exceptions import MergeError
-from ens.utils.misc import flatten, unflatten, call, executable_exists
+from ens.utils.misc import call, executable_exists
 
 
 def merge(old: str, new: str, ext='.txt') -> str:
+    if old == new:
+        return new
+
     fd1, path1 = mkstemp(ext)
     fd2, path2 = mkstemp(ext)
 
@@ -23,7 +26,7 @@ def merge(old: str, new: str, ext='.txt') -> str:
     ret = call(['smerge', 'mergetool', path1, path2, '-o', path2])
 
     with open(path2, encoding='utf-8') as f:
-            final = f.read()
+        final = f.read()
 
     os.close(fd1)
     os.remove(path1)

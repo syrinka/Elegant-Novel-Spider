@@ -4,33 +4,6 @@ from typing import List, Dict, Iterable
 from ens.models import Catalog, Chapter
 
 
-def flatten(catalog: List, index: Dict = None) -> str:
-    piece = []
-    for vol in catalog:
-        piece.append(f'# {vol["name"]}')
-        for cid in vol['cids']:
-            if index is not None:
-                piece.append(f'. {index.get(cid, "[新章节]")} ({cid})')
-            else:
-                piece.append(f'. {cid}')
-    
-    return '\n'.join(piece) + '\n'
-
-
-def unflatten(s: str) -> List:
-    catalog = []
-    for i in s.split('\n'):
-        if i.startswith('# '):
-            catalog.append({
-                'name': i[2:],
-                'cids': []
-            })
-        elif i.startswith('. '):
-            cid = i.rsplit('(', 1)[1][:-1]
-            catalog[-1]['cids'].append(cid)
-    return catalog
-
-
 def call(args: Iterable[str], quiet=False) -> int:
     """调用外部命令"""
     return subprocess.call(

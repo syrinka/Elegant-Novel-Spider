@@ -3,7 +3,6 @@ import click
 from ens.console import echo, edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf
-from ens.utils.misc import flatten
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 
 
@@ -61,7 +60,7 @@ def func(novel):
 def func(novel, pager):
     local = LocalStorage(novel)
     with pager:
-        echo(flatten(local.catalog(), local.get_index()))
+        echo(local.catalog.dump())
 
 
 @local.command('show-content')
