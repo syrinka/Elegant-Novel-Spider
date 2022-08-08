@@ -1,8 +1,8 @@
 import pkgutil
+import importlib
 from warnings import warn
-from typing import Type, Literal
+from typing import Type, List, Literal
 
-import ens.dumpers as dumpers
 from ens.models import DumpMetadata
 from ens.exceptions import DumperNotFound
 
@@ -10,12 +10,6 @@ from ens.exceptions import DumperNotFound
 class Dumper(object):
     all_dumpers = dict()
     ext = None
-
-    def __init_subclass__(cls) -> None:
-        name = cls.__module__.rsplit('.', 1)[-1]
-        if name in cls.all_dumpers:
-            warn(f'Duplicate dumper {name}, may lead to unexpected behaviour.')
-        cls.all_dumpers[name] = cls
 
 
     def init(self, meta: DumpMetadata):
@@ -39,12 +33,20 @@ class Dumper(object):
 
 
 def get_dumper(name) -> Type[Dumper]:
+    """
+    获取远程源对应的逻辑类
+    """
+    name = name.replace('_', '-')
     try:
-        return Dumper.all_dumpers[name]
-    except KeyError:
+        name = f'ens.dumpers.{name}'
+        return importlib.import_module(name).export
+    except ImportError:
         raise DumperNotFound(name)
 
 
-for ff, name, ispkg in pkgutil.iter_modules(dumpers.__path__):
-    name = 'ens.dumpers.' + name
-    ff.find_module(name).load_module(name)
+def get_dumper_list() -> List[str]:
+    from ens.dumpers import __path__
+    dumpers = []
+    for ff, name, ispkg in pkgutil.iter_modules(__path__):
+        dumpers.append(name.replace('_', '-'))
+    return dumpers

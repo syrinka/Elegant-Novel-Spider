@@ -81,7 +81,3 @@ def get_remote_list() -> List[str]:
     for ff, name, ispkg in pkgutil.iter_modules(__path__):
         remotes.append(name.replace('_', '-'))
     return remotes
-
-
-if __name__ == '__main__':
-    print(get_remote_list())

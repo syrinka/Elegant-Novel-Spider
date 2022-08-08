@@ -1,6 +1,7 @@
 import click
 
 from ens import echo, Dumper
+from ens.dumper import get_dumper, get_dumper_list
 
 
 @click.group()
@@ -16,5 +17,5 @@ def func():
     """
     列出可用的输出类型
     """
-    for i in Dumper.all_dumpers.keys():
+    for i in get_dumper_list():
         echo(i)
