@@ -62,7 +62,7 @@ class Remote(object):
 
 def get_remote(name) -> Type[Remote]:
     """获取远程源对应的逻辑类"""
-    name = name.replace('_', '-')
+    name = name.replace('-', '_')
     try:
         name = f'ens.remotes.{name}'
         return importlib.import_module(name).export
