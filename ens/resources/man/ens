@@ -3,7 +3,8 @@
 Usage: ens [OPTIONS] COMMAND [ARGS]...
 
 Options
-  --help  Show this message and exit.
+  -d, --debug  输出日志
+  --help       Show this message and exit.
 
 [gold1]Core[/]
   fetch   抓取

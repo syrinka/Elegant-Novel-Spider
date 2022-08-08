@@ -1,0 +1,16 @@
+Usage: ens fetch [OPTIONS] NOVEL
+
+  尝试抓取小说，抓取的数据将保存在本地，供 [p]dump[/] 等命令使用
+
+  小说的标题、作者、介绍等信息只会在第一次抓取时保存
+  如需要更新上述信息，请指定 [p]--fetch-info[/]
+
+[bright_blue]Options[/]
+  -r, --retry INT   抓取单章时最大尝试次数，为 0 则持续尝试 [3]  [x>=0]
+  -t, --thread INT  多线程运行 (beta)
+  -m, --mode        行为模式
+                    · [p]update[/] 只抓取缺失章节，跳过已保存的章节 [default]
+                    · [p]flush[/]  抓取全部章节并覆盖 !dangerous!
+                    · [p]diff[/]   抓取全部章节，若是已保存章节，则对比差异
+  --fetch-info      从远端抓取小说信息，更新本地信息，然后立即退出
+  --help            Show this message and exit.

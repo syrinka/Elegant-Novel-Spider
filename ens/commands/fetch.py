@@ -8,7 +8,7 @@ from ens.models import Novel, Info
 from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
-from ens.utils.click import arg_novel
+from ens.utils.click import arg_novel, manual
 from ens.exceptions import (
     FetchError,
     LocalNotFound,
@@ -18,33 +18,21 @@ from ens.exceptions import (
 )
 
 
+@manual('ens-fetch')
 @click.command()
 @arg_novel
-@click.option('--info', 'update_info',
-    is_flag = True,
-    help = '只更新 info')
+@click.option('--fetch-info',
+    is_flag = True)
 @click.option('-m', '--mode',
     type = click.Choice(['update', 'flush', 'diff']),
-    default = 'update',
-    help = '''\b
-    处理数据的方式
-    - update 只抓取缺失章节，不改变已保存的章节 [default]
-    - flush  抓取全部章节并覆盖 !dangerous!
-    - diff   抓取全部章节，如为已保存章节，则对比差异''')
-@click.option('-i', '--interval',
-    type = click.FloatRange(min=0),
-    default = 0.2,
-    help = '抓取间隔（秒）[0.2]')
+    default = 'update')
 @click.option('-r', '--retry',
     type = click.IntRange(min=0),
-    default = 3,
-    help = '抓取单章时最大尝试次数，为 0 则持续尝试 [3]')
+    default = 3)
 @click.option('-t', '--thread', # TODO 多线程执行
     type = click.IntRange(min=2),
-    default = None,
-    hidden = True,
-    help = '同时执行的线程数')
-def fetch(novel: Novel, update_info: bool, mode: str, interval: float, retry: int, thread: int):
+    default = None)
+def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
     """
     抓取小说
     """
@@ -60,7 +48,7 @@ def fetch(novel: Novel, update_info: bool, mode: str, interval: float, retry: in
         local = LocalStorage(novel)
         echo(local.info)
 
-        if update_info:
+        if fetch_info:
             try:
                 with doing('Getting Info'):
                     info = remote.get_info(novel)
