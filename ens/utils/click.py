@@ -1,3 +1,4 @@
+import re
 import click
 
 import ens.config as conf
@@ -37,11 +38,17 @@ def translate_code(code: str) -> str:
 
 
 def _code_callback(ctx, param, code):
-    code = translate_code(code)    
+    format = re.compile(r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)')
+    code = translate_code(code)
+
+    m = format.match(code)
+    if m is None:
+        raise InvalidCode(code)
+
     stat = Status('sys')
     stat.set('cache-last', code)
     stat.save()
-    return Code(code)
+    return Code(m[1], m[2])
 
 
 arg_code = click.argument('code',

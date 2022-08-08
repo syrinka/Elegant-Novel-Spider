@@ -16,19 +16,8 @@ from ens.exceptions import (
 
 @dataclass
 class Code(object):
-    """
-    Code('a~book') == Code(('a', 'book'))
-
-    @raise InvalidCode
-    """
-    _code_format = re.compile(
-        r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)'
-    )
-
-    code_data: InitVar[Union[str, Tuple]]
-
-    remote: str = field(init=False)
-    nid: str = field(init=False)
+    remote: str
+    nid: str
 
 
     def __repr__(self):
@@ -46,18 +35,6 @@ class Code(object):
         return iter((self.remote, self.nid))
 
 
-    def __post_init__(self, code_data: Union[str, Tuple]):
-        if isinstance(code_data, tuple):
-            self.remote, self.nid = code_data
-
-        else:
-            match = self._code_format.match(code_data)
-            if match is None:
-                raise InvalidCode(code_data)
-
-            self.remote, self.nid = match[1], match[2]
-
-
     def __rich__(self):
         return '[cyan]{}[/]{}[cyan]{}[/]'.format(
             self.remote, conf.CODE_DELIM, self.nid
@@ -66,9 +43,9 @@ class Code(object):
 
 @dataclass
 class Info(object):
-    code: InitVar[Code]
-    remote: str = field(init=False)
-    nid: str = field(init=False)
+    # remote: str
+    # nid: str
+    code: Code
     
     title: str = None
     author: str = None
@@ -80,11 +57,6 @@ class Info(object):
     isolated: bool = False
     comment: str = None
     tags: list = field(default_factory=list)
-
-
-    def __post_init__(self, code):
-        self.code = code
-        self.remote, self.nid = code
 
 
     def __rich__(self):
@@ -104,12 +76,7 @@ class Info(object):
     @classmethod
     def load(cls, data: str) -> Info:
         data = yaml.load(data, Loader=yaml.SafeLoader)
-        data['code'] = Code((data.pop('remote'), data.pop('nid')))
         return cls(**data)
-
-
-    def update(self, info):
-        self.__dict__.update(info.__dict__)
 
 
     def verbose(self):
@@ -301,10 +268,3 @@ class Catalog(object):
                 m = pattern.match(i)
                 catalog[-1]['cids'].append((m['cid'], m['title']))
         return catalog
-
-
-if __name__ == '__main__':
-    a = Info(Code('a~b'))
-    b = Info(Code('a~b'), title='beta')
-    a.update(b)
-    print(a.dump())
