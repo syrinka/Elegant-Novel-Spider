@@ -1,6 +1,7 @@
 import click
 
-from ens import echo, Remote
+from ens import echo
+from ens.remote import Remote, get_remote_list
 from ens.utils.command import arg_remote
 
 
@@ -17,7 +18,7 @@ def func():
     """
     列出可用的远程源
     """
-    for i in Remote.all_remotes.keys():
+    for i in get_remote_list():
         echo(i)
 
 
