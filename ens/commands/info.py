@@ -4,13 +4,13 @@ from ens import echo, get_local_info, get_remote
 from ens.utils.command import arg_code
 
 
-@click.command('info')
+@click.command()
 @arg_code
 @click.option('-l/-r', '--local/--remote', 'local',
     is_flag = True,
     default = True,
     help = '查看本地/远程信息')
-def main(code, local):
+def info(code, local):
     if local:
         info = get_local_info(code)
     else:

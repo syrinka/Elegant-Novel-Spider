@@ -4,15 +4,15 @@ from ens import echo, Remote
 from ens.utils.command import arg_remote
 
 
-@click.group('remote')
-def main():
+@click.group()
+def remote():
     """
     远程源 (Remote) 管理
     """
     pass
 
 
-@main.command('list')
+@remote.command('list')
 def func():
     """
     列出可用的远程源
@@ -21,7 +21,7 @@ def func():
         echo(i)
 
 
-@main.command('status')
+@remote.command('status')
 @arg_remote
 def func(remote: Remote):
     """

@@ -18,7 +18,7 @@ from ens.exceptions import (
 )
 
 
-@click.command('fetch')
+@click.command()
 @arg_code
 @click.option('--info',
     is_flag = True,
@@ -44,7 +44,7 @@ from ens.exceptions import (
     default = None,
     hidden = True,
     help = '同时执行的线程数')
-def main(code: Code, info: bool, mode: str, interval: float, retry: int, thread: int):
+def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread: int):
     """
     抓取小说
     """

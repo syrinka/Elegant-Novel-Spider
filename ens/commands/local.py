@@ -7,15 +7,15 @@ from ens.utils.command import manual, arg_code, opt_filter, opt_pager
 
 
 @manual('ens-local')
-@click.group('local')
-def main():
+@click.group()
+def local():
     """
     本地库 (Local) 管理
     """
     pass
 
 
-@main.command('list')
+@local.command('list')
 @opt_filter
 @click.option('-s', '--star',
     is_flag = True,
@@ -34,7 +34,7 @@ def func(filter, star, pager):
         echo(shelf)
 
 
-@main.command('remove')
+@local.command('remove')
 @arg_code
 @click.option('-y', '--yes',
     is_flag = True,
@@ -47,14 +47,14 @@ def func(code, yes):
         echo('删除成功')
 
 
-@main.command('info')
+@local.command('info')
 @arg_code
 def func(code):
     info = get_local_info(code)
     echo(info.verbose())
 
 
-@main.command('show-catalog')
+@local.command('show-catalog')
 @arg_code
 @opt_pager
 def func(code, pager):
@@ -63,7 +63,7 @@ def func(code, pager):
         echo(flatten(local.catalog(), local.get_index()))
 
 
-@main.command('show-content')
+@local.command('show-content')
 @arg_code
 @click.argument('cid')
 @opt_pager
@@ -76,7 +76,7 @@ def func(code, cid, pager):
         echo(content)
 
 
-@main.command('edit-content')
+@local.command('edit-content')
 @arg_code
 @click.argument('cid')
 def func(code, cid):
@@ -88,7 +88,7 @@ def func(code, cid):
     local.set_chap(cid, edit(content))
 
 
-@main.command('star')
+@local.command('star')
 @arg_code
 def func(code):
     local = Local(code)
@@ -96,7 +96,7 @@ def func(code):
     local.set_info()
 
 
-@main.command('unstar')
+@local.command('unstar')
 @arg_code
 def func(code):
     local = Local(code)
@@ -104,7 +104,7 @@ def func(code):
     local.set_info()
 
 
-@main.command('isolate')
+@local.command('isolate')
 @arg_code
 def func(code):
     local = Local(code)
@@ -112,7 +112,7 @@ def func(code):
     local.set_info()
 
 
-@main.command('unisolate')
+@local.command('unisolate')
 @arg_code
 def func(code):
     local = Local(code)

@@ -7,7 +7,7 @@ from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
 
 
-@click.command('dump', short_help='输出')
+@click.command(short_help='输出')
 @arg_code
 @opt_dumper
 @click.option('-m', '--miss',
@@ -23,7 +23,7 @@ from ens.exceptions import ChapMissing
     help = '输出目标路径',
     default = '{title}{ext}',
     show_default = True)
-def main(code, dumper, miss, output, **kw):
+def dump(code, dumper, miss, output, **kw):
     """
     输出小说
     """

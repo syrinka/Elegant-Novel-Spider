@@ -1,8 +1,7 @@
-import pkgutil
 import click
-import ens.commands as cmds
 
 import ens.config as conf
+from ens.commands import mount
 from ens.utils.command import manual
 
 
@@ -16,9 +15,4 @@ def ens_cli(ctx, debug):
     if debug:
         conf.DEBUG = debug
 
-
-for ff, name, ispkg in pkgutil.iter_modules(cmds.__path__, ):
-    if (name not in cmds.disabled) and (not name.startswith('_')):
-        name = 'ens.commands.' + name # as fullname
-        main = ff.find_module(name).load_module(name).main
-        ens_cli.add_command(main)
+mount(ens_cli)
