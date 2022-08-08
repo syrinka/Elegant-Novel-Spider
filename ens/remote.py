@@ -1,8 +1,8 @@
 import pkgutil
+import importlib
 from warnings import warn
-from typing import Type
+from typing import Type, List
 
-import ens.remotes as remotes
 from ens.models import Code, Info, Catalog
 from ens.exceptions import RemoteNotFound
 
@@ -18,18 +18,9 @@ class Remote(object):
     与远程源进行交互的逻辑类
     远程源需继承此类并重写若干函数
     """
-    all_remotes = dict()
-
     def __init__(self):
         self.__remote_init__()
         pass
-
-
-    def __init_subclass__(cls) -> None:
-        name = cls.__module__.rsplit('.', 1)[-1]
-        if name in cls.all_remotes:
-            warn(f'Duplicate remote {name}, may lead to unexpected behaviour.')
-        cls.all_remotes[name] = cls
 
 
     def __remote_init__(self):
@@ -76,12 +67,21 @@ def get_remote(name) -> Type[Remote]:
     """
     获取远程源对应的逻辑类
     """
+    name = name.replace('_', '-')
     try:
-        return Remote.all_remotes[name]
-    except KeyError:
+        name = f'ens.remotes.{name}'
+        return importlib.import_module(name).export
+    except ImportError:
         raise RemoteNotFound(name)
 
 
-for ff, name, ispkg in pkgutil.iter_modules(remotes.__path__):
-    name = 'ens.remotes.' + name
-    ff.find_module(name).load_module(name)
+def get_remote_list() -> List[str]:
+    from ens.remotes import __path__
+    remotes = []
+    for ff, name, ispkg in pkgutil.iter_modules(__path__):
+        remotes.append(name.replace('_', '-'))
+    return remotes
+
+
+if __name__ == '__main__':
+    print(get_remote_list())

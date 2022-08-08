@@ -24,3 +24,6 @@ class Test(Remote):
     def get_content(self, code, cid: str) -> str:
         time.sleep(0.1)
         return 'YESYESYES' + cid
+
+
+export = Test
