@@ -133,14 +133,13 @@ class LocalStorage(object):
             return cursor.fetchone() is not None
 
 
-    def get_chap(self, cid: str) -> Tuple[str, str]:
+    def get_chap(self, cid: str) -> str:
         """
-        @return chap_title
         @return chap_content
         @raise ChapMissing
         """
         with self.conn() as (conn, cursor):
-            cursor.execute('SELECT title, content FROM `chaps` WHERE cid=?', (cid,))
+            cursor.execute('SELECT content FROM `chaps` WHERE cid=?', (cid,))
             content = cursor.fetchone()[0]
 
         if content is None:
