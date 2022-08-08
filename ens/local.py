@@ -33,7 +33,7 @@ class LocalStorage(object):
         if path:
             pass
         elif code:
-            path = join(paths.LOCAL, code)
+            path = join(paths.LOCAL, code.remote, code.nid)
         else:
             raise ENSError()
 
@@ -44,8 +44,8 @@ class LocalStorage(object):
         self.db_path = join(path, 'data.db')
 
         if init_flag:
-            self.write_file('info.yml')
-            self.write_file('catalog.yml')
+            self.write_file('info.yml', Info(code).dump())
+            self.write_file('catalog.yml', '')
             sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
 
         try:
@@ -86,9 +86,7 @@ class LocalStorage(object):
             raise LocalAlreadyExists(code)
         os.mkdir(path)
 
-        open(join(path, 'new'), 'w')
-
-        return cls(code)
+        return cls(code, init_flag=True)
 
 
     @classmethod

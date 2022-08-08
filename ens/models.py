@@ -43,8 +43,6 @@ class Code(object):
 
 @dataclass
 class Info(object):
-    # remote: str
-    # nid: str
     code: Code
     
     title: str = None
