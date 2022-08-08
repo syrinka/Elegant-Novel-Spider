@@ -10,7 +10,7 @@ from ens.exceptions import *
 def get_local(remote, nid):
     code = Code((remote, nid))
     try:
-        return Local(code)
+        return LocalStorage(code)
     except LocalNotFound:
         return None
 

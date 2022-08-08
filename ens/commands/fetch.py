@@ -5,7 +5,7 @@ import click
 
 from ens.console import echo, log, doing, Track
 from ens.models import Code, Info
-from ens.local import Local
+from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils import yaml_load, yaml_dump
@@ -59,7 +59,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
         raise
 
     try:
-        local = Local(code)
+        local = LocalStorage(code)
         echo(local.info)
 
         if info:
@@ -83,7 +83,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
     except LocalNotFound:
         log('local initialize')
 
-        local = Local.init(code)
+        local = LocalStorage.init(code)
         try:
             with doing('Getting Info'):
                 info = remote.get_info(code)
@@ -91,13 +91,13 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
             echo(e)
             echo('[alert]抓取 Info 失败')
             del local
-            Local.remove(code)
+            LocalStorage.remove(code)
             raise Abort
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
             del local
-            Local.remove(code)
+            LocalStorage.remove(code)
             raise Abort
 
         local.set_info(info) # 更新信息
@@ -126,7 +126,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
         # 如为 update 模式，则只抓取缺失章节
         cids = [cid for cid in cids if not local.has_chap(cid)]
 
-    def save(local: Local, cid, content):
+    def save(local: LocalStorage, cid, content):
         if mode == 'update':
             local.set_chap(cid, content)
 
@@ -163,7 +163,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
         cids = iter(track)
         sync = Lock()
         def worker():
-            local = Local(code)
+            local = LocalStorage(code)
             while True:
                 try:
                     with sync:

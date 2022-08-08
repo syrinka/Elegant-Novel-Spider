@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `chaps` (
 );'''
 
 
-class Local(object):
+class LocalStorage(object):
     """
     本地库
     @raise LocalNotFound 如果本地库不存在
@@ -253,4 +253,4 @@ def get_local_info(code: Code) -> Info:
 
 if __name__ == '__main__':
     c = Code('test~123')
-    a = Local(c)
+    a = LocalStorage(c)

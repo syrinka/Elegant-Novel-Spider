@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo, edit
-from ens.local import Local, get_local_shelf, get_local_info
+from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf
 from ens.merge import flatten
 from ens.utils.click import manual, arg_code, opt_filter, opt_pager
@@ -44,7 +44,7 @@ def func(code, yes):
     info = get_local_info(code)
     echo(info.verbose())
     if yes or click.confirm('确定要删除它吗？'):
-        Local.remove(code)
+        LocalStorage.remove(code)
         echo('删除成功')
 
 
@@ -59,7 +59,7 @@ def func(code):
 @arg_code
 @opt_pager
 def func(code, pager):
-    local = Local(code)
+    local = LocalStorage(code)
     with pager:
         echo(flatten(local.catalog(), local.get_index()))
 
@@ -69,7 +69,7 @@ def func(code, pager):
 @click.argument('cid')
 @opt_pager
 def func(code, cid, pager):
-    local = Local(code)
+    local = LocalStorage(code)
     title = local.get_title(cid)
     content = local.get_chap(cid)
     with pager:
@@ -81,7 +81,7 @@ def func(code, cid, pager):
 @arg_code
 @click.argument('cid')
 def func(code, cid):
-    local = Local(code)
+    local = LocalStorage(code)
     title = local.get_title(cid)
     content = local.get_chap(cid)
     echo(f'Editing: {title}')
@@ -92,7 +92,7 @@ def func(code, cid):
 @local.command('star')
 @arg_code
 def func(code):
-    local = Local(code)
+    local = LocalStorage(code)
     local.info.star = True
     local.set_info()
 
@@ -100,7 +100,7 @@ def func(code):
 @local.command('unstar')
 @arg_code
 def func(code):
-    local = Local(code)
+    local = LocalStorage(code)
     local.info.star = False
     local.set_info()
 
@@ -108,7 +108,7 @@ def func(code):
 @local.command('isolate')
 @arg_code
 def func(code):
-    local = Local(code)
+    local = LocalStorage(code)
     local.info.isolated = True
     local.set_info()
 
@@ -116,6 +116,6 @@ def func(code):
 @local.command('unisolate')
 @arg_code
 def func(code):
-    local = Local(code)
+    local = LocalStorage(code)
     local.info.isolated = False
     local.set_info()

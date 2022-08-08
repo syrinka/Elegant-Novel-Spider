@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo
-from ens.local import Local, get_local_info
+from ens.local import LocalStorage, get_local_info
 from ens.paths import DUMP, join
 from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
@@ -28,7 +28,7 @@ def dump(code, dumper, miss, output, **kw):
     """
     输出小说
     """
-    local = Local(code)
+    local = LocalStorage(code)
     output = output.format(
         title = local.info.title,
         author = local.info.author,
