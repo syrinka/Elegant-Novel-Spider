@@ -70,10 +70,10 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
                 echo('抓取 Info 失败')
                 # raise Isolated(novel) @TODO
 
-            old = yaml_dump(local.info.dump())
-            new = yaml_dump(info.dump())
+            old = local.info.dump()
+            new = info.dump()
             merged = merge(old, new)
-            info = Info.load(yaml_load(merged))
+            info = Info.load(merged)
             local.set_info(info)
 
             echo('Info 更新成功！')

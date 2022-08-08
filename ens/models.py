@@ -67,6 +67,11 @@ class Info(object):
         )
 
 
+    def __post_init__(self):
+        # 使用 Info.load 载入数据时 novel 字段会成为 Dict 类型，这里修复之
+        self.novel = Novel(**self.novel)
+
+
     def dump(self) -> str:
         return yaml.dump(asdict(self), allow_unicode=True, sort_keys=False)
 
