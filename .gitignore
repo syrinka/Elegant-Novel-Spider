@@ -1,9 +1,5 @@
-local/
-dump/
-
-src/resources/status.yml
-src/ens/remotes/*
-
 **/__pycache__/
 
-.ens.*
+/local/
+/dump/
+/.ens.*
