@@ -1,6 +1,6 @@
 import os
 
-from ens.console import echo, doing, run
+from ens.console import echo, doing
 from ens.dumper import Dumper
 from ens.dumpers.epub import EPUBDumper
 
@@ -23,7 +23,8 @@ class MOBIDumper(Dumper):
 
     def dump(self):
         self.epub.dump()
-        run('kindlegen.exe', self.tmp_path, '-o', os.path.basename(self.path))
+        #重写这里的run
+        # run('kindlegen.exe', self.tmp_path, '-o', os.path.basename(self.path))
         os.remove(self.tmp_path)
 
 

@@ -2,7 +2,6 @@ import os
 import difflib
 from tempfile import mkstemp
 
-from ens.console import run
 from ens.exceptions import MergeError
 from ens.typing import *
 
@@ -19,7 +18,8 @@ def merge(old, new, ext='.yml') -> str:
 
     # 解除对 path2 的占用，使 smerge 能写入文件
     os.close(fd2)
-    ret = run('smerge/smerge.exe', 'mergetool', path1, path2, '-o', path2)
+    #TODO 重写这里的 merge 方法
+    # ret = run('smerge', 'mergetool', path1, path2, '-o', path2)
 
     with open(path2, encoding='utf-8') as f:
             final = f.read()

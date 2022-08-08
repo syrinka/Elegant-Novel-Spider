@@ -13,7 +13,6 @@ from rich.progress import (
 )
 
 import ens.config as conf
-from ens.paths import APP
 from ens.exceptions import *
 
 
@@ -48,12 +47,6 @@ def log(*obj):
 
 def echo(msg, style: str = None, nl: bool = True):
     console.print(msg, style=style, end='\n' if nl else '')
-
-
-def run(path, *args):
-    path = os.path.join(APP, path)
-    p = subprocess.Popen([path, *args])
-    return p.wait()
 
 
 def edit(text, ext='.txt') -> str:
