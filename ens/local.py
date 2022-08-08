@@ -29,16 +29,24 @@ class LocalStorage(object):
     @raise LocalAlreadyExists 如果通过 Local.init 尝试创建已存在的本地库
     @raise InvalidLocal
     """
-    def __init__(self, code: Code, *, path=None):
-        if path is not None:
-            self.path = path
+    def __init__(self, code: Code=None, path: str=None, init_flag: bool=False):
+        if path:
+            pass
+        elif code:
+            path = join(paths.LOCAL, code)
         else:
-            path = join(paths.LOCAL, *code)
-            if not exists(path):
-                raise LocalNotFound(code)
-            self.path = path
+            raise ENSError()
+
+        if not exists(path):
+            raise LocalNotFound(path)
+        self.path = path
 
         self.db_path = join(path, 'data.db')
+
+        if init_flag:
+            self.write_file('info.yml')
+            self.write_file('catalog.yml')
+            sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
 
         try:
             _info = self.read_file('info.yml')
@@ -46,7 +54,7 @@ class LocalStorage(object):
             _catalog = self.read_file('catalog.yml')
             self.catalog = Catalog.load(_catalog)
         except FileNotFoundError:
-            raise InvalidLocal(code)
+            raise InvalidLocal(path)
 
 
     def read_file(self, file) -> str:
@@ -78,15 +86,7 @@ class LocalStorage(object):
             raise LocalAlreadyExists(code)
         os.mkdir(path)
 
-        info_path = join(path, 'info.yml')
-        catalog_path = join(path, 'catalog.yml')
-        db_path = join(path, 'data.db')
-
-        yaml_dump(Info(code).dump(), info_path)
-
-        # catalog 默认值为空列表
-        open(catalog_path, 'w').write('[]')
-        sqlite3.connect(db_path).cursor().execute(_sql_chap)
+        open(join(path, 'new'), 'w')
 
         return cls(code)
 
@@ -98,10 +98,6 @@ class LocalStorage(object):
         """
         path = join(paths.LOCAL, *code)
         rmtree(path)
-
-
-    def catalog(self) -> Dict:
-        return yaml_load(path=self.catalog_path)
 
 
     def spine(self) -> List[str, str]:
