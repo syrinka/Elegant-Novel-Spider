@@ -3,8 +3,9 @@
 
 ```python
 from ens.remote import Remote
-from ens.typing import Info, Catalog
+from ens.models import Info, Catalog
 from ens.console import log
+from ens.utils.remote import CatalogBuilder
 from ens.exceptions import GetContentFail, FetchError
 
 
@@ -16,14 +17,14 @@ class Template(Remote):
 
 
     def get_catalog(self) -> Catalog:
-        c = Catalog()
+        c = CatalogBuilder()
 
         for vol in get_vols():
             c.vol(vol.name)
             for chap in vol.get_chaps():
                 c.chap(chap.cid, chap.title)
 
-        return c
+        return c.build()
 
 
     def get_content(self, novel, cid: str) -> str:
