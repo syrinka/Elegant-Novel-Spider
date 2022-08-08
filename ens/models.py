@@ -1,6 +1,7 @@
 from __future__ import annotations
 import re
 from dataclasses import dataclass, field, InitVar, asdict
+from collections import namedtuple
 from typing import (
     List, Dict, Tuple,
     Literal, Union
@@ -69,7 +70,8 @@ class Info(object):
 
     def __post_init__(self):
         # 使用 Info.load 载入数据时 novel 字段会成为 Dict 类型，这里修复之
-        self.novel = Novel(**self.novel)
+        if isinstance(self.novel, dict):
+            self.novel = Novel(**self.novel)
 
 
     def dump(self) -> str:
@@ -217,11 +219,13 @@ class DumpMetadata(object):
     path: str
 
 
+Chapter = namedtuple('Chapter', 'cid title')
+
 @dataclass
 class Catalog(object):
     catalog: List[
         Dict[
-            Literal['chaps', 'name'], Union[str, List[Tuple[str, str]]]
+            Literal['chaps', 'name'], Union[str, List[Chapter]]
         ]
     ]
 
@@ -236,8 +240,8 @@ class Catalog(object):
 
 
     @property
-    def spine(self) -> List[Tuple[str, str]]:
-        """(cid, title)"""
+    def spine(self) -> List[Chapter]:
+        """Chapter(cid, title)"""
         if not hasattr(self, '_spine'):
             spine = []
             for vol in self.catalog:
@@ -269,5 +273,6 @@ class Catalog(object):
                 })
             elif i.startswith('. '):
                 m = pattern.match(i)
-                catalog[-1]['cids'].append((m['cid'], m['title']))
-        return catalog
+                catalog[-1]['cids'].append(Chapter(m['cid'], m['title']))
+
+        return cls(catalog)

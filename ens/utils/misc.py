@@ -1,7 +1,7 @@
 import subprocess
 from typing import List, Dict, Iterable
 
-from ens.models import Catalog
+from ens.models import Catalog, Chapter
 
 
 def flatten(catalog: List, index: Dict = None) -> str:
@@ -61,7 +61,7 @@ class CatalogBuilder(object):
 
 
     def chap(self, cid: str, title: str):
-        self.catalog[-1]['chaps'].append((cid, title))
+        self.catalog[-1]['chaps'].append(Chapter(cid, title))
         return self
 
 

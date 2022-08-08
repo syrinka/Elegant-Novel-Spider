@@ -68,13 +68,13 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
             except FetchError as e:
                 echo(e)
                 echo('抓取 Info 失败')
-                # raise Isolated(novel) @TODO
+                #TODO raise Isolated(novel) 
 
             old = local.info.dump()
             new = info.dump()
             merged = merge(old, new)
             info = Info.load(merged)
-            local.set_info(info)
+            local.update_info(info)
 
             echo('Info 更新成功！')
             return
@@ -99,31 +99,31 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
             LocalStorage.remove(novel)
             raise Abort
 
-        local.set_info(info) # 更新信息
+        local.update_info(info) # 更新信息
 
     try:
         with doing('Getting catalog'):
-            cat = remote.get_catalog(novel)
+            new_cat = remote.get_catalog(novel)
     except FetchError:
         raise FetchError('Fail to get catalog.')
 
     # merge catalog
-    local_catalog = local.catalog()
-    if catalog_lose(local_catalog, cat.catalog):
+    old_cat = local.catalog
+    if catalog_lose(old_cat, new_cat):
         echo('[alert]检测到目录发生了减量更新，即将进行手动合并')
         index = local.get_index()
         try:
-            cat.catalog = merge_catalog(local_catalog, cat.catalog, index)
+            new_cat = merge_catalog(old_cat, new_cat)
         except MergeError:
             echo('放弃合并，本次抓取终止')
             raise Abort
 
-    local.set_catalog(cat)
+    local.update_catalog(new_cat)
 
-    cids = [cid for cid in local.spine()]
+    chaps = [chap for chap in new_cat.spine]
     if mode == 'update':
         # 如为 update 模式，则只抓取缺失章节
-        cids = [cid for cid in cids if not local.has_chap(cid)]
+        chaps = [chap for chap in chaps if not local.has_chap(chap.cid)]
 
     def save(local: LocalStorage, cid, content):
         if mode == 'update':
@@ -145,10 +145,10 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
                     echo('[green]合并完成')
                     local.set_chap(cid, content)
 
-    track = Track(cids, 'Fetching')
+    track = Track(chaps, 'Fetching')
     if thread is None:
-        for cid in track:
-            track.update_desc(local.get_title(cid))
+        for chap in track:
+            track.update_desc(chap[1])
 
             try:
                 content = remote.get_content(novel, cid)
