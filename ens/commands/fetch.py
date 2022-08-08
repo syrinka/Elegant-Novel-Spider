@@ -148,34 +148,33 @@ def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thre
     track = Track(chaps, 'Fetching')
     if thread is None:
         for chap in track:
-            track.update_desc(chap[1])
+            track.update_desc(chap.title)
 
             try:
-                content = remote.get_content(novel, cid)
+                content = remote.get_content(novel, chap.cid)
             except FetchError as e:
                 echo(e)
                 continue
 
-            save(local, cid, content)
+            save(local, chap.cid, content)
 
     else:
-        cids = iter(track)
+        chaps = iter(track)
         sync = Lock()
         def worker():
             local = LocalStorage(novel)
             while True:
                 try:
                     with sync:
-                        cid = next(cids)
+                        chap = next(chaps)
 
-                    track.update_desc(local.get_title(cid))
+                    track.update_desc(local.get_title(chap.cid))
                     try:
-                        content = remote.get_content(novel, cid)
+                        content = remote.get_content(novel, chap.cid)
                     except GetContentFail as e:
-                        title = cat.index[e.cid] #@TODO
                         echo(e)
                         continue
-                    save(local, cid, content)
+                    save(local, chap.cid, content)
 
                 except StopIteration:
                     break

@@ -269,10 +269,10 @@ class Catalog(object):
             if i.startswith('# '):
                 catalog.append({
                     'name': i[2:],
-                    'cids': []
+                    'chaps': []
                 })
             elif i.startswith('. '):
                 m = pattern.match(i)
-                catalog[-1]['cids'].append(Chapter(m['cid'], m['title']))
+                catalog[-1]['chaps'].append(Chapter(m['cid'], m['title']))
 
         return cls(catalog)
