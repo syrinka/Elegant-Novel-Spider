@@ -98,14 +98,15 @@ class LocalStorage(object):
 
 
     def unravel(self):
-        Node = namedtuple('Node', 'type cid title')
+        """用于供网页生成有层次的目录"""
+        Node = namedtuple('Node', 'type title index')
         nav = []
+        index = 0
         for vol in self.catalog.catalog:
             nav.append(Node('vol', None, vol['name']))
             for chap in vol['chaps']:
-                nav.append(
-                    Node('chap', chap.cid, chap.title)
-                )
+                nav.append(Node('chap', chap.title, index))
+                index += 1
         return nav
 
 
@@ -142,8 +143,8 @@ class LocalStorage(object):
     def set_chap(self, cid: str, content: str) -> str:
         with self.conn() as (conn, cursor):
             cursor.execute(
-                'UPDATE `data` SET content=? WHERE cid=?',
-                (content.strip(), cid) # 去掉多余的换行
+                'REPLACE INTO `data` VALUES (?, ?)',
+                (cid, content.strip()) # 去掉多余的换行
             )
             conn.commit()
 

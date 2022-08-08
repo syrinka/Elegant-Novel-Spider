@@ -40,23 +40,23 @@ def novel(remote, nid):
     )
 
 
-@api.get('/chap/<remote>/<nid>/<cid>')
-def chap(remote, nid, cid):
+@api.get('/chap/<remote>/<nid>/<int:index>')
+def chap(remote, nid, index):
     local = get_local(remote, nid)
 
     spine = local.catalog.spine
-    pos = spine.index(cid) #TODO fix it
-    prev = spine[pos-1] if pos != 0 else None
-    next = spine[pos+1] if pos != len(spine)-1 else None
+    chap = spine[index]
+    prev = index-1 if index != 0 else None
+    next = index+1 if index != len(spine)-1 else None
 
     try:
-        content = local.get_chap(cid)
+        content = local.get_chap(chap.cid)
     except ChapMissing:
         content = '[内容丢失]'
 
     return render_template('chap.html',
         ntitle = local.info.title,
-        title = local.get_title(cid),
+        title = chap.title,
         content = content,
         path = f'{remote}/{nid}',
         prev = f'/chap/{remote}/{nid}/{prev}' if prev else '',
