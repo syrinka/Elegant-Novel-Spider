@@ -1,8 +1,8 @@
 import click
 
-from ens import echo
+from ens.console import echo
 from ens.remote import Remote, get_remote_list
-from ens.utils.command import arg_remote
+from ens.utils.click import arg_remote
 
 
 @click.group()

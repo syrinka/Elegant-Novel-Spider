@@ -1,10 +1,11 @@
 import click
 
-from ens import echo, Local, get_local_info
+from ens.console import echo
+from ens.local import Local, get_local_info
 from ens.paths import DUMP, join
-from ens.utils.command import arg_code, opt_dumper
 from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
+from ens.utils.click import arg_code, opt_dumper
 
 
 @click.command(short_help='输出')

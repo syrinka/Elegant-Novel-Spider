@@ -1,7 +1,8 @@
 import click
 
-from ens import echo, log, Status
-from ens.utils.command import arg_code, opt_filter, translate_code
+from ens.console import echo, log
+from ens.status import Status
+from ens.utils.click import arg_code, opt_filter, translate_code
 
 
 @click.group()

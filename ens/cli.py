@@ -2,7 +2,7 @@ import click
 
 import ens.config as conf
 from ens.commands import mount
-from ens.utils.command import manual
+from ens.utils.click import manual
 
 
 @manual('ens')

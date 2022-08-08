@@ -1,9 +1,10 @@
 import click
 
-from ens import echo, edit
-from ens import Local, Shelf, get_local_shelf, get_local_info
+from ens.console import echo, edit
+from ens.local import Local, get_local_shelf, get_local_info
+from ens.models import Shelf
 from ens.merge import flatten
-from ens.utils.command import manual, arg_code, opt_filter, opt_pager
+from ens.utils.click import manual, arg_code, opt_filter, opt_pager
 
 
 @manual('ens-local')
