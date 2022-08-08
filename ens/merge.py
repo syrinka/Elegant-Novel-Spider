@@ -2,8 +2,9 @@ import os
 import difflib
 from tempfile import mkstemp
 
-from ens.exceptions import MergeError
 from ens.models import *
+from ens.exceptions import MergeError
+from ens.utils.misc import flatten, unflatten, call, executable_exists
 
 
 def merge(old, new, ext='.yml') -> str:
@@ -18,8 +19,7 @@ def merge(old, new, ext='.yml') -> str:
 
     # 解除对 path2 的占用，使 smerge 能写入文件
     os.close(fd2)
-    #TODO 重写这里的 merge 方法
-    # ret = run('smerge', 'mergetool', path1, path2, '-o', path2)
+    ret = call(['smerge', 'mergetool', path1, path2, '-o', path2])
 
     with open(path2, encoding='utf-8') as f:
             final = f.read()
@@ -32,33 +32,6 @@ def merge(old, new, ext='.yml') -> str:
         return final
     else:
         raise MergeError(f'Return code: {ret}')
-
-
-def flatten(catalog: List, index: Dict = None) -> str:
-    piece = []
-    for vol in catalog:
-        piece.append(f'# {vol["name"]}')
-        for cid in vol['cids']:
-            if index is not None:
-                piece.append(f'. {index.get(cid, "[新章节]")} ({cid})')
-            else:
-                piece.append(f'. {cid}')
-    
-    return '\n'.join(piece) + '\n'
-
-
-def unflatten(s: str) -> List:
-    catalog = []
-    for i in s.split('\n'):
-        if i.startswith('# '):
-            catalog.append({
-                'name': i[2:],
-                'cids': []
-            })
-        elif i.startswith('. '):
-            cid = i.rsplit('(', 1)[1][:-1]
-            catalog[-1]['cids'].append(cid)
-    return catalog
 
 
 def catalog_lose(old, new) -> bool:

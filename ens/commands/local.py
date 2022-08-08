@@ -3,7 +3,7 @@ import click
 from ens.console import echo, edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf
-from ens.merge import flatten
+from ens.utils.misc import flatten
 from ens.utils.click import manual, arg_code, opt_filter, opt_pager
 
 
