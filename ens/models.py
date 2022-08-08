@@ -3,9 +3,10 @@ import re
 from dataclasses import dataclass, field, InitVar, asdict
 from typing import (
     List, Dict, Tuple,
-    Literal, Union, Iterable
+    Literal, Union
 )
 
+import yaml
 import ens.config as conf
 from ens.status import Status
 from ens.exceptions import (
@@ -96,12 +97,13 @@ class Info(object):
         )
 
 
-    def dump(self) -> Dict:
-        return asdict(self)
+    def dump(self) -> str:
+        return yaml.dump(asdict(self), allow_unicode=True, sort_keys=False)
 
 
     @classmethod
-    def load(cls, data: Dict) -> Info:
+    def load(cls, data: str) -> Info:
+        data = yaml.load(data, Loader=yaml.SafeLoader)
         data['code'] = Code((data.pop('remote'), data.pop('nid')))
         return cls(**data)
 
@@ -249,18 +251,41 @@ class DumpMetadata(object):
 class Catalog(object):
     catalog: List[
         Dict[
-            Literal['cids', 'name'], Union[str, List[Iterable[str]]]
+            Literal['chaps', 'name'], Union[str, List[Tuple[str, str]]]
         ]
     ]
 
-    def dump(self):
+    @property
+    def index(self) -> Dict[str, str]:
+        """{cid: title}"""
+        if not hasattr(self, '_index'):
+            index = dict(self.spine)
+            self._index = index
+
+        return self._index
+
+
+    @property
+    def spine(self) -> List[Tuple[str, str]]:
+        """(cid, title)"""
+        if not hasattr(self, '_spine'):
+            spine = []
+            for vol in self.catalog:
+                spine.extend(vol['chaps'])
+            self._spine = spine
+
+        return self._spine
+            
+
+    def dump(self) -> str:
         piece = []
         for vol in self.catalog:
             piece.append(f'# {vol["name"]}')
-            for cid, title in vol['cids']:
+            for cid, title in vol['chaps']:
                 piece.append(f'. {title} ({cid})')
         
         return '\n'.join(piece) + '\n'
+
 
     @classmethod
     def load(cls, data: str):

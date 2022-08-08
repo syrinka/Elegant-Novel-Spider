@@ -6,9 +6,9 @@ from shutil import rmtree
 from collections import namedtuple
 from contextlib import contextmanager
 
+import yaml
 import ens.paths as paths
 import ens.config as conf
-from ens.utils.misc import yaml_load, yaml_dump
 from ens.console import log
 from ens.models import *
 from ens.exceptions import *
@@ -17,7 +17,6 @@ from ens.exceptions import *
 _sql_chap = '''
 CREATE TABLE IF NOT EXISTS `chaps` (
     cid VARCHAR(128),
-    title TEXT,
     content TEXT,
     PRIMARY KEY (cid)
 );'''
@@ -38,16 +37,26 @@ class LocalStorage(object):
             if not exists(path):
                 raise LocalNotFound(code)
             self.path = path
-        
-        self.info_path = join(path, 'info.yml')
-        self.catalog_path = join(path, 'catalog.yml')
+
         self.db_path = join(path, 'data.db')
 
         try:
-            _info = yaml_load(path=self.info_path)
+            _info = self.read_file('info.yml')
             self.info = Info.load(_info)
+            _catalog = self.read_file('catalog.yml')
+            self.catalog = Catalog.load(_catalog)
         except FileNotFoundError:
             raise InvalidLocal(code)
+
+
+    def read_file(self, file) -> str:
+        path = join(self.path, file)
+        return open(path, 'r', encoding='utf-8').read()
+
+    
+    def write_file(self, file, text) -> int:
+        path = join(self.path, file)
+        return open(path, 'w', encoding='utf-8').write(text)
 
     
     @classmethod
@@ -95,7 +104,7 @@ class LocalStorage(object):
         return yaml_load(path=self.catalog_path)
 
 
-    def spine(self) -> List[str]:
+    def spine(self) -> List[str, str]:
         """
         获取目录的脊，由所有 cid 组成
         """
