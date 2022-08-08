@@ -2,7 +2,7 @@ import click
 
 from ens.console import echo, log
 from ens.status import Status
-from ens.utils.click import arg_code, opt_filter, translate_code
+from ens.utils.click import arg_novel, opt_filter, translate_novel
 
 
 @click.group()
@@ -10,13 +10,13 @@ def utils():
     pass
 
 
-@utils.command('code')
-@arg_code
-def func(code):
+@utils.command('novel')
+@arg_novel
+def func(novel):
     """
-    测试 code 的解析结果
+    测试 novel 的解析结果
     """
-    echo(code)
+    echo(novel)
 
 
 @utils.command('filter')

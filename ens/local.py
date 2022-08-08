@@ -29,11 +29,11 @@ class LocalStorage(object):
     @raise LocalAlreadyExists 如果通过 Local.init 尝试创建已存在的本地库
     @raise InvalidLocal
     """
-    def __init__(self, code: Code=None, path: str=None, init_flag: bool=False):
+    def __init__(self, novel: Novel=None, path: str=None, init_flag: bool=False):
         if path:
             pass
-        elif code:
-            path = join(paths.LOCAL, code.remote, code.nid)
+        elif novel:
+            path = join(paths.LOCAL, novel.remote, novel.nid)
         else:
             raise ENSError()
 
@@ -44,7 +44,7 @@ class LocalStorage(object):
         self.db_path = join(path, 'data.db')
 
         if init_flag:
-            self.write_file('info.yml', Info(code).dump())
+            self.write_file('info.yml', Info(novel).dump())
             self.write_file('catalog.yml', '')
             sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
 
@@ -73,28 +73,28 @@ class LocalStorage(object):
 
     
     @classmethod
-    def init(cls, code: Code):
+    def init(cls, novel: Novel):
         """
         初始化一个本地库
         """
-        _path = join(paths.LOCAL, code.remote)
+        _path = join(paths.LOCAL, novel.remote)
         if not exists(_path):
             os.mkdir(_path)
         
-        path = join(paths.LOCAL, code.remote, code.nid)
+        path = join(paths.LOCAL, novel.remote, novel.nid)
         if exists(path):
-            raise LocalAlreadyExists(code)
+            raise LocalAlreadyExists(novel)
         os.mkdir(path)
 
-        return cls(code, init_flag=True)
+        return cls(novel, init_flag=True)
 
 
     @classmethod
-    def remove(cls, code: Code):
+    def remove(cls, novel: Novel):
         """
         删除本地库
         """
-        path = join(paths.LOCAL, *code)
+        path = join(paths.LOCAL, *novel)
         rmtree(path)
 
 
@@ -198,14 +198,14 @@ def get_local_shelf(filter: Filter=None) -> Shelf:
     return shelf
 
 
-def get_local_info(code: Code) -> Info:
-    path = join(paths.LOCAL, code.remote, code.nid, 'info.yml')
+def get_local_info(novel: Novel) -> Info:
+    path = join(paths.LOCAL, novel.remote, novel.nid, 'info.yml')
     try:
         return Info.load(open(path, encoding='utf-8')).read()
     except FileNotFoundError:
-        raise LocalNotFound(code)
+        raise LocalNotFound(novel)
         
 
 if __name__ == '__main__':
-    c = Code('test~123')
+    c = Novel('test~123')
     a = LocalStorage(c)

@@ -4,7 +4,7 @@ from ens.console import echo, edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf
 from ens.utils.misc import flatten
-from ens.utils.click import manual, arg_code, opt_filter, opt_pager
+from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 
 
 @manual('ens-local')
@@ -36,40 +36,40 @@ def func(filter, star, pager):
 
 
 @local.command('remove')
-@arg_code
+@arg_novel
 @click.option('-y', '--yes',
     is_flag = True,
     help = '确定确定确定')
-def func(code, yes):
-    info = get_local_info(code)
+def func(novel, yes):
+    info = get_local_info(novel)
     echo(info.verbose())
     if yes or click.confirm('确定要删除它吗？'):
-        LocalStorage.remove(code)
+        LocalStorage.remove(novel)
         echo('删除成功')
 
 
 @local.command('info')
-@arg_code
-def func(code):
-    info = get_local_info(code)
+@arg_novel
+def func(novel):
+    info = get_local_info(novel)
     echo(info.verbose())
 
 
 @local.command('show-catalog')
-@arg_code
+@arg_novel
 @opt_pager
-def func(code, pager):
-    local = LocalStorage(code)
+def func(novel, pager):
+    local = LocalStorage(novel)
     with pager:
         echo(flatten(local.catalog(), local.get_index()))
 
 
 @local.command('show-content')
-@arg_code
+@arg_novel
 @click.argument('cid')
 @opt_pager
-def func(code, cid, pager):
-    local = LocalStorage(code)
+def func(novel, cid, pager):
+    local = LocalStorage(novel)
     title = local.get_title(cid)
     content = local.get_chap(cid)
     with pager:
@@ -78,10 +78,10 @@ def func(code, cid, pager):
 
 
 @local.command('edit-content')
-@arg_code
+@arg_novel
 @click.argument('cid')
-def func(code, cid):
-    local = LocalStorage(code)
+def func(novel, cid):
+    local = LocalStorage(novel)
     title = local.get_title(cid)
     content = local.get_chap(cid)
     echo(f'Editing: {title}')
@@ -90,32 +90,32 @@ def func(code, cid):
 
 
 @local.command('star')
-@arg_code
-def func(code):
-    local = LocalStorage(code)
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
     local.info.star = True
     local.set_info()
 
 
 @local.command('unstar')
-@arg_code
-def func(code):
-    local = LocalStorage(code)
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
     local.info.star = False
     local.set_info()
 
 
 @local.command('isolate')
-@arg_code
-def func(code):
-    local = LocalStorage(code)
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
     local.info.isolated = True
     local.set_info()
 
 
 @local.command('unisolate')
-@arg_code
-def func(code):
-    local = LocalStorage(code)
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
     local.info.isolated = False
     local.set_info()

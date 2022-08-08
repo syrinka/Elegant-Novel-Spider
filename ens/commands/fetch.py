@@ -4,11 +4,11 @@ from time import sleep
 import click
 
 from ens.console import echo, log, doing, Track
-from ens.models import Code, Info
+from ens.models import Novel, Info
 from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
-from ens.utils.click import arg_code
+from ens.utils.click import arg_novel
 from ens.exceptions import (
     FetchError,
     GetContentFail,
@@ -20,7 +20,7 @@ from ens.exceptions import (
 
 
 @click.command()
-@arg_code
+@arg_novel
 @click.option('--info',
     is_flag = True,
     help = '只更新 info')
@@ -45,7 +45,7 @@ from ens.exceptions import (
     default = None,
     hidden = True,
     help = '同时执行的线程数')
-def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread: int):
+def fetch(novel: Novel, info: bool, mode: str, interval: float, retry: int, thread: int):
     """
     抓取小说
     """
@@ -53,22 +53,22 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
         raise FetchError('暂不支持 mode=diff 与多线程的组合')
 
     try:
-        remote = get_remote(code.remote)()
+        remote = get_remote(novel.remote)()
     except RemoteNotFound:
         raise
 
     try:
-        local = LocalStorage(code)
+        local = LocalStorage(novel)
         echo(local.info)
 
         if info:
             try:
                 with doing('Getting Info'):
-                    info = remote.get_info(code)
+                    info = remote.get_info(novel)
             except FetchError as e:
                 echo(e)
                 echo('抓取 Info 失败')
-                # raise Isolated(code) @TODO
+                # raise Isolated(novel) @TODO
 
             old = yaml_dump(local.info.dump())
             new = yaml_dump(info.dump())
@@ -82,28 +82,28 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
     except LocalNotFound:
         log('local initialize')
 
-        local = LocalStorage.init(code)
+        local = LocalStorage.init(novel)
         try:
             with doing('Getting Info'):
-                info = remote.get_info(code)
+                info = remote.get_info(novel)
         except FetchError as e:
             echo(e)
             echo('[alert]抓取 Info 失败')
             del local
-            LocalStorage.remove(code)
+            LocalStorage.remove(novel)
             raise Abort
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
             del local
-            LocalStorage.remove(code)
+            LocalStorage.remove(novel)
             raise Abort
 
         local.set_info(info) # 更新信息
 
     try:
         with doing('Getting catalog'):
-            cat = remote.get_catalog(code)
+            cat = remote.get_catalog(novel)
     except FetchError:
         raise FetchError('Fail to get catalog.')
 
@@ -151,7 +151,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
             track.update_desc(local.get_title(cid))
 
             try:
-                content = remote.get_content(code, cid)
+                content = remote.get_content(novel, cid)
             except FetchError as e:
                 echo(e)
                 continue
@@ -162,7 +162,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
         cids = iter(track)
         sync = Lock()
         def worker():
-            local = LocalStorage(code)
+            local = LocalStorage(novel)
             while True:
                 try:
                     with sync:
@@ -170,7 +170,7 @@ def fetch(code: Code, info: bool, mode: str, interval: float, retry: int, thread
 
                     track.update_desc(local.get_title(cid))
                     try:
-                        content = remote.get_content(code, cid)
+                        content = remote.get_content(novel, cid)
                     except GetContentFail as e:
                         title = cat.index[e.cid] #@TODO
                         echo(e)

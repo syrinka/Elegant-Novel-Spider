@@ -9,9 +9,9 @@ from ens.exceptions import GetContentFail, FetchError
 
 
 class Template(Remote):
-    def get_info(self, code) -> Info:
+    def get_info(self, novel) -> Info:
         return Info(
-            code, 'title', 'author', 'intro', 'finish'
+            novel, 'title', 'author', 'intro', 'finish'
         )
 
 
@@ -26,7 +26,7 @@ class Template(Remote):
         return c
 
 
-    def get_content(self, code, cid: str) -> str:
+    def get_content(self, novel, cid: str) -> str:
         return 'text'.strip()
 
 ```

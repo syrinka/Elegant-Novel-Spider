@@ -3,7 +3,7 @@ import importlib
 from warnings import warn
 from typing import Type, Dict, List
 
-from ens.models import Code, Info, Catalog
+from ens.models import Novel, Info, Catalog
 from ens.exceptions import RemoteNotFound
 
 
@@ -48,15 +48,15 @@ class Remote(object):
         return status
 
 
-    def get_info(self, code: Code) -> Info:
+    def get_info(self, novel: Novel) -> Info:
         raise NotImplementedError
 
 
-    def get_catalog(self, code: Code) -> Catalog:
+    def get_catalog(self, novel: Novel) -> Catalog:
         raise NotImplementedError
 
 
-    def get_content(self, code: Code, cid: str) -> str:
+    def get_content(self, novel: Novel, cid: str) -> str:
         """
         @raise GetContentFail
         """

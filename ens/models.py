@@ -10,12 +10,12 @@ import yaml
 import ens.config as conf
 from ens.status import Status
 from ens.exceptions import (
-    BadFilterRule, InvalidCode
+    BadFilterRule, InvalidNovel
 )
 
 
 @dataclass
-class Code(object):
+class Novel(object):
     remote: str
     nid: str
 
@@ -43,7 +43,7 @@ class Code(object):
 
 @dataclass
 class Info(object):
-    code: Code
+    novel: Novel
     
     title: str = None
     author: str = None
@@ -61,14 +61,14 @@ class Info(object):
         return '[green]{}[/]  [magenta]@{}[/] ({}) {} {}'.format(
             self.title,
             self.author or '[gray27]anon[/]', # anonymous
-            self.code.__rich__(),
+            self.novel.__rich__(),
             '[gray27]isolated[/]' if self.isolated else '',
             '[bright_yellow]★[/]' if self.star else ''
         )
 
 
     def dump(self) -> str:
-        return yaml.dump(asdict(self), allow_unicode=True, sort_keys=False)
+        return yaml.dump(asdict(self), allow_uninovel=True, sort_keys=False)
 
 
     @classmethod
@@ -177,8 +177,8 @@ class Shelf(object):
 
 
     @property
-    def codes(self) -> List[Code]:
-        return list(n.code for n in self.infos)
+    def novels(self) -> List[Novel]:
+        return list(n.novel for n in self.infos)
 
 
     def filter(self, ffunc: Filter, inplace=False):
@@ -190,7 +190,7 @@ class Shelf(object):
 
     def cache_shelf(self):
         status = Status('sys')
-        status.set('cache-shelf', [str(code) for code in self.codes])
+        status.set('cache-shelf', [str(novel) for novel in self.novels])
         status.save()
 
 

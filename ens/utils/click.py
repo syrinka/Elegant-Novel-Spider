@@ -6,17 +6,17 @@ from ens.console import echo, pager
 from ens.status import Status
 from ens.remote import get_remote
 from ens.dumper import get_dumper
-from ens.models import Code, FilterRule, Filter
+from ens.models import Novel, FilterRule, Filter
 from ens.paths import MANUAL, join
 from ens.exceptions import *
 
 
-def translate_code(code: str) -> str:
-    if code.startswith(conf.CODE_INDEX_INDICATOR):
+def translate_novel(novel: str) -> str:
+    if novel.startswith(conf.CODE_INDEX_INDICATOR):
         try:
-            index = int(code.removeprefix(conf.CODE_INDEX_INDICATOR))
+            index = int(novel.removeprefix(conf.CODE_INDEX_INDICATOR))
         except ValueError:
-            raise InvalidCode(code)
+            raise InvalidNovel(novel)
 
         stat = Status('sys')
         if index == 0 and conf.ZERO_MEANS_LAST:
@@ -29,31 +29,31 @@ def translate_code(code: str) -> str:
             try:
                 return stat['cache-shelf'][index - 1]
             except IndexError:
-                raise BadCodeIndex(index, len(stat['cache-shelf']))
+                raise BadNovelIndex(index, len(stat['cache-shelf']))
             except KeyError:
                 raise StatusError('cache-shelf not exists.')
 
     else:
-        return code
+        return novel
 
 
-def _code_callback(ctx, param, code):
+def _novel_callback(ctx, param, novel):
     format = re.compile(r'([a-zA-Z0-9\-_\.]+)' + conf.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)')
-    code = translate_code(code)
+    novel = translate_novel(novel)
 
-    m = format.match(code)
+    m = format.match(novel)
     if m is None:
-        raise InvalidCode(code)
+        raise InvalidNovel(novel)
 
     stat = Status('sys')
-    stat.set('cache-last', code)
+    stat.set('cache-last', novel)
     stat.save()
-    return Code(m[1], m[2])
+    return Novel(m[1], m[2])
 
 
-arg_code = click.argument('code',
-    metavar = 'CODE',
-    callback = _code_callback
+arg_novel = click.argument('novel',
+    metavar = 'NOVEL',
+    callback = _novel_callback
 )
 
 

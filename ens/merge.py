@@ -32,7 +32,7 @@ def merge(old: str, new: str, ext='.txt') -> str:
     if ret == 0:
         return final
     else:
-        raise MergeError(f'Return code: {ret}')
+        raise MergeError(f'Return novel: {ret}')
 
 
 def catalog_lose(old: Catalog, new: Catalog) -> bool:

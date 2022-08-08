@@ -8,9 +8,9 @@ from ens.exceptions import *
 
 
 def get_local(remote, nid):
-    code = Code((remote, nid))
+    novel = Novel((remote, nid))
     try:
-        return LocalStorage(code)
+        return LocalStorage(novel)
     except LocalNotFound:
         return None
 

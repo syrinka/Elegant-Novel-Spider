@@ -4,7 +4,7 @@ from typing import NewType, Type
 
 
 # dummy type
-Code_ = NewType('Code', Type)
+Novel_ = NewType('Novel', Type)
 
 
 class ENSError(Exception):
@@ -79,12 +79,12 @@ class StatusError(ENSError):
     pass
 
 
-class InvalidCode(ENSError):
-    code_data: Union[str, Tuple]
+class InvalidNovel(ENSError):
+    novel_data: Union[str, Tuple]
 
 
 @dataclass
-class BadCodeIndex(ENSError):
+class BadNovelIndex(ENSError):
     index: int
     max_index: int
     msg = 'Expect 1~[p]{max_index}[/], receive [p]{index}[/]'
@@ -93,7 +93,7 @@ class BadCodeIndex(ENSError):
 @dataclass
 class MergeError(ENSError):
     status: int
-    msg = 'Merge fail, status code [p]{status}[/]'
+    msg = 'Merge fail, status novel [p]{status}[/]'
 
 
 @dataclass

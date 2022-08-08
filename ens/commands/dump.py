@@ -5,11 +5,11 @@ from ens.local import LocalStorage, get_local_info
 from ens.paths import DUMP, join
 from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
-from ens.utils.click import arg_code, opt_dumper
+from ens.utils.click import arg_novel, opt_dumper
 
 
 @click.command(short_help='输出')
-@arg_code
+@arg_novel
 @opt_dumper
 @click.option('-m', '--miss',
     type = click.Choice(['skip', 'stop', 'warn']),
@@ -24,11 +24,11 @@ from ens.utils.click import arg_code, opt_dumper
     help = '输出目标路径',
     default = '{title}{ext}',
     show_default = True)
-def dump(code, dumper, miss, output, **kw):
+def dump(novel, dumper, miss, output, **kw):
     """
     输出小说
     """
-    local = LocalStorage(code)
+    local = LocalStorage(novel)
     output = output.format(
         title = local.info.title,
         author = local.info.author,
@@ -36,7 +36,7 @@ def dump(code, dumper, miss, output, **kw):
     )
 
     meta = DumpMetadata(
-        get_local_info(code),
+        get_local_info(novel),
         local.vol_count(),
         local.chap_count(),
         local.chap_count(),

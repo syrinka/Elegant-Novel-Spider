@@ -52,7 +52,7 @@ function bind_theme_switcher() {
 
 function bind_filter_input() {
     $('#filter').on('keypress', function(e){
-        if (e.keyCode === 13) {
+        if (e.keyNovel === 13) {
             apply_filter()
         }
     })

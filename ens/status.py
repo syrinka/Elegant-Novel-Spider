@@ -55,7 +55,7 @@ class Status(object):
         yaml.dump(
             cls._data,
             open(STATUS, 'w', encoding='utf-8'),
-            allow_unicode = True
+            allow_uninovel = True
         )
 
 
