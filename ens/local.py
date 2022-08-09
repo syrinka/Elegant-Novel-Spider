@@ -97,8 +97,8 @@ class LocalStorage(object):
         nav = []
         index = 0
         for vol in self.catalog.catalog:
-            nav.append(NavPoint('vol', vol['name'], None))
-            for chap in vol['chaps']:
+            nav.append(NavPoint('vol', vol.title, None))
+            for chap in vol.chaps:
                 nav.append(NavPoint('chap', chap.title, index))
                 index += 1
         return nav

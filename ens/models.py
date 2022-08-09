@@ -246,7 +246,7 @@ class Catalog(object):
         if not hasattr(self, '_spine'):
             spine = []
             for vol in self.catalog:
-                spine.extend(vol['chaps'])
+                spine.extend(vol.chaps)
             self._spine = spine
 
         return self._spine
@@ -256,14 +256,15 @@ class Catalog(object):
         piece = []
         for vol in self.catalog:
             piece.append(f'# {vol.title}')
-            for cid, title in vol.chaps:
-                piece.append(f'. {title} ({cid})')
+            for chap in vol.chaps:
+                piece.append(f'. {chap.title} ({chap.cid})')
         
         return '\n'.join(piece) + '\n'
 
 
     @classmethod
     def load(cls, data: str):
+        #TODO 检测是否为合法的输入
         catalog: List[Volume] = []
         pattern = re.compile(r'. (?P<title>.+) \((?P<cid>.+)\)')
         for i in data.strip().split('\n'):
