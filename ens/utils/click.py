@@ -1,6 +1,7 @@
 import re
 import click
 
+from ens import __version__
 from ens.config import config
 from ens.console import echo, pager
 from ens.cache import Cache
@@ -131,9 +132,12 @@ def opt_pager(cmd):
 
 def manual(mpage):
     def wrap(cmd):
+        # hack
         def get_help(ctx):
             path = join(MANUAL, mpage)
-            text = open(path, encoding='utf-8').read()
+            text = open(path, encoding='utf-8').read().format(
+                version=__version__
+            )
             echo(text, nl=False)
 
         cmd.get_help = get_help
