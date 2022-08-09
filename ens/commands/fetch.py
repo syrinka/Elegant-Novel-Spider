@@ -36,9 +36,6 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
     """
     抓取小说
     """
-    if mode=='diff' and thnum is not None:
-        raise FetchError('暂不支持 mode=diff 与多线程的组合')
-
     try:
         remote = get_remote(novel.remote)
     except RemoteNotFound:
@@ -106,6 +103,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
 
     local.update_catalog(new_cat)
     
+    merge_lock = Lock()
     def resolve(chap):
         cid, title = chap
         track.update_desc(title)
@@ -121,6 +119,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
         elif mode == 'diff':
             old = local.get_chap(cid)
             if old != content:
+                merge_lock.acquire()
                 echo(f'检测到章节内容变动：{title} ({cid})')
                 try:
                     content = merge(old, content)
@@ -129,6 +128,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                 else:
                     echo('[green]合并完成')
                     local.set_chap(cid, content)
+                merge_lock.release()
 
     chaps = [chap for chap in new_cat.spine]
     if mode == 'update':
@@ -152,7 +152,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
 
                 try:
                     with sync:
-                        chap = next(chaps)
+                        chap = next(chaps) # 保护生成器线程安全
                     
                     resolve(chap)
 
