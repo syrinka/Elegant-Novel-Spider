@@ -253,6 +253,18 @@ class Catalog(object):
             self._spine = spine
 
         return self._spine
+
+
+    def nav_list(self) -> List[NavPoint]:
+        """用于供网页生成有层次的目录"""
+        nav = []
+        index = 0
+        for vol in self.catalog:
+            nav.append(NavPoint('vol', vol.title, None))
+            for chap in vol.chaps:
+                nav.append(NavPoint('chap', chap.title, index))
+                index += 1
+        return nav
             
 
     def dump(self) -> str:

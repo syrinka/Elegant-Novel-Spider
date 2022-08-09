@@ -36,7 +36,7 @@ def novel(remote, nid):
     
     return render_template('novel.html',
         info = local.info,
-        nav = local.nav_list()
+        nav = local.catalog.nav_list()
     )
 
 
@@ -51,7 +51,7 @@ def chap(remote, nid, index):
 
     try:
         content = local.get_chap(chap.cid)
-    except ChapMissing:
+    except KeyError:
         content = '[内容丢失]'
 
     return render_template('chap.html',
