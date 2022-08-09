@@ -80,13 +80,12 @@ class Track(object):
         self.progress = Progress(
             SpinnerColumn(),
             msg,
-            TimeRemainingColumn(compact=True),
+            TimeRemainingColumn(compact=True, elapsed_when_finished=True),
             BarColumn(),
             '[magenta]{task.percentage:>6.1f}%',
             '{task.description}',
             refresh_per_second = 20,
             console = console,
-            transient = True
         )
         self.jobs = jobs
         self.task_id = self.progress.add_task(desc, total=len(jobs))
