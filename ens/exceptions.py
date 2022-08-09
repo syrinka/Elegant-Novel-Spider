@@ -9,7 +9,7 @@ class ENSError(Exception):
 
     def __rich__(self):
         if self.msg is None:
-            msg = ' '.join(self.args)
+            msg = self.args[0]
         else:
             msg = self.msg.format(*self.args)
         return f'[red]{self.__class__.__name__}[/] {msg}'
