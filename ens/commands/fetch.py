@@ -146,6 +146,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
         chaps = iter(track)
         sync = Lock()
         def worker():
+            nonlocal alive_count
             while True:
                 if interrupt:
                     return
@@ -157,7 +158,8 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                     resolve(chap)
 
                 except StopIteration:
-                    alive_count -= 1
+                    with sync:
+                        alive_count -= 1
                     break
 
         threads = [Thread(target=worker, daemon=True) for i in range(thnum)]
