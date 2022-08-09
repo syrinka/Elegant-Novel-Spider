@@ -39,7 +39,6 @@ class RemoteError(ENSError):
 
 class RemoteNotFound(RemoteError):
     """@param name"""
-    pass
 
 
 class MaybeIsolated(RemoteError):
@@ -49,7 +48,6 @@ class MaybeIsolated(RemoteError):
 # Fetch
 class FetchError(RemoteError):
     """@param reason"""
-    pass
 
 
 class DataNotFound(FetchError):
@@ -65,7 +63,6 @@ class DataNotFound(FetchError):
 
     @param reason
     """
-    pass
 
 
 class RequestError(FetchError):
@@ -85,27 +82,22 @@ class DumpError(ENSError):
 
 class DumperNotFound(DumpError):
     """@param name"""
-    pass
 
 
 # Misc
 class CacheError(ENSError):
     """@param msg"""
-    pass
 
 
 class InvalidNovel(ENSError):
     """@param bad_novel"""
-    pass
 
 
 class ExternalError(ENSError):
     """当调用外部程序失败时
-    @param status
+    @param ret_code
     """
-    msg = 'return code {0}'
 
 
 class BadFilterRule(ENSError):
     """@param rule"""
-    msg = '非法的过滤规则 {0}'
