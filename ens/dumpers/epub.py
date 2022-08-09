@@ -1,11 +1,12 @@
-from collections import OrderedDict
-
 import os
 import zipfile
-
 import uuid
+from collections import OrderedDict
+from typing import Callable
 
+from ens.console import echo
 from ens.dumper import Dumper
+from ens.models import Info, Catalog
 
 
 tpl_mimetype = 'application/epub+zip'
@@ -41,8 +42,8 @@ class Volume(object):
 class EPUBDumper(Dumper):
     ext = '.epub'
 
-    def init(self, meta):
-        self.zip = zipfile.ZipFile(meta.path, 'w')
+    def dump(self, info: Info, catalog: Catalog, get_chap: Callable[[str], str], path: str):
+        self.zip = zipfile.ZipFile(path, 'w')
 
         self.write('mimetype', tpl_mimetype)
         self.write('META-INF', 'container.xml', tpl_container)
@@ -55,7 +56,6 @@ class EPUBDumper(Dumper):
 
         self.uid = uuid.uuid4() # 随机数uuid
 
-        info = meta.info
         self.title = info.title
         self.author = info.author
         self.write('stylesheet.css', default_style)
@@ -64,6 +64,17 @@ class EPUBDumper(Dumper):
         )
         self.spine.append('cover')
         self.manifest['cover'] = 'cover_page.xhtml'
+
+        for nav in catalog.nav_list():
+            if nav.type == 'chap':
+                cid = catalog.spine[nav.index].cid
+                self.chap(nav.title, get_chap(cid))
+            elif nav.type == 'vol':
+                self.vol(nav.title)
+
+        self.write_toc()
+        self.write_content()
+        self.zip.close()
 
 
     def write(self, *args):
@@ -92,13 +103,6 @@ class EPUBDumper(Dumper):
         )
 
 
-    def feed(self, type, data):
-        if type == 'vol':
-            self.vol(data)
-        else:
-            self.chap(data[0], data[1])
-
-
     def chap(self, title, content):
         src_id = 'chap_{:0>4}'.format(self.chapters)
         src_name = 'chap_{:0>4}_page.xhtml'.format(self.chapters)
@@ -116,7 +120,6 @@ class EPUBDumper(Dumper):
 
 
     def vol(self, title):
-
         src_id = 'vol_{:0>4}'.format(self.volumes)
         src_name = 'vol_{:0>4}_page.xhtml'.format(self.volumes)
         self.volumes += 1
@@ -125,17 +128,6 @@ class EPUBDumper(Dumper):
         self.spine.append(src_id)
         self.manifest[src_id] = src_name
         self.push_volume(title)
-
-
-    def dump(self):
-        self.write_toc()
-        self.write_content()
-        self.zip.close()
-
-
-    def abort(self):
-        self.zip.close()
-        os.remove(self.zip.filename)
 
 
     def write_toc(self):
@@ -188,3 +180,6 @@ class EPUBDumper(Dumper):
                 uid = self.uid
             )
         )
+
+
+export = EPUBDumper

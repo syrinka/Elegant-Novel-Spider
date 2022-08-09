@@ -113,12 +113,12 @@ class LocalStorage(object):
         """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
-            content = cursor.fetchone()[0]
+            data = cursor.fetchone()
 
-        if content is None:
+        if data is None:
             raise KeyError
         else:
-            return content
+            return data[0]
 
 
     def set_chap(self, cid: str, content: str) -> str:
