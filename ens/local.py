@@ -121,14 +121,14 @@ class LocalStorage(object):
     def get_chap(self, cid: str) -> str:
         """获取章节文本
         @return chap_content
-        @raise ChapMissing 当本地存储中没有对应章节的数据
+        @raise KeyError 当本地存储中没有对应章节的数据
         """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
             content = cursor.fetchone()[0]
 
         if content is None:
-            raise ChapMissing(cid)
+            raise KeyError
         else:
             return content
 

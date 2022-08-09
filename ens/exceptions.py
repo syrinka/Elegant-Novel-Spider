@@ -32,11 +32,6 @@ class InvalidLocal(LocalError):
     """@param path"""
 
 
-class ChapMissing(LocalError):
-    pass
-
-
-
 # Remote
 class RemoteError(ENSError):
     pass

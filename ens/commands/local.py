@@ -71,7 +71,10 @@ def func(novel, pager):
 def func(novel, cid, pager):
     local = LocalStorage(novel)
     title = local.get_title(cid)
-    content = local.get_chap(cid)
+    try:
+        content = local.get_chap(cid)
+    except KeyError:
+        echo('[alert]章节数据不存在')
     with pager:
         echo(title)
         echo(content)
