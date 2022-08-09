@@ -11,9 +11,11 @@ from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novel, manual
 from ens.exceptions import (
     FetchError,
+    DataNotFound,
     LocalNotFound,
     RemoteNotFound,
     ExternalError,
+    MaybeIsolated,
     Abort
 )
 
@@ -51,8 +53,9 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                     info = remote.get_info(novel)
             except FetchError as e:
                 echo(e)
-                echo('抓取 Info 失败')
-                #TODO raise Isolated(novel) 
+                echo('[alert]抓取 Info 失败')
+                if isinstance(e, DataNotFound):
+                    raise MaybeIsolated()
 
             old = local.info.dump()
             new = info.dump()

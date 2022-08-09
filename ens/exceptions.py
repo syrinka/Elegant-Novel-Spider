@@ -47,10 +47,40 @@ class RemoteNotFound(RemoteError):
     pass
 
 
+class MaybeIsolated(RemoteError):
+    msg = '该小说可能已在远端被删除'
+
+
 # Fetch
 class FetchError(RemoteError):
     """@param reason"""
     pass
+
+
+class DataNotFound(FetchError):
+    """当请求的数据不存在，这可能是由于以下原因
+    
+    - 小说不存在
+    - 小说被删除
+    - 章节不存在
+    - 章节被删除
+    - 章节未审核通过
+
+    当抛出该异常时，将会跳过重试阶段
+
+    @param reason
+    """
+    pass
+
+
+class RequestError(FetchError):
+    """当网络出现异常，这可能是由于以下原因
+
+    - 连接超时
+    - 服务器不可用
+
+    @param reason
+    """
 
 
 # Dumper

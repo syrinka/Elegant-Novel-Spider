@@ -3,6 +3,7 @@ import time
 from ens.remote import Remote
 from ens.models import Catalog, Info
 from ens.utils.remote import CatalogBuilder
+from ens.exceptions import FetchError
 
 
 class Test(Remote):
