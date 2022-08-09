@@ -114,13 +114,13 @@ class LocalStorage(object):
         conn.close()
 
 
-    def has_chap(self, cid: str) -> bool:
+    def has_chap(self, cid: ChapId) -> bool:
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT cid FROM `data` WHERE cid=?', (cid,))
             return cursor.fetchone() is not None
 
 
-    def get_chap(self, cid: str) -> str:
+    def get_chap(self, cid: ChapId) -> str:
         """获取章节文本
         @return chap_content
         @raise ChapMissing 当本地存储中没有对应章节的数据
@@ -135,7 +135,7 @@ class LocalStorage(object):
             return content
 
 
-    def set_chap(self, cid: str, content: str) -> str:
+    def set_chap(self, cid: ChapId, content: str) -> str:
         with self.conn() as (conn, cursor):
             cursor.execute(
                 'REPLACE INTO `data` VALUES (?, ?)',

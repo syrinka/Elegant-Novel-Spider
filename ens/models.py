@@ -1,18 +1,20 @@
 from __future__ import annotations
 import re
 from dataclasses import dataclass, field, InitVar, asdict
-from collections import namedtuple
 from typing import (
-    List, Dict, Tuple,
-    Literal, Union
+    List, Dict, NewType,
+    Literal, Union, Callable,
+    NamedTuple
 )
 
 import yaml
 from ens.config import config
 from ens.cache import Cache
-from ens.exceptions import (
-    BadFilterRule, InvalidNovel
-)
+from ens.exceptions import BadFilterRule
+
+
+ChapId = NewType('ChapId', str)
+Chapter = NamedTuple('Chapter', [('cid', ChapId), ('title', str)])
 
 
 @dataclass
@@ -215,17 +217,6 @@ class Shelf(object):
 
 
 @dataclass
-class DumpMetadata(object):
-    info: Info
-    vol_count: int
-    chap_count: int
-    char_count: int
-    path: str
-
-
-Chapter = namedtuple('Chapter', 'cid title')
-
-@dataclass
 class Catalog(object):
     catalog: List[
         Dict[
@@ -234,7 +225,7 @@ class Catalog(object):
     ]
 
     @property
-    def index(self) -> Dict[str, str]:
+    def index(self) -> Dict[ChapId, str]:
         """{cid: title}"""
         if not hasattr(self, '_index'):
             index = dict(self.spine)
@@ -280,3 +271,18 @@ class Catalog(object):
                 catalog[-1]['chaps'].append(Chapter(m['cid'], m['title']))
 
         return cls(catalog)
+
+
+@dataclass
+class DumpMetadata(object):
+    info: Info
+    catalog: Catalog
+    path: str
+
+
+@dataclass
+class DumperInput(object):
+    info: Info
+    catalog: Catalog
+    get_chap: Callable[[ChapId], str]
+    path: str

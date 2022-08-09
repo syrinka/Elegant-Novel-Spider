@@ -3,12 +3,11 @@ import importlib
 from warnings import warn
 from typing import Type, List, Literal
 
-from ens.models import DumpMetadata
+from ens.models import DumpMetadata, DumperInput
 from ens.exceptions import DumperNotFound
 
 
 class Dumper(object):
-    all_dumpers = dict()
     ext = None
 
 
@@ -29,6 +28,11 @@ class Dumper(object):
 
 
     def abort(self):
+        pass
+
+
+class FullDumper(object):
+    def __init__(self, data: DumperInput):
         pass
 
 

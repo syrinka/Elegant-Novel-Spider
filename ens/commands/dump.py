@@ -1,7 +1,7 @@
 import click
 
 from ens.console import echo
-from ens.local import LocalStorage, get_local_info
+from ens.local import LocalStorage
 from ens.paths import DUMP, join
 from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
@@ -36,10 +36,8 @@ def dump(novel, dumper, miss, output, **kw):
     )
 
     meta = DumpMetadata(
-        get_local_info(novel),
-        local.vol_count(),
-        local.chap_count(),
-        local.chap_count(),
+        local.info,
+        local.catalog,
         join(DUMP, output)
     )
 
