@@ -13,6 +13,17 @@ from ens.cache import Cache
 from ens.exceptions import BadFilterRule
 
 
+def str_presenter(dumper, data):
+    scaler = dumper.represent_scalar(u'tag:yaml.org,2002:str', data)
+    if len(data.splitlines()) >= 2:
+        scaler.style = '|'
+    return scaler
+
+yaml.add_representer(str, str_presenter)
+# to use with safe_dump:
+yaml.representer.SafeRepresenter.add_representer(str, str_presenter)
+
+
 class Chapter(NamedTuple):
     cid: str
     title: str

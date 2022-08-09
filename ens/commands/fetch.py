@@ -25,7 +25,7 @@ from ens.exceptions import (
 @click.option('--fetch-info',
     is_flag = True)
 @click.option('-m', '--mode',
-    type = click.Choice(['update', 'flush', 'diff']),
+    type = click.Choice(['update', 'flush', 'diff', 'patch']),
     default = 'update')
 @click.option('-r', '--retry',
     type = click.IntRange(min=0),
@@ -124,7 +124,13 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
             local.set_chap(cid, content)
 
         elif mode == 'diff':
-            old = local.get_chap(cid)
+            try:
+                old = local.get_chap(cid)
+            except KeyError:
+                # 是新章节，直接保存
+                local.set_chap(cid, content)     
+                return
+
             if old != content:
                 merge_lock.acquire()
                 echo(f'检测到章节内容变动：{title} ({cid})')
@@ -136,6 +142,20 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                     echo('[green]合并完成')
                     local.set_chap(cid, content)
                 merge_lock.release()
+
+        elif mode == 'patch':
+            try:
+                old = local.get_chap(cid)
+            except KeyError:
+                # 是新章节，直接保存
+                local.set_chap(cid, content)     
+                return           
+
+            if old in content:
+                print(chap.title)
+                local.set_chap(cid, content)
+                return
+
 
     chaps = [chap for chap in new_cat.spine]
     if mode == 'update':

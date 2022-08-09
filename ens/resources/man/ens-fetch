@@ -9,8 +9,9 @@ Usage: ens fetch [OPTIONS] NOVEL
   -r, --retry INT   抓取单章时最大尝试次数，为 0 则持续尝试 [3]  [x>=0]
   -t, --thread INT  多线程运行 (beta)
   -m, --mode        行为模式
-                    · [p]update[/] 只抓取缺失章节，跳过已保存的章节 [default]
-                    · [p]flush[/]  抓取全部章节并覆盖 !dangerous!
-                    · [p]diff[/]   抓取全部章节，若是已保存章节，则对比差异
+                    · [p]update[/]    只抓取缺失章节，跳过已保存的章节 [default]
+                    · [p]override[/]  抓取全部章节并覆盖 !dangerous!
+                    · [p]diff[/]      抓取全部章节，若是已保存章节，则对比差异
+                    · [p]patch[/]     抓取全部章节，若是已保存章节且为增量更新，则直接保存
   --fetch-info      从远端抓取小说信息，更新本地信息，然后立即退出
   --help            Show this message and exit.
