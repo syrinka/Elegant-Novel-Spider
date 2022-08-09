@@ -125,7 +125,7 @@ class LocalStorage(object):
         with self.conn() as (conn, cursor):
             cursor.execute(
                 'REPLACE INTO `data` VALUES (?, ?)',
-                (cid, content.strip()) # 去掉多余的换行
+                (cid, content) # 去掉多余的换行
             )
             conn.commit()
 

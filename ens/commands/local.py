@@ -85,7 +85,7 @@ def func(novel, cid, pager):
 @click.argument('cid')
 def func(novel, cid):
     local = LocalStorage(novel)
-    title = local.get_title(cid)
+    title = local.catalog.index[cid]
     content = local.get_chap(cid)
     echo(f'Editing: {title}')
     

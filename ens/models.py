@@ -141,7 +141,10 @@ class FilterRule(object):
 
 
     def __call__(self, info: Info) -> bool:
-        v0 = getattr(info, self.attr)
+        if self.attr == 'remote':
+            v0 = info.novel.remote
+        else:
+            v0 = getattr(info, self.attr)
         v1 = self.value
         return self.compare(v0, v1)
 

@@ -16,7 +16,7 @@ def info(novel, local):
     if local:
         info = get_local_info(novel)
     else:
-        remote = get_remote(novel.remote)()
+        remote = get_remote(novel.remote)
         info = remote.get_info(novel)
 
     echo(info.verbose())
