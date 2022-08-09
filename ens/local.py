@@ -169,21 +169,19 @@ class LocalStorage(object):
         pass
 
 
-def get_local_shelf(filter: Filter=None) -> Shelf:
+def get_local_shelf(filter: Filter=Filter()) -> Shelf:
     shelf = Shelf()
 
     time1 = time.time()
     for remote in os.listdir(paths.LOCAL):
-        if filter:
-            if not filter.remote_in_scope(remote):
-                continue
+        if not filter.is_remote_in_scope(remote):
+            continue
 
         for nid in os.listdir(join(paths.LOCAL, remote)):
             path = join(paths.LOCAL, remote, nid, 'info.yml')
             info = Info.load(open(path, encoding='utf-8').read())
-            if filter:
-                if not filter(info):
-                    continue
+            if not filter(info):
+                continue
             shelf += info
     time2 = time.time()
     log('get local shelf in {:.4f}s'.format(time2 - time1))

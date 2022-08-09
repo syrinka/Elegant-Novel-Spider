@@ -123,7 +123,7 @@ class FilterRule(object):
         if   self.mode == '=':  res = v1 in v0
         elif self.mode == '==': res = v0 == v1
         elif self.mode == '^=': res = v0.startswith(v1)
-        elif self.mode == '@=': res = v0.endswith(v1)
+        elif self.mode == '$=': res = v0.endswith(v1)
         elif self.mode == '*=': res = v1 in v0
         return res ^ self.rev
 
@@ -141,23 +141,27 @@ class FilterRule(object):
 
 @dataclass
 class Filter(object):
-    rules: List[FilterRule]
+    rules: Union[List[FilterRule], None]
     mode: Literal['all', 'any'] = 'all'
 
 
     def __call__(self, info) -> bool:
-        judge = all if self.mode == 'all' else any
-        return judge(rule(info) for rule in self.rules)
+        if self.rules is None:
+            return True
+        else:
+            judge = all if self.mode == 'all' else any
+            return judge(rule(info) for rule in self.rules)
 
     
     def __repr__(self):
         return '\n'.join(str(rule) for rule in self.rules)
 
 
-    def remote_in_scope(self, remote) -> bool:
+    def is_remote_in_scope(self, remote) -> bool:
         """
-        判断某个远端源是否能通过过滤器
-        在 get_local_shelf 时剔除必然被过滤的远端源，加快速度
+        判断某个远端源是否能通过过滤器，若能通过，返回 True
+
+        在 get_local_shelf 时首先剔除必然被过滤的远端源，加快速度
         """
         for rule in self.rules:
             if rule.attr == 'remote':
