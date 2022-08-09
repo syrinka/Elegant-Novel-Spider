@@ -190,7 +190,7 @@ def get_local_shelf(filter: Filter=Filter(None)) -> Shelf:
 def get_local_info(novel: Novel) -> Info:
     path = join(paths.LOCAL, novel.remote, novel.nid, 'info.yml')
     try:
-        return Info.load(open(path, encoding='utf-8')).read()
+        return Info.load(open(path, encoding='utf-8').read())
     except FileNotFoundError:
         raise LocalNotFound(novel)
         
