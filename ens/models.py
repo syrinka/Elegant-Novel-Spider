@@ -278,18 +278,3 @@ class Catalog(object):
                 catalog[-1].chaps.append(Chapter(m['cid'], m['title']))
 
         return cls(catalog)
-
-
-@dataclass
-class DumpMetadata(object):
-    info: Info
-    catalog: Catalog
-    path: str
-
-
-@dataclass
-class DumperInput(object):
-    info: Info
-    catalog: Catalog
-    get_chap: Callable[[str], str]
-    path: str

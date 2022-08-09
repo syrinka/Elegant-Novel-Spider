@@ -40,7 +40,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
         raise FetchError('暂不支持 mode=diff 与多线程的组合')
 
     try:
-        remote = get_remote(novel.remote)()
+        remote = get_remote(novel.remote)
     except RemoteNotFound:
         raise
 

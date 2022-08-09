@@ -1,7 +1,7 @@
 import pkgutil
 import importlib
 from warnings import warn
-from typing import Type, Dict, List
+from typing import Dict, List
 
 from ens.models import Novel, Info, Catalog
 from ens.exceptions import RemoteNotFound
@@ -60,12 +60,12 @@ class Remote(object):
         raise NotImplementedError
 
 
-def get_remote(name) -> Type[Remote]:
-    """获取远程源对应的逻辑类"""
+def get_remote(name) -> Remote:
+    """获取一个 Remote 实例"""
     name = name.replace('-', '_')
     try:
         name = f'ens.remotes.{name}'
-        return importlib.import_module(name).export
+        return importlib.import_module(name).export()
     except ImportError:
         raise RemoteNotFound(name)
 

@@ -3,7 +3,6 @@ import click
 from ens.console import echo
 from ens.local import LocalStorage
 from ens.paths import DUMP, join
-from ens.models import DumpMetadata
 from ens.exceptions import ChapMissing
 from ens.utils.click import arg_novel, opt_dumper
 
@@ -35,35 +34,10 @@ def dump(novel, dumper, miss, output, **kw):
         ext = dumper.ext or ''
     )
 
-    meta = DumpMetadata(
+
+    dumper.dump(
         local.info,
         local.catalog,
-        join(DUMP, output)
+        local.get_chap,
+        output
     )
-
-    dumper = dumper()
-    dumper.init(meta)
-
-    for vol in local.catalog():
-        dumper.feed('vol', vol['name'])
-
-        for cid in vol['cids']:
-            try:
-                title = local.get_title(cid)
-                content = local.get_chap(cid)
-            except ChapMissing:
-                if miss == 'skip':
-                    continue
-
-                elif miss == 'stop':
-                    echo(f'[alert]章节数据缺失[/] {title} ({cid})')
-                    echo('[fatal]输出已中止')
-                    break
-                
-                elif miss == 'warn':
-                    echo(f'[alert]章节数据缺失[/] {title} ({cid})')
-                    continue
-
-            dumper.feed('chap', (title, content))
-
-    dumper.dump()

@@ -1,49 +1,23 @@
 import pkgutil
 import importlib
 from warnings import warn
-from typing import Type, List, Literal
+from typing import List, Dict, Callable
 
-from ens.models import DumpMetadata, DumperInput
+from ens.models import Info, Catalog
 from ens.exceptions import DumperNotFound
 
 
 class Dumper(object):
-    ext = None
+    def dump(self, info: Info, catalog: Catalog, get_chap: Callable[[str], str], path: str):
+        raise NotImplementedError
 
 
-    def init(self, meta: DumpMetadata):
-        pass
-
-
-    def feed(self, type: Literal['vol', 'chap'], data):
-        """
-        vol: str
-        chap: title, content
-        """
-        pass
-
-
-    def dump(self):
-        pass
-
-
-    def abort(self):
-        pass
-
-
-class FullDumper(object):
-    def __init__(self, data: DumperInput):
-        pass
-
-
-def get_dumper(name) -> Type[Dumper]:
-    """
-    获取远程源对应的逻辑类
-    """
+def get_dumper(name) -> Dumper:
+    """获取一个 Dumper 实例"""
     name = name.replace('_', '-')
     try:
         name = f'ens.dumpers.{name}'
-        return importlib.import_module(name).export
+        return importlib.import_module(name).export()
     except ImportError:
         raise DumperNotFound(name)
 
