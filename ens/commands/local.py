@@ -1,6 +1,7 @@
 import click
 
-from ens.console import echo, edit
+from ens.console import echo
+from ens.merge import edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager

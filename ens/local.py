@@ -7,7 +7,6 @@ from collections import namedtuple
 from contextlib import contextmanager
 
 import ens.paths as paths
-from ens.config import config
 from ens.console import log
 from ens.models import *
 from ens.exceptions import *
@@ -169,7 +168,7 @@ class LocalStorage(object):
         pass
 
 
-def get_local_shelf(filter: Filter=Filter()) -> Shelf:
+def get_local_shelf(filter: Filter=Filter(None)) -> Shelf:
     shelf = Shelf()
 
     time1 = time.time()
