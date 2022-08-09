@@ -1,30 +1,27 @@
 import os
+from typing import Callable
 from ens.dumper import Dumper
+from ens.models import Info, Catalog
 
 
 class TXTDumper(Dumper):
     ext = '.txt'
 
-    def init(self, meta):
-        self.path = meta.path
-        self.file = open(meta.path, 'w', encoding='utf-8')
-        self.file.write(meta.info.title + '\n')
+    def dump(self, info: Info, catalog: Catalog, get_chap: Callable[[str], str], path: str):
+        file = open(path, 'w', encoding='utf-8')
+        file.write(info.title + '\n')
+
+        for nav in catalog.nav_list():
+            if nav.type == 'chap':
+                cid = catalog.spine[nav.index].cid
+                file.write('Chap. {}\n{}\n\n'.format(
+                    nav.title,
+                    get_chap(cid)
+                ))
+            elif nav.type == 'vol':
+                file.write('Vol. ' + nav.title + '\n\n')
+
+        file.close()
 
 
-    def feed(self, type, data):
-        if type == 'vol':
-            self.file.write('Vol. ' + data + '\n\n')
-        elif type == 'chap':
-            self.file.write('Chap. {}\n{}\n\n'.format(
-                data[0],
-                data[1].strip()
-            ))
-
-
-    def dump(self):
-        self.file.close()
-
-
-    def abort(self):
-        self.file.close()
-        os.remove(self.path)
+export = TXTDumper
