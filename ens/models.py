@@ -62,12 +62,12 @@ class Info(object):
     author: str = None
     intro: str = None
     finish: bool = None
+    tags: list = field(default_factory=list)
 
     # metadata
     star: bool = False
     isolated: bool = False
     comment: str = None
-    tags: list = field(default_factory=list)
 
 
     def __rich__(self):
