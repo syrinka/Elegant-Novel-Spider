@@ -175,13 +175,16 @@ class Filter(object):
 
         在 get_local_shelf 时首先剔除必然被过滤的远端源，加快速度
         """
-        for rule in self.rules:
-            if rule.attr == 'remote':
-                v0 = rule.value
-                v1 = remote
-                if not rule.compare(v0, v1):
-                    return False
-        return True
+        if self.rules is None:
+            return True
+        else:
+            for rule in self.rules:
+                if rule.attr == 'remote':
+                    v0 = rule.value
+                    v1 = remote
+                    if not rule.compare(v0, v1):
+                        return False
+            return True
 
 
 @dataclass
