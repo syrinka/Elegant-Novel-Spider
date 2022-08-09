@@ -24,6 +24,7 @@ def dump(novel, dumper, output, **kw):
         author = local.info.author,
         ext = dumper.ext or ''
     )
+    output = join(DUMP, output)
 
     dumper.dump(
         local.info,
