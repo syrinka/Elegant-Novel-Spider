@@ -105,23 +105,22 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
             raise Abort
 
     local.update_catalog(new_cat)
+    
+    def resolve(chap):
+        cid, title = chap
+        track.update_desc(title)
+        try:
+            content = remote.get_content(novel, cid)
+        except FetchError as e:
+            echo(e)
+            return
 
-    chaps = [chap for chap in new_cat.spine]
-    if mode == 'update':
-        # 如为 update 模式，则只抓取缺失章节
-        chaps = [chap for chap in chaps if not local.has_chap(chap.cid)]
-
-    def save(cid, content):
-        if mode == 'update':
-            local.set_chap(cid, content)
-
-        elif mode == 'flush':
+        if mode == 'update' or mode == 'flush':
             local.set_chap(cid, content)
 
         elif mode == 'diff':
             old = local.get_chap(cid)
             if old != content:
-                title = local.get_title(cid)
                 echo(f'检测到章节内容变动：{title} ({cid})')
                 try:
                     content = merge(old, content)
@@ -131,18 +130,15 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                     echo('[green]合并完成')
                     local.set_chap(cid, content)
 
+    chaps = [chap for chap in new_cat.spine]
+    if mode == 'update':
+        # 如为 update 模式，则在此处筛去本地已保存章节
+        chaps = [chap for chap in chaps if not local.has_chap(chap.cid)]
+
     track = Track(chaps, 'Fetching')
     if thnum is None:
         for chap in track:
-            track.update_desc(chap.title)
-
-            try:
-                content = remote.get_content(novel, chap.cid)
-            except FetchError as e:
-                echo(e)
-                continue
-
-            save(chap.cid, content)
+            resolve(chap)
 
     else:
         alive_count = thnum
@@ -157,14 +153,8 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                 try:
                     with sync:
                         chap = next(chaps)
-
-                    track.update_desc(chap.title)
-                    try:
-                        content = remote.get_content(novel, chap.cid)
-                    except FetchError as e:
-                        echo(e)
-                        continue
-                    save(chap.cid, content)
+                    
+                    resolve(chap)
 
                 except StopIteration:
                     alive_count -= 1

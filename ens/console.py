@@ -1,7 +1,6 @@
 import os
 import tempfile
 import subprocess
-from threading import Lock
 from contextlib import contextmanager
 from typing import Iterable
 
@@ -89,7 +88,6 @@ class Track(object):
             console = console,
             transient = True
         )
-        self.lock = Lock()
         self.jobs = jobs
         self.task_id = self.progress.add_task(desc, total=len(jobs))
         
@@ -97,8 +95,7 @@ class Track(object):
     def __iter__(self):
         with self.progress:
             for job in self.jobs:
-                with self.lock:
-                    yield job
+                yield job
                 self.progress.advance(self.task_id, advance=1)
 
 
