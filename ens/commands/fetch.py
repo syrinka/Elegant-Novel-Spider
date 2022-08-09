@@ -51,10 +51,11 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                 with doing('Getting Info'):
                     info = remote.get_info(novel)
             except FetchError as e:
-                echo(e)
                 echo('[alert]抓取 Info 失败')
                 if isinstance(e, DataNotFound):
                     raise MaybeIsolated()
+                else:
+                    raise e
 
             old = local.info.dump()
             new = info.dump()
@@ -90,8 +91,12 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
     try:
         with doing('Getting catalog'):
             new_cat = remote.get_catalog(novel)
-    except FetchError:
-        raise FetchError('Fail to get catalog.')
+    except FetchError as e:
+        echo('[alert]抓取 Info 失败')
+        if isinstance(e, DataNotFound):
+            raise MaybeIsolated()
+        else:
+            raise e
 
     # merge catalog
     old_cat = local.catalog
