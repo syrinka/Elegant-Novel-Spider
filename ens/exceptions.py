@@ -114,8 +114,3 @@ class ExternalError(ENSError):
 class BadFilterRule(ENSError):
     """@param rule"""
     msg = '非法的过滤规则 {0}'
-
-
-class Abort(ENSError):
-    """@param reason"""
-    pass

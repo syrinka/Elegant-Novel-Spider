@@ -15,8 +15,7 @@ from ens.exceptions import (
     LocalNotFound,
     RemoteNotFound,
     ExternalError,
-    MaybeIsolated,
-    Abort
+    MaybeIsolated
 )
 
 
@@ -78,13 +77,13 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
             echo('[alert]抓取 Info 失败')
             del local
             LocalStorage.remove(novel)
-            raise Abort
+            raise click.Abort
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
             del local
             LocalStorage.remove(novel)
-            raise Abort
+            raise click.Abort
 
         local.update_info(info) # 更新信息
 
@@ -102,7 +101,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
             new_cat = merge_catalog(old_cat, new_cat)
         except ExternalError:
             echo('放弃合并，本次抓取终止')
-            raise Abort
+            raise click.Abort
 
     local.update_catalog(new_cat)
     
@@ -180,6 +179,6 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
             echo('等待所有线程退出中')
             for th in threads: # 等待线程全部退出
                 th.join()
-            raise Abort
+            raise click.Abort
 
     echo('Done.', style='good')
