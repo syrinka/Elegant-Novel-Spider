@@ -3,7 +3,6 @@ import sqlite3
 import time
 from os.path import join, exists
 from shutil import rmtree
-from collections import namedtuple
 from contextlib import contextmanager
 
 import ens.paths as paths
@@ -79,7 +78,7 @@ class LocalStorage(object):
         
         path = join(paths.LOCAL, novel.remote, novel.nid)
         if exists(path):
-            raise LocalAlreadyExists(novel)
+            raise LocalAlreadyExists(path)
         os.mkdir(path)
 
         return cls(novel, init_flag=True)
@@ -193,8 +192,3 @@ def get_local_info(novel: Novel) -> Info:
         return Info.load(open(path, encoding='utf-8').read())
     except FileNotFoundError:
         raise LocalNotFound(novel)
-        
-
-if __name__ == '__main__':
-    c = Novel('test~123')
-    a = LocalStorage(c)

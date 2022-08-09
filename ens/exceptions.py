@@ -21,15 +21,15 @@ class LocalError(ENSError):
 
 
 class LocalNotFound(LocalError):
-    pass
+    """@param path"""
 
 
 class LocalAlreadyExists(LocalError):
-    pass
+    """@param path"""
 
 
 class InvalidLocal(LocalError):
-    pass
+    """@param path"""
 
 
 class ChapMissing(LocalError):
