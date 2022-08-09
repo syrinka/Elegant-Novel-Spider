@@ -15,6 +15,9 @@ from ens.exceptions import BadFilterRule
 
 ChapId = NewType('ChapId', str)
 Chapter = NamedTuple('Chapter', [('cid', ChapId), ('title', str)])
+NavPoint = NamedTuple('NavPoint', 
+    [('type', Literal['vol', 'chap']), ('title', str), ('index', Union[int, None])]
+)
 
 
 @dataclass

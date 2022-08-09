@@ -36,7 +36,7 @@ def novel(remote, nid):
     
     return render_template('novel.html',
         info = local.info,
-        nav = local.unravel()
+        nav = local.nav_list()
     )
 
 

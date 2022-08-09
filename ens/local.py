@@ -92,15 +92,14 @@ class LocalStorage(object):
         rmtree(path)
 
 
-    def unravel(self):
+    def nav_list(self) -> List[NavPoint]:
         """用于供网页生成有层次的目录"""
-        Node = namedtuple('Node', 'type title index')
         nav = []
         index = 0
         for vol in self.catalog.catalog:
-            nav.append(Node('vol', None, vol['name']))
+            nav.append(NavPoint('vol', vol['name'], None))
             for chap in vol['chaps']:
-                nav.append(Node('chap', chap.title, index))
+                nav.append(NavPoint('chap', chap.title, index))
                 index += 1
         return nav
 
