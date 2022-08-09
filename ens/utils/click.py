@@ -65,7 +65,7 @@ arg_remote = click.argument('remote',
 opt_dumper = click.option('-d', '--dumper',
     default = config.DEFAULT_DUMPER,
     metavar = 'DUMPER',
-    help = '选择输出类型，详见 topic:dump',
+    help = '选择输出类型，详见 docs:dump',
     show_default = True,
     callback = lambda c, p, v: get_dumper(v),
 )
@@ -89,7 +89,7 @@ def opt_filter(cmd):
         metavar = 'RULE',
         multiple = True,
         callback = _filter_callback,
-        help = '根据给定条件进行筛选，详见 topic:filter')(cmd)
+        help = '根据给定条件进行筛选，详见 docs:filter')(cmd)
 
     click.option('-R', '--remote',
         is_eager = True, metavar='VALUE', multiple=True, hidden=True)(cmd)
