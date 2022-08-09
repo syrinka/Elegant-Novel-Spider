@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request, jsonify, render_template, redirect
+from flask import render_template, redirect
 
 from ens.paths import FLASK_PATH
 from ens.models import *

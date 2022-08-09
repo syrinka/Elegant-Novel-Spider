@@ -1,7 +1,6 @@
 import os
 import difflib
 from tempfile import mkstemp
-from typing import List
 
 from ens.models import Catalog
 from ens.exceptions import ExternalError

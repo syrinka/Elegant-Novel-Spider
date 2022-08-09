@@ -1,6 +1,5 @@
 import click
 
-from ens.console import echo
 from ens.local import LocalStorage
 from ens.paths import DUMP, join
 from ens.utils.click import arg_novel, opt_dumper

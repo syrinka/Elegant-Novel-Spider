@@ -1,7 +1,6 @@
 import pkgutil
 import importlib
-from warnings import warn
-from typing import List, Dict, Callable
+from typing import List, Callable
 
 from ens.models import Info, Catalog
 from ens.exceptions import DumperNotFound

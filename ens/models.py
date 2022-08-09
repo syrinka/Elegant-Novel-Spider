@@ -2,8 +2,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field, InitVar, asdict
 from typing import (
-    List, Dict, Callable,
-    Literal, Union, Optional,
+    List, Dict, Literal, 
+    Union, Optional,
     NamedTuple
 )
 

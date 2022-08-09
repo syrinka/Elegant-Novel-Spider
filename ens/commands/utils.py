@@ -1,8 +1,8 @@
 import click
 
-from ens.console import echo, log
+from ens.console import echo
 from ens.cache import Cache
-from ens.utils.click import arg_novel, opt_filter, translate_novel
+from ens.utils.click import arg_novel, opt_filter
 
 
 @click.group()

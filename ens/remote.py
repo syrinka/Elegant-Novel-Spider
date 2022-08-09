@@ -1,6 +1,5 @@
 import pkgutil
 import importlib
-from warnings import warn
 from typing import Dict, List
 
 from ens.models import Novel, Info, Catalog
