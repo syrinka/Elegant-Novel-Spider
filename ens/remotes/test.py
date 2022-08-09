@@ -16,14 +16,14 @@ class Test(Remote):
     def get_catalog(self, novel) -> Catalog:
         c = CatalogBuilder()
         c.vol('第一章')
-        for i in range(10):
+        for i in range(100):
             c.chap(f'{i:0>3}', f'title-[{i}]')
 
         return c.build()
 
 
     def get_content(self, novel, cid: str) -> str:
-        time.sleep(0.1)
+        time.sleep(1)
         return 'YESYESYES' + cid
 
 

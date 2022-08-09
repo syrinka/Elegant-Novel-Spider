@@ -29,14 +29,14 @@ from ens.exceptions import (
 @click.option('-r', '--retry',
     type = click.IntRange(min=0),
     default = 3)
-@click.option('-t', '--thread', # TODO 多线程执行
+@click.option('-t', '--thread', 'thnum', # TODO 多线程执行
     type = click.IntRange(min=2),
     default = None)
-def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
+def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
     """
     抓取小说
     """
-    if mode=='diff' and thread is not None:
+    if mode=='diff' and thnum is not None:
         raise FetchError('暂不支持 mode=diff 与多线程的组合')
 
     try:
@@ -111,7 +111,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
         # 如为 update 模式，则只抓取缺失章节
         chaps = [chap for chap in chaps if not local.has_chap(chap.cid)]
 
-    def save(local: LocalStorage, cid, content):
+    def save(cid, content):
         if mode == 'update':
             local.set_chap(cid, content)
 
@@ -132,7 +132,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
                     local.set_chap(cid, content)
 
     track = Track(chaps, 'Fetching')
-    if thread is None:
+    if thnum is None:
         for chap in track:
             track.update_desc(chap.title)
 
@@ -142,44 +142,49 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
                 echo(e)
                 continue
 
-            save(local, chap.cid, content)
+            save(chap.cid, content)
 
     else:
+        alive_count = thnum
+        interrupt = False
         chaps = iter(track)
         sync = Lock()
         def worker():
-            local = LocalStorage(novel)
             while True:
+                if interrupt:
+                    return
+
                 try:
                     with sync:
                         chap = next(chaps)
 
-                    track.update_desc(local.get_title(chap.cid))
+                    track.update_desc(chap.title)
                     try:
                         content = remote.get_content(novel, chap.cid)
                     except FetchError as e:
                         echo(e)
                         continue
-                    save(local, chap.cid, content)
+                    save(chap.cid, content)
 
                 except StopIteration:
+                    alive_count -= 1
                     break
 
-        threads = [Thread(target=worker) for i in range(thread)]
-        log('{} threads online'.format(thread))
+        threads = [Thread(target=worker, daemon=True) for i in range(thnum)]
+        log('{} threads online'.format(thnum))
 
         try:
             for th in threads:
-                th.setDaemon(True)
                 th.start()
-            while True:
+            while True: # 使用主线程轮询以正确处理 SIGINT 信号
                 sleep(0.5)
-                stat = 0
-                for th in threads:
-                    stat |= th.is_alive()
-                if not stat:
+                if alive_count == 0:
                     break
         except KeyboardInterrupt:
+            interrupt = True # 设置终止 flag
+            echo('等待所有线程退出中')
+            for th in threads: # 等待线程全部退出
+                th.join()
             raise Abort
 
     echo('Done.', style='good')

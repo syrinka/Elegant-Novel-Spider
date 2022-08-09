@@ -1,7 +1,9 @@
 import os
 import tempfile
 import subprocess
+from threading import Lock
 from contextlib import contextmanager
+from typing import Iterable
 
 from rich.console import Console
 from rich.theme import Theme
@@ -75,7 +77,7 @@ class Track(object):
     track = Track(jobs, msg)
 
     """
-    def __init__(self, jobs, msg='Working...', desc=''):
+    def __init__(self, jobs: Iterable, msg='Working...', desc=''):
         self.progress = Progress(
             SpinnerColumn(),
             msg,
@@ -87,6 +89,7 @@ class Track(object):
             console = console,
             transient = True
         )
+        self.lock = Lock()
         self.jobs = jobs
         self.task_id = self.progress.add_task(desc, total=len(jobs))
         
@@ -94,7 +97,8 @@ class Track(object):
     def __iter__(self):
         with self.progress:
             for job in self.jobs:
-                yield job
+                with self.lock:
+                    yield job
                 self.progress.advance(self.task_id, advance=1)
 
 
