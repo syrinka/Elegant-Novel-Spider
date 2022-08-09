@@ -213,7 +213,7 @@ class Shelf(object):
 
     def __rich_console__(self, console, opt):
         for i, info in enumerate(self.infos):
-            yield '#{}  {}'.format(i+1, info.__rich__())
+            yield config.CODE_INDEX_INDICATOR + '{}  {}'.format(i+1, info.__rich__())
 
 
     @property
