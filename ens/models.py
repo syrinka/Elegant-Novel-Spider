@@ -2,8 +2,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field, InitVar, asdict
 from typing import (
-    List, Dict, NewType,
-    Literal, Union, Callable,
+    List, Dict, Callable,
+    Literal, Union, Optional,
     NamedTuple
 )
 
@@ -13,11 +13,18 @@ from ens.cache import Cache
 from ens.exceptions import BadFilterRule
 
 
-ChapId = NewType('ChapId', str)
-Chapter = NamedTuple('Chapter', [('cid', ChapId), ('title', str)])
-NavPoint = NamedTuple('NavPoint', 
-    [('type', Literal['vol', 'chap']), ('title', str), ('index', Union[int, None])]
-)
+class Chapter(NamedTuple):
+    cid: str
+    title: str
+
+class Volume(NamedTuple):
+    title: str
+    chaps: List[Chapter]
+
+class NavPoint(NamedTuple):
+    type: Literal['vol', 'chap']
+    title: str
+    index: Optional[int]
 
 
 @dataclass
@@ -221,14 +228,10 @@ class Shelf(object):
 
 @dataclass
 class Catalog(object):
-    catalog: List[
-        Dict[
-            Literal['chaps', 'name'], Union[str, List[Chapter]]
-        ]
-    ]
+    catalog: List[Volume]
 
     @property
-    def index(self) -> Dict[ChapId, str]:
+    def index(self) -> Dict[str, str]:
         """{cid: title}"""
         if not hasattr(self, '_index'):
             index = dict(self.spine)
@@ -252,8 +255,8 @@ class Catalog(object):
     def dump(self) -> str:
         piece = []
         for vol in self.catalog:
-            piece.append(f'# {vol["name"]}')
-            for cid, title in vol['chaps']:
+            piece.append(f'# {vol.title}')
+            for cid, title in vol.chaps:
                 piece.append(f'. {title} ({cid})')
         
         return '\n'.join(piece) + '\n'
@@ -261,17 +264,14 @@ class Catalog(object):
 
     @classmethod
     def load(cls, data: str):
-        catalog = []
+        catalog: List[Volume] = []
         pattern = re.compile(r'. (?P<title>.+) \((?P<cid>.+)\)')
         for i in data.strip().split('\n'):
             if i.startswith('# '):
-                catalog.append({
-                    'name': i[2:],
-                    'chaps': []
-                })
+                catalog.append(Volume(i[2:], []))
             elif i.startswith('. '):
                 m = pattern.match(i)
-                catalog[-1]['chaps'].append(Chapter(m['cid'], m['title']))
+                catalog[-1].chaps.append(Chapter(m['cid'], m['title']))
 
         return cls(catalog)
 
@@ -287,5 +287,5 @@ class DumpMetadata(object):
 class DumperInput(object):
     info: Info
     catalog: Catalog
-    get_chap: Callable[[ChapId], str]
+    get_chap: Callable[[str], str]
     path: str

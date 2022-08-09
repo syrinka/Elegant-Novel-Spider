@@ -1,4 +1,5 @@
-from ens.models import Catalog, Chapter
+from typing import List
+from ens.models import Catalog, Chapter, Volume
 
 
 class CatalogBuilder(object):
@@ -9,16 +10,16 @@ class CatalogBuilder(object):
     c.chap(...)
     """
     def __init__(self):
-        self.catalog = list()
+        self.catalog: List[Volume] = []
 
 
-    def vol(self, name: str):
-        self.catalog.append({'name': name, 'chaps': []})
+    def vol(self, title: str):
+        self.catalog.append(Volume(title, []))
         return self
 
 
     def chap(self, cid: str, title: str):
-        self.catalog[-1]['chaps'].append(Chapter(cid, title))
+        self.catalog[-1].chaps.append(Chapter(cid, title))
         return self
 
 
