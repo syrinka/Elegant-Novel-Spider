@@ -9,8 +9,8 @@ class Config(BaseSettings):
     EMPTY_RULE_MODE: str = '*='
     DEFAULT_DUMPER: str = 'txt'
 
-    MERGE: str = 'smerge mergetool {old} {new} -o {new}'
-    EDITOR: str = 'notepad {file}'
+    DO_EDIT: str = 'notepad {file}'
+    DO_MERGE: str = 'smerge mergetool {old} {new} -o {new}'
 
     class Config(object):
         env_file = CONFIG

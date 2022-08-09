@@ -1,15 +1,15 @@
 import subprocess
-from typing import List
+from typing import List, Union
 
 
-def call(args: List[str], quiet=False) -> int:
+def call(args: Union[str, List[str]], quiet=False) -> int:
     """调用外部命令"""
-    return subprocess.call(
-        args, 
-        stdout=subprocess.DEVNULL if quiet else None
-    )
+    pipe = subprocess.DEVNULL if quiet else None
+    return subprocess.call(args, stdout=pipe, stderr=pipe)
 
 
-def executable_exists(name: str) -> bool:
+def executable(cmd: str) -> bool:
     """判断外部命令是否存在"""
-    return call(['where', name], True) == 0
+    app = cmd.split(maxsplit=1)[0]
+
+    return call(['where', app], True) == 0

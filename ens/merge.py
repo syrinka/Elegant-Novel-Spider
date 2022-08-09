@@ -2,12 +2,16 @@ import os
 import difflib
 from tempfile import mkstemp
 
+from ens.config import config
+from ens.exceptions import ExternalError, FeatureUnsupport
 from ens.models import Catalog
-from ens.exceptions import ExternalError
-from ens.utils.exec import call, executable_exists
+from ens.utils.exec import call, executable
 
 
 def merge(old: str, new: str, ext='.txt') -> str:
+    if not executable(config.DO_MERGE):
+        raise FeatureUnsupport('merge')
+
     if old == new:
         return new
 
@@ -22,7 +26,7 @@ def merge(old: str, new: str, ext='.txt') -> str:
 
     # 解除对 path2 的占用，使 smerge 能写入文件
     os.close(fd2)
-    ret = call(['smerge', 'mergetool', path1, path2, '-o', path2])
+    ret = call(config.DO_MERGE.format(old=path1, new=path2))
 
     with open(path2, encoding='utf-8') as f:
         final = f.read()
@@ -55,12 +59,15 @@ def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
 
 
 def edit(text, ext='.txt') -> str:
+    if not executable(config.DO_EDIT):
+        raise FeatureUnsupport('edit')
+
     fd, path = mkstemp(ext)
     with open(path, 'w', encoding='utf-8') as f:
         f.write(text)
 
     os.close(fd)
-    ret = call(['notepad', path])
+    ret = call(config.DO_EDIT.format(file=path))
 
     with open(path, encoding='utf-8') as f:
         final = f.read()
