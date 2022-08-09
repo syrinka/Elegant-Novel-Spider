@@ -74,9 +74,11 @@ class InvalidNovel(ENSError):
     pass
 
 
-class MergeError(ENSError):
-    """@param status"""
-    msg = 'Merge fail, return code {0}'
+class ExternalError(ENSError):
+    """当调用外部程序失败时
+    @param status
+    """
+    msg = 'return code {0}'
 
 
 class BadFilterRule(ENSError):

@@ -13,7 +13,7 @@ from ens.exceptions import (
     FetchError,
     LocalNotFound,
     RemoteNotFound,
-    MergeError,
+    ExternalError,
     Abort
 )
 
@@ -100,7 +100,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
         echo('[alert]检测到目录发生了减量更新，即将进行手动合并')
         try:
             new_cat = merge_catalog(old_cat, new_cat)
-        except MergeError:
+        except ExternalError:
             echo('放弃合并，本次抓取终止')
             raise Abort
 
@@ -125,7 +125,7 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thread: int):
                 echo(f'检测到章节内容变动：{title} ({cid})')
                 try:
                     content = merge(old, content)
-                except MergeError:
+                except ExternalError:
                     echo('[yellow]放弃合并，章节内容未变动')
                 else:
                     echo('[green]合并完成')

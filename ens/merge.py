@@ -4,7 +4,7 @@ from tempfile import mkstemp
 from typing import List
 
 from ens.models import Catalog
-from ens.exceptions import MergeError
+from ens.exceptions import ExternalError
 from ens.utils.exec import call, executable_exists
 
 
@@ -35,7 +35,7 @@ def merge(old: str, new: str, ext='.txt') -> str:
     if ret == 0:
         return final
     else:
-        raise MergeError(ret)
+        raise ExternalError(ret)
 
 
 def catalog_lose(old: Catalog, new: Catalog) -> bool:
@@ -55,8 +55,27 @@ def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
     )
 
 
+def edit(text, ext='.txt') -> str:
+    fd, path = mkstemp(ext)
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(text)
+
+    os.close(fd)
+    ret = call(['notepad', path])
+
+    with open(path, encoding='utf-8') as f:
+        final = f.read()
+
+    os.remove(path)
+
+    if ret == 0:
+        return final
+    else:
+        raise ExternalError(ret)
+
+
 if __name__ == '__main__':
-    from ens.utils.exec import CatalogBuilder
+    from ens.utils.remote import CatalogBuilder
 
     c1 = CatalogBuilder().vol('格林在地下城') \
         .chap('1', 'aa').chap('2', 'bb').chap('3', 'cc').build()

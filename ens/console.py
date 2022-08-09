@@ -49,22 +49,6 @@ def echo(msg, style: str = None, nl: bool = True):
     console.print(msg, style=style, end='\n' if nl else '')
 
 
-def edit(text, ext='.txt') -> str:
-    fd, path = tempfile.mkstemp()
-    with open(path, 'w', encoding='utf-8') as f:
-        f.write(text)
-
-    p = subprocess.Popen(['notepad', path])
-    p.wait()
-
-    with open(path, encoding='utf-8') as f:
-        final = f.read()
-
-    os.close(fd)
-    os.remove(path)
-    return final
-
-
 @contextmanager
 def pager(title=None):
     with console.capture() as cap:
