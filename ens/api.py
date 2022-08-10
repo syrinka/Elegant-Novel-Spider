@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, redirect
+from flask import request, render_template, redirect
 
 from ens.paths import FLASK_PATH
 from ens.models import *
@@ -25,8 +25,10 @@ def root():
 
 @api.get('/shelf')
 def shelf():
+    rules = request.args.getlist('f')
+    filter = Filter([FilterRule(rule) for rule in rules])
     return render_template('shelf.html', 
-        shelf = get_local_shelf()
+        shelf = get_local_shelf(filter)
     )
 
 
