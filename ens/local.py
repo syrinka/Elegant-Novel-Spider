@@ -26,7 +26,11 @@ class LocalStorage(object):
     @raise LocalAlreadyExists 如果通过 Local.init 尝试创建已存在的本地库
     @raise InvalidLocal
     """
-    def __init__(self, novel: Novel=None, path: str=None, init_flag: bool=False):
+    def __init__(self,
+        novel: Novel = None,
+        path: str = None,
+        init_flag: Optional[bool] = False
+    ):
         if path:
             pass
         elif novel:
@@ -130,14 +134,14 @@ class LocalStorage(object):
             conn.commit()
 
 
-    def update_info(self, info: Info = None):
+    def update_info(self, info: Optional[Info] = None):
         """更新小说的信息"""
         if info is not None:
             self.info = info
         self.write_file('info.yml', self.info.dump())
 
     
-    def update_catalog(self, catalog: Catalog = None):
+    def update_catalog(self, catalog: Optional[Catalog] = None):
         """更新小说的目录"""
         if catalog is not None:
             self.catalog = catalog
