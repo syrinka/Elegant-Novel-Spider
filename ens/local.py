@@ -158,7 +158,10 @@ class LocalStorage(object):
         pass
 
 
-def get_local_shelf(filter: Filter=Filter(None)) -> Shelf:
+def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
+    if filter is None:
+        filter = Filter(None)
+
     shelf = Shelf()
 
     time1 = time.time()
@@ -172,6 +175,7 @@ def get_local_shelf(filter: Filter=Filter(None)) -> Shelf:
             if not filter(info):
                 continue
             shelf += info
+
     time2 = time.time()
     log('get local shelf in {:.4f}s'.format(time2 - time1))
 

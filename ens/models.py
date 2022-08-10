@@ -167,7 +167,7 @@ class FilterRule(object):
 
 @dataclass
 class Filter(object):
-    rules: Union[List[FilterRule], None]
+    rules: Union[List[FilterRule], None] # 若传入 None，则该过滤器永远返回 True
     mode: Literal['all', 'any'] = 'all'
 
 
