@@ -221,13 +221,6 @@ class Shelf(object):
         return list(n.novel for n in self.infos)
 
 
-    def filter(self, ffunc: Filter, inplace=False):
-        if inplace:
-            self.infos = list(filter(ffunc, self.infos))
-        else:
-            return self.__class__(list(filter(ffunc, self.infos)))
-
-
     def cache_shelf(self):
         cache = Cache('ens')
         cache.set('cache-shelf', [str(novel) for novel in self.novels])
