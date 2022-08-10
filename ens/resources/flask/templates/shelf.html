@@ -9,6 +9,7 @@
 <html>
     <section class="container">
         <article>
+            <input type="text" name="" id="searchbar">
             {% for info in shelf.infos %}
                 <a class="node" href="/novel/{{info.novel.remote}}/{{info.novel.nid}}">{{info.title}}</a>
             {% endfor %}

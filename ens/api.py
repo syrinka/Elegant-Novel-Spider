@@ -15,6 +15,20 @@ def get_local(remote, nid):
         return None
 
 
+def resolve_query(query: str) -> Union[Filter, None]:
+    if query is None:
+        return None
+    rules = []
+    pieces = query.split()
+    for piece in pieces:
+        try:
+            rule = FilterRule(piece)
+        except BadFilterRule:
+            rule = FilterRule('title=' + piece)
+        rules.append(rule)
+    return Filter(rules)
+
+
 api = Flask('api', root_path=FLASK_PATH)
 
 
@@ -25,8 +39,8 @@ def root():
 
 @api.get('/shelf')
 def shelf():
-    rules = request.args.getlist('f')
-    filter = Filter([FilterRule(rule) for rule in rules])
+    query = request.args.get('query')
+    filter = resolve_query(query)
     return render_template('shelf.html', 
         shelf = get_local_shelf(filter)
     )
