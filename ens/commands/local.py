@@ -1,3 +1,4 @@
+import os
 import click
 
 from ens.console import echo
@@ -46,6 +47,13 @@ def func(novel, yes):
     if yes or click.confirm('确定要删除它吗？'):
         LocalStorage.remove(novel)
         echo('删除成功')
+
+
+@local.command('open')
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
+    os.startfile(local.path)
 
 
 @local.command('info')

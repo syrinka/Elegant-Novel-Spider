@@ -6,6 +6,7 @@ Options
 [gold1]Commands[/]
   list    列出所有本地库
   remove  删除本地库
+  open    打开小说数据所在文件夹
   info    查看小说信息
 
 [bright_blue]Modify[/]
