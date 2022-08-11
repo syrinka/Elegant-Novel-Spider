@@ -109,7 +109,7 @@ def func(novel, cid):
 def func(novel):
     local = LocalStorage(novel)
     local.info.star = True
-    local.set_info()
+    local.update_info()
 
 
 @local.command('unstar')
@@ -117,7 +117,7 @@ def func(novel):
 def func(novel):
     local = LocalStorage(novel)
     local.info.star = False
-    local.set_info()
+    local.update_info()
 
 
 @local.command('isolate')
@@ -125,7 +125,7 @@ def func(novel):
 def func(novel):
     local = LocalStorage(novel)
     local.info.isolated = True
-    local.set_info()
+    local.update_info()
 
 
 @local.command('unisolate')
@@ -133,4 +133,4 @@ def func(novel):
 def func(novel):
     local = LocalStorage(novel)
     local.info.isolated = False
-    local.set_info()
+    local.update_info()
