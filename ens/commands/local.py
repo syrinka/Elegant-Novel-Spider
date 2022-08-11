@@ -3,7 +3,7 @@ import click
 from ens.console import echo
 from ens.merge import edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
-from ens.models import Shelf
+from ens.models import Shelf, Info
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 
 
@@ -50,8 +50,12 @@ def func(novel, yes):
 
 @local.command('info')
 @arg_novel
-def func(novel):
+@click.option('-e', '--edit', 'edit_',
+    is_flag=True)
+def func(novel, edit_):
     info = get_local_info(novel)
+    if edit_:
+        info = Info.load(edit(info.dump(), '.yml'))
     echo(info.verbose())
 
 
