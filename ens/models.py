@@ -69,16 +69,16 @@ class Novel(object):
 class Info(object):
     novel: Novel
     
-    title: str = None
-    author: str = None
-    intro: str = None
-    finish: bool = None
-    tags: list = field(default_factory=list)
+    title: str
+    author: str
+    intro: Optional[str] = None
+    finish: Optional[bool] = None
+    tags: List[str] = field(default_factory=list)
 
     # metadata
     star: bool = False
     isolated: bool = False
-    comment: str = None
+    comment: Optional[str] = None
 
 
     def __rich__(self):
