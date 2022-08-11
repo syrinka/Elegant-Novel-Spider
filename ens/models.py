@@ -108,10 +108,16 @@ class Info(object):
 
 
     def verbose(self):
-        return '{}\n\n[cyan]{}[/]'.format(
+        items = [
             self.__rich__(),
-            (self.intro or 'no intro.').strip()
-        )
+            ('[cyan]' + self.intro + '[/]') \
+                if self.intro else None,
+            ' '.join(f'\[{tag}]' for tag in self.tags) \
+                if self.tags else None,
+            ('[purple]' + self.comment  + '[/]') \
+                if self.comment else None
+        ]
+        return '\n\n'.join(item for item in items if item is not None)
 
 
 @dataclass
