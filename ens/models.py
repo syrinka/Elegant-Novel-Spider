@@ -13,6 +13,8 @@ from ens.cache import Cache
 from ens.exceptions import BadFilterRule
 
 
+# hack yaml style
+# turn multi line string into "|" style
 def str_presenter(dumper, data):
     scaler = dumper.represent_scalar(u'tag:yaml.org,2002:str', data)
     if len(data.splitlines()) >= 2:
