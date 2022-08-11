@@ -57,6 +57,12 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
                 else:
                     raise e
 
+            # 同步一些本地独立信息
+            #TODO refactor
+            info.star = local.info.star
+            info.isolated = local.info.isolated
+            info.comment = local.info.comment
+
             old = local.info.dump()
             new = info.dump()
             merged = merge(old, new)
