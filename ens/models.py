@@ -71,8 +71,8 @@ class Novel(object):
 class Info(object):
     novel: Novel
     
-    title: str
-    author: str
+    title: Optional[str] = None
+    author: Optional[str] = None
     intro: Optional[str] = None
     finish: Optional[bool] = None
     tags: List[str] = field(default_factory=list)
