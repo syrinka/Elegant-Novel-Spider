@@ -2,6 +2,7 @@ import os
 import zipfile
 import uuid
 from collections import OrderedDict
+from datetime import datetime
 from typing import Callable
 
 from ens.console import echo
@@ -21,7 +22,7 @@ tpl_volume = '<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.o
 
 tpl_toc = '<?xml version="1.0" encoding="utf-8"?><ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1"><head><meta content="{uid}" name="dtb:uid"/><meta content="-1" name="dtb:depth"/><meta content="0" name="dtb:totalPageCount"/><meta content="0" name="dtb:maxPageNumber"/></head><docTitle><text>{title}</text></docTitle><navMap>{nav}</navMap></ncx>'
 
-tpl_content = '<?xml version="1.0" encoding="utf-8"?><package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookID" version="2.0"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"><dc:title>{title}</dc:title><dc:identifier id="BookID" opf:scheme="UUID">{uid}</dc:identifier><dc:author>{author}</dc:author><dc:subject>ens-dump</dc:subject><dc:language>zh-CN</dc:language><dc:creator>{author}</dc:creator></metadata><manifest><item href="stylesheet.css" id="styleshee" media-type="text/css"/><item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>{manifest}</manifest><spine toc="ncx">{spine}</spine><guide></guide></package>'
+tpl_content = '<?xml version="1.0" encoding="utf-8"?><package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookID" version="2.0"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf"><dc:title>{title}</dc:title><dc:identifier id="BookID" opf:scheme="UUID">{uid}</dc:identifier><dc:author>{author}</dc:author><dc:creator>{author}</dc:creator><dc:description>{intro}</dc:description><source>Elegant Novel Spider</dc:source><dc:language>zh-CN</dc:language><dc:date>{date}</dc:date></metadata><manifest><item href="stylesheet.css" id="styleshee" media-type="text/css"/><item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>{manifest}</manifest><spine toc="ncx">{spine}</spine><guide></guide></package>'
 
 default_style = '''@namespace h "http://www.w3.org/1999/xhtml"; body {display: block; margin: 5pt; page-break-before: always; text-align: justify; } h1, h2, h3 {text-align: center; font-weight: bold; margin-bottom: 1em; margin-left: 0; margin-right: 0; margin-top: 1em; } p {margin-bottom: 1em; margin-left: 0; margin-right: 0; margin-top: 1em; } .author {text-align: right; font-weight: bold; }'''
 
@@ -58,6 +59,7 @@ class EPUBDumper(Dumper):
 
         self.title = info.title
         self.author = info.author
+        self.intro = info.intro
         self.write('stylesheet.css', default_style)
         self.write('text', 'cover_page.xhtml',
             tpl_cover.format(title=info.title, author=info.author)
@@ -175,6 +177,8 @@ class EPUBDumper(Dumper):
             tpl_content.format(
                 title = self.title,
                 author = self.author,
+                intro = self.intro,
+                date = datetime.now().strftime('%Y-%m-%d'),
                 spine = spine,
                 manifest = manifest,
                 uid = self.uid
