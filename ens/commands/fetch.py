@@ -36,7 +36,7 @@ from ens.exceptions import (
     default = None)
 def fetch(novels: List[Novel], **kw):
     """
-    抓取小说
+    爬取小说
     """
     for novel in novels:
         fetch_novel(novel, **kw)
@@ -57,7 +57,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                 with doing('Getting Info'):
                     info = remote.get_info(novel)
             except FetchError as e:
-                echo('[alert]抓取 Info 失败')
+                echo('[alert]爬取 Info 失败')
                 if isinstance(e, DataNotFound):
                     raise MaybeIsolated()
                 else:
@@ -87,13 +87,13 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                 info = remote.get_info(novel)
         except FetchError as e:
             echo(e)
-            echo('[alert]抓取 Info 失败')
+            echo('[alert]爬取 Info 失败')
             del local
             LocalStorage.remove(novel)
             raise click.Abort
         except Exception as e:
             console.print_exception()
-            echo('[alert]抓取 Info 失败，错误未捕获')
+            echo('[alert]爬取 Info 失败，未捕获的异常，请检查爬虫逻辑')
             del local
             LocalStorage.remove(novel)
             raise click.Abort
@@ -110,7 +110,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         with doing('Getting catalog'):
             new_cat = remote.get_catalog(novel)
     except FetchError as e:
-        echo('[alert]抓取 Info 失败')
+        echo('[alert]爬取 Info 失败')
         if isinstance(e, DataNotFound):
             raise MaybeIsolated()
         else:
@@ -123,7 +123,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         try:
             new_cat = merge_catalog(old_cat, new_cat)
         except ExternalError:
-            echo('放弃合并，本次抓取终止')
+            echo('放弃合并，本次爬取终止')
             raise click.Abort
 
     local.update_catalog(new_cat)

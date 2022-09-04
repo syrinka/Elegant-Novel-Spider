@@ -7,7 +7,7 @@ Options
   --help         Show this message and exit.
 
 [gold1]Core[/]
-  fetch   抓取
+  fetch   爬取
   dump    输出
   info    信息
 
