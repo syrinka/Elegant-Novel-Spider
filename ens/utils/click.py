@@ -58,6 +58,13 @@ arg_novel = click.argument('novel',
 )
 
 
+arg_novels = click.argument('novels',
+    metavar = 'NOVEL',
+    nargs = -1,
+    callback = lambda c, p, v: list(_novel_callback(c, p, i) for i in v)
+)
+
+
 arg_remote = click.argument('remote',
     callback = lambda c, p, v: get_remote(v)
 )

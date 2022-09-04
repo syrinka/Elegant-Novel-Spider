@@ -1,4 +1,4 @@
-Usage: ens fetch [OPTIONS] NOVEL
+Usage: ens fetch [OPTIONS] NOVEL...
 
   尝试抓取小说，抓取的数据将保存在本地，供 [p]dump[/] 等命令使用
 

@@ -1,14 +1,15 @@
 from threading import Thread, Lock
 from time import sleep
+from typing import List
 
 import click
 
-from ens.console import echo, log, doing, Track
+from ens.console import console, echo, log, doing, Track
 from ens.models import Novel, Info
 from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
-from ens.utils.click import arg_novel, manual
+from ens.utils.click import arg_novels, manual
 from ens.exceptions import (
     FetchError,
     DataNotFound,
@@ -21,7 +22,7 @@ from ens.exceptions import (
 
 @manual('ens-fetch')
 @click.command()
-@arg_novel
+@arg_novels
 @click.option('--fetch-info',
     is_flag = True)
 @click.option('-m', '--mode',
@@ -33,10 +34,15 @@ from ens.exceptions import (
 @click.option('-t', '--thread', 'thnum', # TODO 多线程执行
     type = click.IntRange(min=2),
     default = None)
-def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
+def fetch(novels: List[Novel], **kw):
     """
     抓取小说
     """
+    for novel in novels:
+        fetch_novel(novel, **kw)
+
+
+def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
     try:
         remote = get_remote(novel.remote)
     except RemoteNotFound:
@@ -82,6 +88,12 @@ def fetch(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
         except FetchError as e:
             echo(e)
             echo('[alert]抓取 Info 失败')
+            del local
+            LocalStorage.remove(novel)
+            raise click.Abort
+        except Exception as e:
+            console.print_exception()
+            echo('[alert]抓取 Info 失败，错误未捕获')
             del local
             LocalStorage.remove(novel)
             raise click.Abort
