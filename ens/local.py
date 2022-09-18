@@ -208,6 +208,8 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 
     time1 = time.time()
     for remote in os.listdir(paths.LOCAL):
+        if not os.path.isdir(os.path.join(paths.LOCAL, remote)):
+            continue
         if not filter.is_remote_in_scope(remote):
             continue
 
