@@ -13,23 +13,22 @@ _dependencies = {
 
 
 class Remote(object):
-    """
-    与远程源进行交互的逻辑类
-    远程源应继承此类并重写若干函数
+    """远程源
+
+    新的远程源应继承此类并重写若干函数
+
+    Class methods:
+        status: 获取该远程源支持的功能
     """
     @classmethod
     def _is_overrided(cls, funcname: str) -> bool:
-        """
-        判断函数是否被重写
-        """
+        """判断函数是否被重写"""
         return funcname in cls.__dict__
 
 
     @classmethod
-    def status(cls) -> Dict:
-        """
-        判断能否支持某个功能
-        """
+    def status(cls) -> Dict[str, bool]:
+        """获取该远程源支持的功能"""
         status = {}
         for feat, deps in _dependencies.items():
             status[feat] = all(
@@ -40,21 +39,24 @@ class Remote(object):
 
     def get_info(self, novel: Novel) -> Info:
         """
-        @raise FetchError
+        Raises:
+            FetchError
         """
         raise NotImplementedError
 
 
     def get_catalog(self, novel: Novel) -> Catalog:
         """
-        @raise FetchError
+        Raises:
+            FetchError
         """
         raise NotImplementedError
 
 
     def get_content(self, novel: Novel, cid: str) -> str:
         """
-        @raise FetchError
+        Raises:
+            FetchError
         """
         raise NotImplementedError
 
