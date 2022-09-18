@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `data` (
 );'''
 
 
-class LocalStorage(object):
+class LocalCache(object):
     """
     本地库
     @raise LocalNotFound 如果本地库不存在
