@@ -24,7 +24,7 @@ class LocalCache(object):
     def __init__(self,
         novel: Novel = None, *,
         path: str = None,
-        init_flag: Optional[bool] = False
+        new: Optional[bool] = False
     ):
         """
         Args:
@@ -47,7 +47,7 @@ class LocalCache(object):
 
         self.db_path = join(path, 'data.db')
 
-        if init_flag:
+        if new:
             self.write_file('info.yml', Info(novel).dump())
             self.write_file('catalog.yml', '')
             sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
@@ -77,7 +77,7 @@ class LocalCache(object):
 
 
     @classmethod
-    def init(cls, novel: Novel):
+    def new(cls, novel: Novel):
         """初始化一个本地缓存"""
         _path = join(paths.LOCAL, novel.remote)
         if not exists(_path):
@@ -88,7 +88,7 @@ class LocalCache(object):
             raise LocalAlreadyExists(path)
         os.mkdir(path)
 
-        return cls(novel, init_flag=True)
+        return cls(novel, new=True)
 
 
     @classmethod

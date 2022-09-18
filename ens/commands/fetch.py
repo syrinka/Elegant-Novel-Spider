@@ -81,7 +81,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
     except LocalNotFound:
         log('local initialize')
 
-        local = LocalCache.init(novel)
+        local = LocalCache.new(novel)
         try:
             with doing('Getting Info'):
                 info = remote.get_info(novel)
