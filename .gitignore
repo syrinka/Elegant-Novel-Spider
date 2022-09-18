@@ -1,9 +1,7 @@
 **/__pycache__/
-
 .venv
-
-/local/
-/dump/
+/local/*
+/dump/*
 /.ens.*
-
 poetry.lock
+!.gitkeep
