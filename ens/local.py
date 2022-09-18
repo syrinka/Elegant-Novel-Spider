@@ -20,7 +20,20 @@ CREATE TABLE IF NOT EXISTS `data` (
 
 
 class LocalCache(object):
-    """本地缓存"""
+    """本地缓存
+
+    Attributes:
+        path (str): 缓存路径
+        info (Info): 小说信息
+        catalog (Catalog): 小说目录
+
+    Class methods:
+        from_path: 从文件路径打开本地缓存
+        new: 创建一个本地缓存
+
+    Static methods:
+        remove: 删除本地缓存
+    """
     def __init__(self,
         novel: Novel = None, *,
         path: str = None,
@@ -78,7 +91,7 @@ class LocalCache(object):
 
     @classmethod
     def new(cls, novel: Novel):
-        """初始化一个本地缓存"""
+        """创建一个本地缓存"""
         _path = join(paths.LOCAL, novel.remote)
         if not exists(_path):
             os.mkdir(_path)
@@ -108,15 +121,28 @@ class LocalCache(object):
 
 
     def has_chap(self, cid: str) -> bool:
+        """
+        Args:
+            cid (str): chapter ID
+
+        Returns:
+            has (bool): True if has chapter
+        """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT cid FROM `data` WHERE cid=?', (cid,))
             return cursor.fetchone() is not None
 
 
     def get_chap(self, cid: str) -> str:
-        """获取章节文本
-        @return chap_content
-        @raise KeyError 当本地存储中没有对应章节的数据
+        """
+        Args:
+            cid (str): chapter ID
+
+        Returns:
+            content (str): chapter content
+
+        Raises:
+            KeyError: 当缓存中没有对应章节的数据
         """
         with self.conn() as (conn, cursor):
             cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
@@ -128,7 +154,12 @@ class LocalCache(object):
             return data[0]
 
 
-    def set_chap(self, cid: str, content: str) -> str:
+    def set_chap(self, cid: str, content: str):
+        """
+        Args:
+            cid (str): chapter ID
+            content (str): chapter content
+        """
         with self.conn() as (conn, cursor):
             cursor.execute(
                 'REPLACE INTO `data` VALUES (?, ?)',
@@ -138,14 +169,22 @@ class LocalCache(object):
 
 
     def update_info(self, info: Optional[Info] = None):
-        """更新小说的信息"""
+        """更新小说的信息，并写入缓存
+        
+        Args:
+            info (Info, optional)
+        """
         if info is not None:
             self.info = info
         self.write_file('info.yml', self.info.dump())
 
     
     def update_catalog(self, catalog: Optional[Catalog] = None):
-        """更新小说的目录"""
+        """更新小说的目录
+        
+        Args:
+            info (Catalog, optional)
+        """
         if catalog is not None:
             self.catalog = catalog
         self.write_file('catalog.yml', self.catalog.dump())
