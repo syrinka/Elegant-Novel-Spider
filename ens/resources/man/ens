@@ -12,7 +12,7 @@ Options
   info    信息
 
 [bright_blue]Management[/]
-  local   本地库
+  local   本地缓存
   remote  远程源
   dumper  输出类型
 

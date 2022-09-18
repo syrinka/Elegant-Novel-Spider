@@ -12,7 +12,7 @@ from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 @click.group()
 def local():
     """
-    本地库 (Local) 管理
+    本地缓存 (Local) 管理
     """
     pass
 
@@ -25,7 +25,7 @@ def local():
 @opt_pager
 def func(filter, star, pager):
     """
-    列出所有本地库
+    列出所有本地缓存
     """
     shelf = get_local_shelf(filter)
     if star:

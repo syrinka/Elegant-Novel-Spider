@@ -20,17 +20,20 @@ CREATE TABLE IF NOT EXISTS `data` (
 
 
 class LocalCache(object):
-    """
-    本地库
-    @raise LocalNotFound 如果本地库不存在
-    @raise LocalAlreadyExists 如果通过 Local.init 尝试创建已存在的本地库
-    @raise InvalidLocal
-    """
+    """本地缓存"""
     def __init__(self,
-        novel: Novel = None,
+        novel: Novel = None, *,
         path: str = None,
         init_flag: Optional[bool] = False
     ):
+        """
+        Args:
+            novel
+
+        Raises:
+            LocalNotFound: 指定本地缓存不存在
+            InvalidLocal: 文件缺失或损坏
+        """
         if path:
             pass
         elif novel:
@@ -72,10 +75,10 @@ class LocalCache(object):
     def from_path(cls, path):
         return cls(path=path)
 
-    
+
     @classmethod
     def init(cls, novel: Novel):
-        """初始化一个本地库"""
+        """初始化一个本地缓存"""
         _path = join(paths.LOCAL, novel.remote)
         if not exists(_path):
             os.mkdir(_path)
@@ -90,7 +93,7 @@ class LocalCache(object):
 
     @classmethod
     def remove(cls, novel: Novel):
-        """删除本地库"""
+        """删除本地缓存"""
         path = join(paths.LOCAL, *novel)
         rmtree(path)
 
