@@ -50,7 +50,17 @@ class FetchError(RemoteError):
     """@param reason"""
 
 
-class DataNotFound(FetchError):
+class RequestError(FetchError):
+    """当网络出现异常，这可能是由于以下原因
+
+    - 连接超时
+    - 服务器不可用
+
+    @param reason
+    """
+
+
+class SourceNotFound(FetchError):
     """当请求的数据不存在，这可能是由于以下原因
     
     - 小说不存在
@@ -59,17 +69,7 @@ class DataNotFound(FetchError):
     - 章节被删除
     - 章节未审核通过
 
-    当抛出该异常时，将会跳过重试阶段
-
-    @param reason
-    """
-
-
-class RequestError(FetchError):
-    """当网络出现异常，这可能是由于以下原因
-
-    - 连接超时
-    - 服务器不可用
+    当抛出该异常时，将不再重试
 
     @param reason
     """

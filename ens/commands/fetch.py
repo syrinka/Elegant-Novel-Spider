@@ -12,7 +12,7 @@ from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novels, manual
 from ens.exceptions import (
     FetchError,
-    DataNotFound,
+    SourceNotFound,
     LocalNotFound,
     RemoteNotFound,
     ExternalError,
@@ -58,7 +58,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                     info = remote.get_info(novel)
             except FetchError as e:
                 echo('[alert]爬取 Info 失败')
-                if isinstance(e, DataNotFound):
+                if isinstance(e, SourceNotFound):
                     raise MaybeIsolated()
                 else:
                     raise e
@@ -111,7 +111,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             new_cat = remote.get_catalog(novel)
     except FetchError as e:
         echo('[alert]爬取 Info 失败')
-        if isinstance(e, DataNotFound):
+        if isinstance(e, SourceNotFound):
             raise MaybeIsolated()
         else:
             raise e
