@@ -13,11 +13,13 @@ from ens.exceptions import *
 
 
 def translate_novel(novel: str) -> str:
+    """
+    Raises:
+        ValueError: illegal
+    """
     if novel.startswith(config.CODE_INDEX_INDICATOR):
-        try:
-            index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
-        except ValueError:
-            raise InvalidNovel(novel)
+        # may raise ValueError
+        index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
 
         cache = Cache('ens')
         if index == 0:
@@ -44,7 +46,7 @@ def _novel_callback(ctx, param, novel):
 
     m = format.match(novel)
     if m is None:
-        raise InvalidNovel(novel)
+        raise ValueError(novel)
 
     cache = Cache('ens')
     cache.set('cache-last', novel)

@@ -89,15 +89,10 @@ class CacheError(ENSError):
     """@param msg"""
 
 
-class InvalidNovel(ENSError):
-    """@param bad_novel"""
-
-
 class ExternalError(ENSError):
     """当调用外部程序失败时
     @param ret_code
     """
-
 
 class FeatureUnsupport(ENSError):
     """@param feature"""
