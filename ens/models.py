@@ -10,7 +10,6 @@ from typing import (
 import yaml
 from ens.config import config
 from ens.cache import Cache
-from ens.exceptions import BadFilterRule
 
 
 # hack yaml style
@@ -125,7 +124,8 @@ class Info(object):
 @dataclass
 class FilterRule(object):
     """
-    @raise BadFilterRule
+    Raises:
+        ValueError: illegal rule expression
     """
     _rule_format = re.compile(
         r'(?P<attr>(?:remote)|(?:author)|(?:title)|(?:intro))'
@@ -143,7 +143,7 @@ class FilterRule(object):
     def __post_init__(self, rule_str):
         rule = self._rule_format.match(rule_str)
         if rule is None:
-            raise BadFilterRule(rule_str)
+            raise ValueError(rule_str)
         self.attr = rule['attr']
         self.mode = rule['mode'] or config.EMPTY_RULE_MODE
         self.value = rule['value']

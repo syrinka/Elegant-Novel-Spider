@@ -99,9 +99,5 @@ class ExternalError(ENSError):
     """
 
 
-class BadFilterRule(ENSError):
-    """@param rule"""
-
-
 class FeatureUnsupport(ENSError):
     """@param feature"""

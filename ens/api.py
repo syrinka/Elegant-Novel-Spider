@@ -23,7 +23,7 @@ def resolve_query(query: str) -> Union[Filter, None]:
     for piece in pieces:
         try:
             rule = FilterRule(piece)
-        except BadFilterRule:
+        except ValueError:
             rule = FilterRule('title=' + piece)
         rules.append(rule)
     return Filter(rules)
