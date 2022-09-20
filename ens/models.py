@@ -9,7 +9,7 @@ from typing import (
 
 import yaml
 from ens.config import config
-from ens.cache import Cache
+from ens.state import State
 
 
 # hack yaml style
@@ -230,9 +230,9 @@ class Shelf(object):
 
 
     def cache_shelf(self):
-        cache = Cache('ens')
-        cache.set('cache-shelf', [str(novel) for novel in self.novels])
-        cache.save()
+        state = State('ens')
+        state.set('cache-shelf', [str(novel) for novel in self.novels])
+        state.save()
 
 
     def dump(self):

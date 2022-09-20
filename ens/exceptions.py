@@ -85,7 +85,7 @@ class DumperNotFound(DumpError):
 
 
 # Misc
-class CacheError(ENSError):
+class StateError(ENSError):
     """@param msg"""
 
 

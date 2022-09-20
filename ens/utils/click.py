@@ -4,7 +4,7 @@ import click
 from ens import __version__
 from ens.config import config
 from ens.console import echo, pager
-from ens.cache import Cache
+from ens.state import State
 from ens.remote import get_remote
 from ens.dumper import get_dumper
 from ens.models import Novel, FilterRule, Filter
@@ -21,20 +21,20 @@ def translate_novel(novel: str) -> str:
         # may raise ValueError
         index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
 
-        cache = Cache('ens')
+        state = State('ens')
         if index == 0:
             try:
-                return cache['cache-last']
+                return state['cache-last']
             except KeyError:
-                raise CacheError('cache-last not exists.')
+                raise StateError('cache-last not exists.')
                 
         else:
             try:
-                return cache['cache-shelf'][index - 1]
+                return state['cache-shelf'][index - 1]
             except IndexError:
-                raise CacheError(f'Cache index out of range, max index {len(cache["cache-shelf"])-1}')
+                raise StateError(f'Cache index out of range, max index {len(state["cache-shelf"])-1}')
             except KeyError:
-                raise CacheError('cache-shelf not exists.')
+                raise StateError('cache-shelf not exists.')
 
     else:
         return novel
@@ -48,9 +48,9 @@ def _novel_callback(ctx, param, novel):
     if m is None:
         raise ValueError(novel)
 
-    cache = Cache('ens')
-    cache.set('cache-last', novel)
-    cache.save()
+    state = State('ens')
+    state.set('cache-last', novel)
+    state.save()
     return Novel(m[1], m[2])
 
 

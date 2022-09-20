@@ -2,7 +2,7 @@ import click
 
 from ens.console import echo
 from ens.merge import merge, edit
-from ens.cache import Cache
+from ens.state import State
 from ens.utils.click import arg_novel, opt_filter
 
 

@@ -1,9 +1,9 @@
 import yaml
 
-from ens.paths import CACHE
+from ens.paths import STATE
 
 
-class Cache(object):
+class State(object):
     _data = None
 
     def __init__(self, scope):
@@ -13,11 +13,11 @@ class Cache(object):
             try:
                 # 将数据写入类中，确保所有实例访问的是相同的 status data
                 self.__class__._data = yaml.load(
-                    open(CACHE, encoding='utf-8'),
+                    open(STATE, encoding='utf-8'),
                     Loader = yaml.SafeLoader
                 ) or dict()
             except FileNotFoundError:
-                open(CACHE, 'w', encoding='utf-8') # create file
+                open(STATE, 'w', encoding='utf-8') # create file
                 self.__class__._data = dict()
 
 
@@ -54,6 +54,6 @@ class Cache(object):
     def save(cls):
         yaml.dump(
             cls._data,
-            open(CACHE, 'w', encoding='utf-8'),
+            open(STATE, 'w', encoding='utf-8'),
             allow_unicode = True
         )
