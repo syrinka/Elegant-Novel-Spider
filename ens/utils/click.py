@@ -24,17 +24,17 @@ def translate_novel(novel: str) -> str:
         state = State('ens')
         if index == 0:
             try:
-                return state['cache-last']
+                return state['last']
             except KeyError:
-                raise StateError('cache-last not exists.')
+                raise StateError('last not exists.')
                 
         else:
             try:
-                return state['cache-shelf'][index - 1]
+                return state['list'][index - 1]
             except IndexError:
-                raise StateError(f'Cache index out of range, max index {len(state["cache-shelf"])-1}')
+                raise StateError(f'Cache index out of range, max index {len(state["list"])-1}')
             except KeyError:
-                raise StateError('cache-shelf not exists.')
+                raise StateError('list not exists.')
 
     else:
         return novel
@@ -49,7 +49,7 @@ def _novel_callback(ctx, param, novel):
         raise ValueError(novel)
 
     state = State('ens')
-    state.set('cache-last', novel)
+    state.set('last', novel)
     state.save()
     return Novel(m[1], m[2])
 

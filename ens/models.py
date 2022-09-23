@@ -231,7 +231,7 @@ class Shelf(object):
 
     def cache_shelf(self):
         state = State('ens')
-        state.set('cache-shelf', [str(novel) for novel in self.novels])
+        state.set('list', [str(novel) for novel in self.novels])
         state.save()
 
 
