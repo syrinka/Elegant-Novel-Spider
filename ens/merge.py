@@ -9,7 +9,7 @@ from ens.utils.exec import call, executable
 
 
 def merge(old: str, new: str, ext='.txt') -> str:
-    if not executable(config.DO_MERGE):
+    if not executable(config.DO_MERGE or ''):
         raise FeatureUnsupport('merge')
 
     if old == new:
@@ -59,7 +59,7 @@ def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
 
 
 def edit(text, ext='.txt') -> str:
-    if not executable(config.DO_EDIT):
+    if not executable(config.DO_EDIT or ''):
         raise FeatureUnsupport('edit')
 
     fd, path = mkstemp(ext)
