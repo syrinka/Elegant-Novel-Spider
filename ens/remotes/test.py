@@ -1,7 +1,7 @@
 import time
 
 from ens.remote import Remote
-from ens.models import Info, Catalog
+from ens.models import Info_ as Info, Catalog
 from ens.utils.remote import CatalogBuilder
 from ens.exceptions import FetchError
 

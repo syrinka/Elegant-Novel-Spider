@@ -122,6 +122,17 @@ class Info(object):
 
 
 @dataclass
+class Info_(object):
+    """Info directly returned from `get_info()`
+    """
+    title: Optional[str] = None
+    author: Optional[str] = None
+    intro: Optional[str] = None
+    finish: Optional[bool] = None
+    tags: List[str] = field(default_factory=list)
+
+
+@dataclass
 class FilterRule(object):
     """
     Raises:

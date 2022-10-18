@@ -1,9 +1,10 @@
 import pkgutil
 import importlib
-from typing import Dict, List, Type
+from dataclasses import asdict
+from typing import Dict, Type
 
 from ens.console import log
-from ens.models import Novel, Info, Catalog
+from ens.models import Novel, Info, Info_, Catalog
 from ens.exceptions import RemoteNotFound
 
 
@@ -21,6 +22,18 @@ class Remote(object):
     Class methods:
         status: 获取该远程源支持的功能
     """
+    def __init_subclass__(cls) -> None:
+        """patch `get_info()`
+
+        from `(self, str) -> Info_` to `(self, Novel) -> Info`
+        """
+        cls._get_info = cls.get_info
+        def patch(self, novel) -> Info:
+            info_ = self._get_info(novel.nid)
+            return Info(novel, **asdict(info_))
+        cls.get_info = patch
+
+
     @classmethod
     def _is_overrided(cls, funcname: str) -> bool:
         """判断函数是否被重写"""
@@ -38,7 +51,7 @@ class Remote(object):
         return status
 
 
-    def get_info(self, nid: str) -> Info:
+    def get_info(self, novel: Novel) -> Info:
         """
         Raises:
             FetchError
