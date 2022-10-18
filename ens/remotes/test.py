@@ -28,4 +28,4 @@ class Test(Remote):
         return 'YESYESYES' + cid
 
 
-export = Test
+exports = ('test', Test)

@@ -1,8 +1,9 @@
 import pkgutil
 import importlib
-from typing import Dict, List
+from typing import Dict, List, Type
 
-from ens.models import Info, Catalog
+from ens.console import log
+from ens.models import Novel, Info, Catalog
 from ens.exceptions import RemoteNotFound
 
 
@@ -61,19 +62,32 @@ class Remote(object):
         raise NotImplementedError
 
 
+def get_remote_list() -> Dict[str, Type[Remote]]:
+    from ens.remotes import __path__
+    remotes = {}
+    for ff, modname, ispkg in pkgutil.iter_modules(__path__):
+        fullname = 'ens.remote.' + modname
+        try:
+            exports = ff.find_module(fullname).load_module(fullname).exports
+        except ModuleNotFoundError as e:
+            log('loading {} failed for lack of module {}'.format(fullname, e.name))
+            continue
+
+        if isinstance(exports, tuple):
+            name, remote = exports
+            remotes[name] = remote
+            log('find remote {} named as {}'.format(remote, name))
+        elif isinstance(exports, dict):
+            for name, remote in exports.items():
+                remotes[name] = remote
+                log('find remote {} named as {}'.format(remote, name))
+
+    return remotes
+
+
 def get_remote(name) -> Remote:
     """获取一个 Remote 实例"""
-    name = name.replace('-', '_')
     try:
-        name = f'ens.remotes.{name}'
-        return importlib.import_module(name).export()
+        return get_remote_list()[name]()
     except ImportError:
         raise RemoteNotFound(name)
-
-
-def get_remote_list() -> List[str]:
-    from ens.remotes import __path__
-    remotes = []
-    for ff, name, ispkg in pkgutil.iter_modules(__path__):
-        remotes.append(name.replace('_', '-'))
-    return remotes
