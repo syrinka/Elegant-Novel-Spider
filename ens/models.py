@@ -249,13 +249,12 @@ class Catalog(object):
     catalog: List[Volume]
 
     @property
-    def index(self) -> Dict[str, str]:
-        """{cid: title}"""
-        if not hasattr(self, '_index'):
-            index = dict(self.spine)
-            self._index = index
+    def map(self) -> Dict[str, Chapter]:
+        if not hasattr(self, '_map'):
+            map = {chap.cid: chap for chap in self.spine}
+            self._map = map
 
-        return self._index
+        return self._map
 
 
     @property

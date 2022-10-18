@@ -97,7 +97,7 @@ def func(novel, cid, pager):
 @click.argument('cid')
 def func(novel, cid):
     local = LocalCache(novel)
-    title = local.catalog.index[cid]
+    title = local.catalog.map[cid].title
     content = local.get_chap(cid)
     echo(f'Editing: {title}')
     
