@@ -1,0 +1,6 @@
+DEBUG = False
+CODE_DELIM = '~'
+CODE_INDEX_INDICATOR = '@'
+EMPTY_RULE_MODE = '*='
+DEFAULT_DUMPER = 'txt'
+DO_EDIT = 'subl {file} -w'

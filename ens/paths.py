@@ -3,8 +3,8 @@ from os.path import join, dirname
 
 # 工作目录
 CWD = dirname(dirname(__file__))
-STATE = join(CWD, '.ens.state')
-CONFIG = join(CWD, '.ens.config')
+STATE = join(CWD, '.ens_state')
+CONFIG = join(CWD, 'config.yml')
 LOCAL = join(CWD, 'local')
 DUMP = join(CWD, 'dump')
 
