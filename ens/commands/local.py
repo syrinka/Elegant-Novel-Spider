@@ -2,6 +2,7 @@ import os
 import click
 
 from ens.console import echo
+from ens.exceptions import LocalError
 from ens.merge import edit
 from ens.local import LocalCache, get_local_shelf, get_local_info
 from ens.models import Shelf, Info
@@ -102,6 +103,55 @@ def func(novel, cid):
     echo(f'Editing: {title}')
     
     local.set_chap(cid, edit(content))
+
+
+@local.command('insert-chapter')
+@arg_novel
+@click.argument('rel', type=click.Choice(['before', 'after']))
+@click.argument('cid')
+@click.argument('i_cid')
+@click.argument('i_title')
+def func(novel, rel, cid, i_cid, i_title):
+    local = LocalCache(novel)
+    old = local.catalog.dump()
+    i = old.find('({})\n'.format(cid))
+    if i == -1:
+        raise LocalError('no such cid')
+
+    if rel == 'before':
+        while old[i] != '\n':
+            i -= 1
+    elif rel == 'after':
+        while old[i] != '\n':
+            i += 1
+
+    new_cat = local.catalog.load(
+        old[:i] + '\n. {} ({})'.format(i_title, i_cid) + old[i:]
+    )
+
+    new_chap = new_cat.map[i_cid]
+    index = new_cat.spine.index(new_chap)
+    try:
+        before = new_cat.spine[index-1]
+    except IndexError:
+        before = '-- head --'
+    try:
+        after = new_cat.spine[index+1]
+    except IndexError:
+        after = '-- tail --'
+
+    echo('新章节将插入于：')
+    echo(before)
+    echo(new_chap)
+    echo(after)
+
+    if not click.confirm('确定吗？'):
+        raise click.Abort()
+
+    content = edit('')
+    local.set_chap(i_cid, content)
+    local.update_catalog(new_cat)
+    echo('inserted')
 
 
 @local.command('star')
