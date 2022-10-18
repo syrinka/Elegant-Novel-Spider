@@ -4,7 +4,7 @@
 
 ```python
 from ens.remote import Remote
-from ens.models import Info, Catalog
+from ens.models import Info_ as Info, Catalog
 from ens.console import log
 from ens.utils.remote import CatalogBuilder
 from ens.exceptions import FetchError
@@ -12,9 +12,7 @@ from ens.exceptions import FetchError
 
 class RemoteExample(Remote):
     def get_info(self, nid: str) -> Info:
-        return Info(
-            novel, 'title', 'author', 'intro', 'finish'
-        )
+        return Info('title', 'author', 'intro', 'finish')
 
 
     def get_catalog(self, nid: str) -> Catalog:
@@ -32,7 +30,7 @@ class RemoteExample(Remote):
         return 'text'.strip()
 
 
-export = RemoteExample
+exports = ('example', RemoteExample)
 ```
 
 新的远端源应置于 `ens/remotes` 目录下，文件名为远端源名。
