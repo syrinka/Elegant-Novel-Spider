@@ -4,11 +4,19 @@
 pip install -r requirements.txt
 ```
 
-如您有安装 `poetry`，则可以
+更推荐使用 `poetry` 进行安装
 
 ```
 poetry install
 ```
+
+## 配置文件
+
+将根目录下的 `ens_config.example` 复制一份，命名为 `ens_config`
+
+## 编写远端源
+
+请参考[远端源编写文档](remote-dev.md)
 
 ## 基本使用
 

@@ -1,20 +1,20 @@
 import time
 
 from ens.remote import Remote
-from ens.models import Catalog, Info
+from ens.models import Info, Catalog
 from ens.utils.remote import CatalogBuilder
 from ens.exceptions import FetchError
 
 
 class Test(Remote):
-    def get_info(self, novel) -> Info:
+    def get_info(self, nid) -> Info:
         return Info(
-            novel, 'A Good Book {}'.format(novel.nid),
+            'A Good Book {}'.format(nid),
             'Anonymous', intro='A Marvo book.'
         )
 
 
-    def get_catalog(self, novel) -> Catalog:
+    def get_catalog(self, nid) -> Catalog:
         c = CatalogBuilder()
         c.vol('第一章')
         for i in range(100):
@@ -23,7 +23,7 @@ class Test(Remote):
         return c.build()
 
 
-    def get_content(self, novel, cid: str) -> str:
+    def get_content(self, nid, cid: str) -> str:
         time.sleep(1)
         return 'YESYESYES' + cid
 
