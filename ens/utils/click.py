@@ -41,7 +41,7 @@ def translate_novel(novel: str) -> str:
 
 
 def _novel_callback(ctx, param, novel):
-    format = re.compile(r'([a-zA-Z0-9\-_\.]+)' + config.CODE_DELIM + r'([a-zA-Z0-9\-_\.]+)')
+    format = re.compile(r'([a-zA-Z0-9\-\._]+)' + config.CODE_DELIM + r'([a-zA-Z0-9\-\._/=]+)')
     novel = translate_novel(novel)
 
     m = format.match(novel)
