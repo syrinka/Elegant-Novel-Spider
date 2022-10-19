@@ -108,7 +108,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
 
     try:
         with doing('Getting catalog'):
-            new_cat = remote.get_catalog(novel)
+            new_cat = remote.get_catalog(novel.nid)
     except FetchError as e:
         echo('[alert]爬取 Info 失败')
         if isinstance(e, SourceNotFound):
@@ -133,7 +133,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         cid, title = chap
         track.update_desc(title)
         try:
-            content = remote.get_content(novel, cid)
+            content = remote.get_content(novel.nid, cid)
         except FetchError as e:
             echo(e)
             return
