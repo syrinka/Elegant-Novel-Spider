@@ -18,7 +18,7 @@ def translate_novel(novel: str) -> str:
         ValueError: illegal
     """
     if novel.startswith(config.CODE_INDEX_INDICATOR):
-        # may raise ValueError
+        # may raise ValueError1
         index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
 
         state = State('ens')

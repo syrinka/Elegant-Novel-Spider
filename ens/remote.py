@@ -3,7 +3,7 @@ import importlib
 from dataclasses import asdict
 from typing import Dict, Type
 
-from ens.console import log
+from ens.console import logger
 from ens.models import Novel, Info, Info_, Catalog
 from ens.exceptions import RemoteNotFound
 
@@ -83,17 +83,17 @@ def get_remote_list() -> Dict[str, Type[Remote]]:
         try:
             exports = ff.find_module(fullname).load_module(fullname).exports
         except ModuleNotFoundError as e:
-            log('loading {} failed for lack of module {}'.format(fullname, e.name))
+            logger.warning('loading {} failed for lack of module {}'.format(fullname, e.name))
             continue
 
         if isinstance(exports, tuple):
             name, remote = exports
             remotes[name] = remote
-            log('find remote {} named as {}'.format(remote, name))
+            logger.info('find remote {} named as {}'.format(remote, name))
         elif isinstance(exports, dict):
             for name, remote in exports.items():
                 remotes[name] = remote
-                log('find remote {} named as {}'.format(remote, name))
+                logger.info('find remote {} named as {}'.format(remote, name))
 
     return remotes
 

@@ -4,6 +4,7 @@ import subprocess
 from contextlib import contextmanager
 from typing import Iterable
 
+import loguru
 from rich.console import Console
 from rich.theme import Theme
 from rich.progress import (
@@ -18,15 +19,16 @@ from ens.exceptions import *
 
 
 __all__ = [
+    'logger',
     'console',
     'doing',
-    'log',
     'echo',
     'run',
     'pager',
     'Track'
 ]
 
+logger = loguru.logger
 
 theme = Theme({
     'bad': 'red',
@@ -36,14 +38,7 @@ theme = Theme({
     'p': 'bright_white', # param
 })
 console = Console(highlight=False, theme=theme)
-
-
 doing = console.status
-
-
-def log(*obj):
-    if config.DEBUG:
-        console.log(*obj)
 
 
 def echo(msg, style: str = None, nl: bool = True):

@@ -5,7 +5,7 @@ from pydantic import BaseSettings
 
 
 class Config(BaseSettings):
-    DEBUG: bool = False
+    LOG_LEVEL: int = 0
     CODE_DELIM: str = '~'
     CODE_INDEX_INDICATOR: str = '#'
     EMPTY_RULE_MODE: str = '*='

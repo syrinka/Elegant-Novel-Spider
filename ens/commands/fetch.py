@@ -4,7 +4,7 @@ from typing import List
 
 import click
 
-from ens.console import console, echo, log, doing, Track
+from ens.console import console, echo, logger, doing, Track
 from ens.models import Novel, Info
 from ens.local import LocalCache
 from ens.remote import get_remote
@@ -79,7 +79,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             return
 
     except LocalNotFound:
-        log('local initialize')
+        logger.info('local initialize')
 
         local = LocalCache.new(novel)
         try:
@@ -208,7 +208,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                     break
 
         threads = [Thread(target=worker, daemon=True) for i in range(thnum)]
-        log('{} threads online'.format(thnum))
+        logger.info('{} threads online'.format(thnum))
 
         try:
             for th in threads:

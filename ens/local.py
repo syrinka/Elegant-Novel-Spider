@@ -6,7 +6,7 @@ from shutil import rmtree
 from contextlib import contextmanager
 
 import ens.paths as paths
-from ens.console import log
+from ens.console import logger
 from ens.models import *
 from ens.exceptions import *
 
@@ -221,7 +221,7 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
             shelf += info
 
     time2 = time.time()
-    log('get local shelf in {:.4f}s'.format(time2 - time1))
+    logger.info('get local shelf in {:.4f}s'.format(time2 - time1))
 
     return shelf
 
