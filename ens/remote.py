@@ -89,11 +89,11 @@ def get_remote_list() -> Dict[str, Type[Remote]]:
         if isinstance(exports, tuple):
             name, remote = exports
             remotes[name] = remote
-            logger.info('find remote {} named as {}'.format(remote, name))
+            logger.debug('find remote {} named as {}'.format(remote, name))
         elif isinstance(exports, dict):
             for name, remote in exports.items():
                 remotes[name] = remote
-                logger.info('find remote {} named as {}'.format(remote, name))
+                logger.debug('find remote {} named as {}'.format(remote, name))
 
     return remotes
 

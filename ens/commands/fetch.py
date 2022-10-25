@@ -79,7 +79,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             return
 
     except LocalNotFound:
-        logger.info('local initialize')
+        logger.debug('local initialize')
 
         local = LocalCache.new(novel)
         try:
@@ -208,7 +208,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                     break
 
         threads = [Thread(target=worker, daemon=True) for i in range(thnum)]
-        logger.info('{} threads online'.format(thnum))
+        logger.debug('{} threads online'.format(thnum))
 
         try:
             for th in threads:
@@ -216,6 +216,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             while True: # 使用主线程轮询以正确处理 SIGINT 信号
                 sleep(0.5)
                 if alive_count == 0:
+                    logger.debug('all threads exited')
                     break
         except KeyboardInterrupt:
             interrupt = True # 设置终止 flag
