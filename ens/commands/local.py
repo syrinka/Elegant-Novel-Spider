@@ -83,7 +83,7 @@ def func(novel, pager):
 @opt_pager
 def func(novel, cid, pager):
     local = LocalCache(novel)
-    title = local.get_title(cid)
+    title = local.catalog.map[cid].title
     try:
         content = local.get_chap(cid)
     except KeyError:
