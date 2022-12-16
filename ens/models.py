@@ -303,7 +303,7 @@ class Catalog(object):
 
 
     @classmethod
-    def load(cls, data: str):
+    def load(cls, data: str) -> Catalog:
         #TODO 检测是否为合法的输入
         catalog: List[Volume] = []
         pattern = re.compile(r'. (?P<title>.+) \((?P<cid>.+)\)')
