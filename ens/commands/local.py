@@ -105,6 +105,17 @@ def func(novel, cid):
     local.set_chap(cid, edit(content))
 
 
+@local.command('edit-catalog')
+@arg_novel
+def func(novel):
+    local = LocalCache(novel)
+    catalog = local.catalog
+    edited = edit(catalog.dump())
+    new_catalog = catalog.load(edited)
+    local.update_catalog(catalog)
+    echo('更新成功')
+
+
 @local.command('insert-chapter')
 @arg_novel
 @click.argument('rel', type=click.Choice(['before', 'after']))
