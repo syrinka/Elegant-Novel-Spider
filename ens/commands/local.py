@@ -112,7 +112,7 @@ def func(novel):
     catalog = local.catalog
     edited = edit(catalog.dump())
     new_catalog = catalog.load(edited)
-    local.update_catalog(catalog)
+    local.update_catalog(new_catalog)
     echo('更新成功')
 
 
