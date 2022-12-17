@@ -3,6 +3,7 @@ import click
 from ens.console import echo
 from ens.merge import merge, edit
 from ens.state import State
+from ens.remote import get_remote
 from ens.utils.click import arg_novel, opt_filter
 
 
@@ -34,7 +35,7 @@ def func(filter):
 @click.argument('text2')
 def func(text1, text2):
     """
-    测试 merge 的结果
+    测试 merge
     """
     echo(merge(text1, text2))
 
@@ -43,6 +44,23 @@ def func(text1, text2):
 @click.argument('text')
 def func(text):
     """
-    测试 merge 的结果
+    测试 edit
     """
     echo(edit(text))
+
+
+@utils.command('catalog')
+@arg_novel
+def func(novel):
+    remote = get_remote(novel.remote)
+    cat = remote.get_catalog(novel.nid)
+    print(cat.dump())
+
+
+@utils.command('chapter')
+@arg_novel
+@click.argument('cid')
+def func(novel, cid):
+    remote = get_remote(novel.remote)
+    text = remote.get_content(novel.nid, cid)
+    print(text)
