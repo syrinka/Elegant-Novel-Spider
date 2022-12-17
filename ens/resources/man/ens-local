@@ -11,7 +11,9 @@ Options
 
 [bright_blue]Modify[/]
   show-catalog
+  edit-catalog
   show-content
   edit-content
+  insert-chapter
   [grey27](un)[/]star
   [grey27](un)[/]isolate
