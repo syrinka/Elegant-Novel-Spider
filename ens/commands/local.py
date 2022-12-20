@@ -109,11 +109,13 @@ def func(novel, cid):
 @arg_novel
 def func(novel):
     local = LocalCache(novel)
-    catalog = local.catalog
-    edited = edit(catalog.dump())
-    new_catalog = catalog.load(edited)
-    local.update_catalog(new_catalog)
-    echo('更新成功')
+    old = local.catalog
+    edited = edit(old.dump())
+    new = old.load(edited)
+    delta = new - old
+
+    # local.update_catalog(new)
+    # echo('更新成功')
 
 
 @local.command('insert-chapter')

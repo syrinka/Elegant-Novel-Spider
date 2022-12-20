@@ -290,6 +290,14 @@ class Catalog(object):
                 nav.append(NavPoint('chap', chap.title, index))
                 index += 1
         return nav
+
+
+    def __sub__(self, other: Catalog) -> List[str]:
+        delta = []
+        for i in self.map:
+            if i not in other.map:
+                delta.append(i)
+        return delta
             
 
     def dump(self) -> str:
