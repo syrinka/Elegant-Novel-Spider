@@ -61,7 +61,7 @@ arg_novel = click.argument('novel',
 
 
 arg_novels = click.argument('novels',
-    metavar = 'NOVEL',
+    metavar = 'NOVEL...',
     nargs = -1,
     callback = lambda c, p, v: list(_novel_callback(c, p, i) for i in v)
 )
