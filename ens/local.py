@@ -2,15 +2,16 @@ import os
 import sqlite3
 import time
 from os.path import join, exists
+from pathlib import Path
 from shutil import rmtree
 from contextlib import contextmanager
 
-import ens.paths as paths
 from ens.console import logger
 from ens.models import *
 from ens.exceptions import *
 
 
+LOCAL = Path() / 'local'
 _sql_chap = '''
 CREATE TABLE IF NOT EXISTS `data` (
     cid VARCHAR(128),
@@ -50,11 +51,11 @@ class LocalStorage(object):
         if path:
             pass
         elif novel:
-            path = join(paths.LOCAL, novel.remote, novel.nid)
+            path = LOCAL / novel.remote / novel.nid
         else:
             raise ENSError()
 
-        if not exists(path):
+        if not path.exists():
             raise LocalNotFound(path)
         self.path = path
 
@@ -75,13 +76,11 @@ class LocalStorage(object):
 
 
     def read_file(self, file) -> str:
-        path = join(self.path, file)
-        return open(path, 'r', encoding='utf-8').read()
+        return (self.path / file).read_text(encoding='utf-8')
 
     
     def write_file(self, file, text) -> int:
-        path = join(self.path, file)
-        return open(path, 'w', encoding='utf-8').write(text)
+        return (self.path / file).write_text(text, encoding='utf-8')
 
     
     @classmethod
@@ -92,14 +91,11 @@ class LocalStorage(object):
     @classmethod
     def new(cls, novel: Novel):
         """创建一个本地缓存"""
-        _path = join(paths.LOCAL, novel.remote)
-        if not exists(_path):
-            os.mkdir(_path)
-        
-        path = join(paths.LOCAL, novel.remote, novel.nid)
-        if exists(path):
+        path = LOCAL / novel.remote / novel.nid
+        if path.exists():
             raise LocalAlreadyExists(path)
-        os.mkdir(path)
+        else:
+            path.mkdir(parents=True)
 
         return cls(novel, new=True)
 
@@ -107,7 +103,7 @@ class LocalStorage(object):
     @classmethod
     def remove(cls, novel: Novel):
         """删除本地缓存"""
-        path = join(paths.LOCAL, *novel)
+        path = LOCAL / novel.remote / novel.nid
         rmtree(path)
 
 
@@ -207,15 +203,15 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
     shelf = Shelf()
 
     time1 = time.time()
-    for remote in os.listdir(paths.LOCAL):
-        if not os.path.isdir(os.path.join(paths.LOCAL, remote)):
+    for remote in LOCAL.iterdir():
+        if not (LOCAL / remote).is_dir():
             continue
         if not filter.is_remote_in_scope(remote):
             continue
 
-        for nid in os.listdir(join(paths.LOCAL, remote)):
-            path = join(paths.LOCAL, remote, nid, 'info.yml')
-            info = Info.load(open(path, encoding='utf-8').read())
+        for nid in (LOCAL / remote).iterdir():
+            path = (LOCAL / remote / nid / 'info.yml')
+            info = Info.load(path.read_text(encoding='utf-8'))
             if not filter(info):
                 continue
             shelf += info
@@ -227,8 +223,8 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 
 
 def get_local_info(novel: Novel) -> Info:
-    path = join(paths.LOCAL, novel.remote, novel.nid, 'info.yml')
+    path = (LOCAL / remote / nid / 'info.yml')
     try:
-        return Info.load(open(path, encoding='utf-8').read())
+        return Info.load(path.read_text(encoding='utf-8'))
     except FileNotFoundError:
         raise LocalNotFound(novel)

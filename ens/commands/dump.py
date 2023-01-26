@@ -1,7 +1,7 @@
 import click
+from pathlib import Path
 
 from ens.local import LocalStorage
-from ens.paths import DUMP, join
 from ens.utils.click import arg_novel, opt_dumper
 
 
@@ -23,7 +23,7 @@ def dump(novel, dumper, output, **kw):
         author = local.info.author,
         ext = dumper.ext or ''
     )
-    output = join(DUMP, output)
+    output = Path() / 'dump' / output
 
     dumper.dump(
         local.info,
