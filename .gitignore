@@ -1,7 +1,7 @@
 **/__pycache__/
 /.venv
 /.*
-/ens_config
+!/.env.example
 /local/*
 /dump/*
 poetry.lock
