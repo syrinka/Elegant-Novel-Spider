@@ -285,11 +285,11 @@ class Catalog(object):
         return nav
 
 
-    def __sub__(self, other: Catalog) -> List[str]:
+    def __sub__(self, other: Catalog) -> List[Chapter]:
         delta = []
         for i in self.map:
             if i not in other.map:
-                delta.append(i)
+                delta.append(self.map[i])
         return delta
             
 

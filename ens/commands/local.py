@@ -113,7 +113,18 @@ def func(novel):
     old = local.catalog
     edited = edit(old.dump())
     new = old.load(edited)
-    delta = new - old
+
+    loss = old - new
+    gain = new - old
+    echo('以下部分发生了变动：')
+    for i in loss:
+        echo(f'- {i.title} ({i.cid})', style='red')
+    for i in gain:
+        echo(f'+ {i.title} ({i.cid})', style='green', nl=False)
+        if not local.has_chap(i.cid):
+            echo(' missing', style='bright_yellow')
+        else:
+            echo()
 
     # local.update_catalog(new)
     # echo('更新成功')
