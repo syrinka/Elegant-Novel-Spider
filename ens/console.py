@@ -41,8 +41,8 @@ console = Console(highlight=False, theme=theme)
 doing = console.status
 
 
-def echo(msg, style: str = None, nl: bool = True):
-    console.print(msg, style=style, end='\n' if nl else '')
+def echo(*msg, style: str = None, nl: bool = True):
+    console.print(*msg, style=style, end='\n' if nl else '')
 
 
 @contextmanager
