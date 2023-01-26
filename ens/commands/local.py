@@ -65,7 +65,7 @@ def func(novel):
 def func(novel, edit_):
     info = get_local_info(novel)
     if edit_:
-        info = Info.load(edit(info.dump(), '.yml'))
+        info = Info.loads(edit(info.dumps(), '.yml'))
     echo(info.verbose())
 
 
@@ -75,7 +75,7 @@ def func(novel, edit_):
 def func(novel, pager):
     local = LocalStorage(novel)
     with pager:
-        echo(local.catalog.dump())
+        echo(local.catalog.dumps())
 
 
 @local.command('show-content')
@@ -111,8 +111,8 @@ def func(novel, cid):
 def func(novel):
     local = LocalStorage(novel)
     old = local.catalog
-    edited = edit(old.dump())
-    new = old.load(edited)
+    edited = edit(old.dumps())
+    new = old.loads(edited)
     delta = new - old
 
     # local.update_catalog(new)
@@ -127,7 +127,7 @@ def func(novel):
 @click.argument('i_title')
 def func(novel, rel, cid, i_cid, i_title):
     local = LocalStorage(novel)
-    old = local.catalog.dump()
+    old = local.catalog.dumps()
     i = old.find('({})\n'.format(cid))
     if i == -1:
         raise LocalError('no such cid')
@@ -139,7 +139,7 @@ def func(novel, rel, cid, i_cid, i_title):
         while old[i] != '\n':
             i += 1
 
-    new_cat = local.catalog.load(
+    new_cat = local.catalog.loads(
         old[:i] + '\n. {} ({})'.format(i_title, i_cid) + old[i:]
     )
 
