@@ -189,6 +189,13 @@ def func(novel):
     only_data = in_data - in_catalog
     only_catalog = in_catalog - in_data
 
+    echo('chapters only in data:')
+    for i in only_data:
+        echo(f'+ ({i})')
+    echo('\nchapters only in catalog:')
+    for i in only_catalog:
+        echo(f'- {local.catalog.map[i]} ({i})')
+
 
 @local.command('star')
 @arg_novel
