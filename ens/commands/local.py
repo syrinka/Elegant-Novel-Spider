@@ -132,24 +132,31 @@ def func(novel):
 
 @local.command('insert-chapter')
 @arg_novel
-@click.argument('rel', type=click.Choice(['before', 'after']))
-@click.argument('cid')
-@click.argument('i_cid')
-@click.argument('i_title')
-def func(novel, rel, cid, i_cid, i_title):
+@click.argument('rel', type=click.Choice(['before', 'after', 'last']))
+@click.argument('cid', required=False)
+@click.option('-i', '--i-cid', prompt='cid',
+    help='待插入章节的 Chapter ID',
+    required=True)
+@click.option('-t', '--i-title', prompt='title',
+    help='待插入章节的标题',
+    required=True)
+def func(novel, i_cid, i_title, rel, cid):
     local = LocalStorage(novel)
     old = local.catalog.dump()
-    i = old.find('({})\n'.format(cid))
-    if i == -1:
-        raise LocalError('no such cid')
+    if cid is None and rel == 'last':
+        i = len(old)
+    else:
+        i = old.find('({})\n'.format(cid))
+        if i == -1:
+            raise LocalError('no such cid')
 
-    if rel == 'before':
-        while old[i] != '\n':
-            i -= 1
-    elif rel == 'after':
-        while old[i] != '\n':
-            i += 1
-
+        if rel == 'before':
+            while old[i] != '\n':
+                i -= 1
+        elif rel == 'after':
+            while old[i] != '\n':
+                i += 1
+    
     new_cat = local.catalog.load(
         old[:i] + '\n. {} ({})'.format(i_title, i_cid) + old[i:]
     )
@@ -167,7 +174,7 @@ def func(novel, rel, cid, i_cid, i_title):
 
     echo('新章节将插入于：')
     echo(before)
-    echo(new_chap)
+    echo(new_chap, style='green')
     echo(after)
 
     if not click.confirm('确定吗？'):
