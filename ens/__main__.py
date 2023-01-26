@@ -8,8 +8,10 @@ def run():
         ens_cli()
     except ENSError as e:
         console.print(e)
+        exit(1)
     except Exception as e:
         console.print_exception()
+        exit(1)
 
 
 if __name__ == '__main__':
