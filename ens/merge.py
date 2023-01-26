@@ -45,7 +45,7 @@ def catalog_lose(old: Catalog, new: Catalog) -> bool:
     """
     检查目录是否发生了减量更新
     """
-    diff = difflib.ndiff(old.dumps(), new.dumps())
+    diff = difflib.ndiff(old.dump(), new.dump())
     for line in diff:
         if line.startswith('-'):
             return True
@@ -53,8 +53,8 @@ def catalog_lose(old: Catalog, new: Catalog) -> bool:
 
 
 def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
-    return Catalog.loads(
-        merge(old.dumps(), new.dumps())
+    return Catalog.load(
+        merge(old.dump(), new.dump())
     )
 
 

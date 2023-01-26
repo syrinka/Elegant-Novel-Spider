@@ -97,12 +97,12 @@ class Info(object):
             self.novel = Novel(**self.novel)
 
 
-    def dumps(self) -> str:
+    def dump(self) -> str:
         return yaml.dump(asdict(self), allow_unicode=True, sort_keys=False)
 
 
     @classmethod
-    def loads(cls, data: str) -> Info:
+    def load(cls, data: str) -> Info:
         data = yaml.load(data, Loader=yaml.SafeLoader)
         return cls(**data)
 
@@ -240,12 +240,12 @@ class Shelf(object):
 
 
     def dump(self):
-        return [i.dumps() for i in self.infos]
+        return [i.dump() for i in self.infos]
 
 
     @classmethod
     def load(cls, data):
-        return cls([Info.loads(d) for d in data])
+        return cls([Info.load(d) for d in data])
 
 
 @dataclass
@@ -293,7 +293,7 @@ class Catalog(object):
         return delta
             
 
-    def dumps(self) -> str:
+    def dump(self) -> str:
         piece = []
         for vol in self.catalog:
             piece.append(f'# {vol.title}')
@@ -304,7 +304,7 @@ class Catalog(object):
 
 
     @classmethod
-    def loads(cls, data: str) -> Catalog:
+    def load(cls, data: str) -> Catalog:
         #TODO 检测是否为合法的输入
         catalog: List[Volume] = []
         pattern = re.compile(r'. (?P<title>.+) \((?P<cid>.+)\)')

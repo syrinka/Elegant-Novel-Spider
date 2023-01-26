@@ -69,10 +69,10 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             info.isolated = local.info.isolated
             info.comment = local.info.comment
 
-            old = local.info.dumps()
-            new = info.dumps()
+            old = local.info.dump()
+            new = info.dump()
             merged = merge(old, new)
-            info = Info.loads(merged)
+            info = Info.load(merged)
             local.update_info(info)
 
             echo('Info 更新成功！')

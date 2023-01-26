@@ -53,7 +53,7 @@ def func(text):
 def func(novel):
     remote = get_remote(novel.remote)
     cat = remote.get_catalog(novel.nid)
-    print(cat.dumps())
+    print(cat.dump())
 
 
 @utils.command('chapter')

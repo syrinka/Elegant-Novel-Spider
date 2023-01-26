@@ -59,13 +59,13 @@ class LocalStorage(object):
         self.db_path = path / 'data.db'
 
         if new:
-            self.write_file('info.yml', Info(novel).dumps())
+            self.write_file('info.yml', Info(novel).dump())
             self.write_file('catalog.yml', '')
             sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
 
         try:
             _info = self.read_file('info.yml')
-            self.info = Info.loads(_info)
+            self.info = Info.load(_info)
             _catalog = self.read_file('catalog.yml')
             self.catalog = Catalog.load(_catalog)
         except FileNotFoundError:
@@ -169,7 +169,7 @@ class LocalStorage(object):
         """
         if info is not None:
             self.info = info
-        self.write_file('info.yml', self.info.dumps())
+        self.write_file('info.yml', self.info.dump())
 
     
     def update_catalog(self, catalog: Optional[Catalog] = None):
@@ -180,7 +180,7 @@ class LocalStorage(object):
         """
         if catalog is not None:
             self.catalog = catalog
-        self.write_file('catalog.yml', self.catalog.dumps())
+        self.write_file('catalog.yml', self.catalog.dump())
 
 
     def isolate(self):
@@ -208,7 +208,7 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 
         for nid in (LOCAL / remote).iterdir():
             path = (LOCAL / remote / nid / 'info.yml')
-            info = Info.loads(path.read_text(encoding='utf-8'))
+            info = Info.load(path.read_text(encoding='utf-8'))
             if not filter(info):
                 continue
             shelf += info
@@ -222,6 +222,6 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 def get_local_info(novel: Novel) -> Info:
     path = (LOCAL / novel.remote / novel.nid / 'info.yml')
     try:
-        return Info.loads(path.read_text(encoding='utf-8'))
+        return Info.load(path.read_text(encoding='utf-8'))
     except FileNotFoundError:
         raise LocalNotFound(novel)
