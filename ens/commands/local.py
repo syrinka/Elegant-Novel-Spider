@@ -179,6 +179,17 @@ def func(novel, rel, cid, i_cid, i_title):
     echo('inserted')
 
 
+@local.command('check')
+@arg_novel
+def func(novel):
+    local = LocalStorage(novel)
+    in_data = {i for i in local.all_chaps()}
+    in_catalog = {i for i in local.catalog.map.keys()}
+
+    only_data = in_data - in_catalog
+    only_catalog = in_catalog - in_data
+
+
 @local.command('star')
 @arg_novel
 def func(novel):

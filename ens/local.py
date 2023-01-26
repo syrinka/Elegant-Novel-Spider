@@ -1,7 +1,6 @@
 import time
 from pathlib import Path
 from shutil import rmtree
-from contextlib import contextmanager
 
 from ens.console import logger
 from ens.models import *
@@ -129,6 +128,11 @@ class LocalStorage(object):
             content (str): chapter content
         """
         (self.path / 'data' / cid).write_text(content, 'utf-8')
+
+
+    def all_chaps(self):
+        for i in (self.path / 'data').iterdir():
+            yield i.name
 
 
     def update_info(self, info: Optional[Info] = None):
