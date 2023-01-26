@@ -1,7 +1,5 @@
-import os
 import sqlite3
 import time
-from os.path import join, exists
 from pathlib import Path
 from shutil import rmtree
 from contextlib import contextmanager
@@ -37,7 +35,7 @@ class LocalStorage(object):
     """
     def __init__(self,
         novel: Novel = None, *,
-        path: str = None,
+        path: Union[str, Path] = None,
         new: Optional[bool] = False
     ):
         """
@@ -49,7 +47,7 @@ class LocalStorage(object):
             InvalidLocal: 文件缺失或损坏
         """
         if path:
-            pass
+            path = Path(path)
         elif novel:
             path = LOCAL / novel.remote / novel.nid
         else:
@@ -58,8 +56,7 @@ class LocalStorage(object):
         if not path.exists():
             raise LocalNotFound(path)
         self.path = path
-
-        self.db_path = join(path, 'data.db')
+        self.db_path = path / 'data.db'
 
         if new:
             self.write_file('info.yml', Info(novel).dumps())
@@ -70,7 +67,7 @@ class LocalStorage(object):
             _info = self.read_file('info.yml')
             self.info = Info.loads(_info)
             _catalog = self.read_file('catalog.yml')
-            self.catalog = Catalog.loads(_catalog)
+            self.catalog = Catalog.load(_catalog)
         except FileNotFoundError:
             raise InvalidLocal(path)
 
