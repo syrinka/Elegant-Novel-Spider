@@ -6,7 +6,7 @@ from diskcache import Cache
 from ens.console import echo
 from ens.exceptions import LocalError
 from ens.merge import edit
-from ens.local import LocalCache, get_local_shelf, get_local_info
+from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf, Info
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 
@@ -47,14 +47,14 @@ def func(novel, yes):
     info = get_local_info(novel)
     echo(info.verbose())
     if yes or click.confirm('确定要删除它吗？'):
-        LocalCache.remove(novel)
+        LocalStorage.remove(novel)
         echo('删除成功')
 
 
 @local.command('open')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     os.startfile(local.path)
 
 
@@ -73,7 +73,7 @@ def func(novel, edit_):
 @arg_novel
 @opt_pager
 def func(novel, pager):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     with pager:
         echo(local.catalog.dump())
 
@@ -83,7 +83,7 @@ def func(novel, pager):
 @click.argument('cid')
 @opt_pager
 def func(novel, cid, pager):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     title = local.catalog.map[cid].title
     try:
         content = local.get_chap(cid)
@@ -98,7 +98,7 @@ def func(novel, cid, pager):
 @arg_novel
 @click.argument('cid')
 def func(novel, cid):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     title = local.catalog.map[cid].title
     content = local.get_chap(cid)
     echo(f'Editing: {title}')
@@ -171,7 +171,7 @@ def func(novel, rel, cid, i_cid, i_title):
 @local.command('star')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     local.info.star = True
     local.update_info()
 
@@ -179,7 +179,7 @@ def func(novel):
 @local.command('unstar')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     local.info.star = False
     local.update_info()
 
@@ -187,7 +187,7 @@ def func(novel):
 @local.command('isolate')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     local.info.isolated = True
     local.update_info()
 
@@ -195,6 +195,6 @@ def func(novel):
 @local.command('unisolate')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     local.info.isolated = False
     local.update_info()

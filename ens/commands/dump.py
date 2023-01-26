@@ -1,6 +1,6 @@
 import click
 
-from ens.local import LocalCache
+from ens.local import LocalStorage
 from ens.paths import DUMP, join
 from ens.utils.click import arg_novel, opt_dumper
 
@@ -17,7 +17,7 @@ def dump(novel, dumper, output, **kw):
     """
     输出小说
     """
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     output = output.format(
         title = local.info.title,
         author = local.info.author,

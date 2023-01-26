@@ -19,20 +19,20 @@ CREATE TABLE IF NOT EXISTS `data` (
 );'''
 
 
-class LocalCache(object):
-    """本地缓存
+class LocalStorage(object):
+    """本地小说数据
 
     Attributes:
-        path (str): 缓存路径
+        path (str): 存储路径
         info (Info): 小说信息
         catalog (Catalog): 小说目录
 
     Class methods:
-        from_path: 从文件路径打开本地缓存
-        new: 创建一个本地缓存
+        from_path: 从文件路径打开
+        new: 创建一个空的数据库
 
     Static methods:
-        remove: 删除本地缓存
+        remove: 删除本地数据
     """
     def __init__(self,
         novel: Novel = None, *,

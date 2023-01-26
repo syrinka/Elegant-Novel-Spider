@@ -13,7 +13,7 @@ FLASK_ROOT = Path(__file__).parent / 'resources' / 'flask'
 def get_local(remote, nid):
     novel = Novel(remote, nid)
     try:
-        return LocalCache(novel)
+        return LocalStorage(novel)
     except LocalNotFound:
         return None
 

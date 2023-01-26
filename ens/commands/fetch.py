@@ -6,7 +6,7 @@ import click
 
 from ens.console import console, echo, logger, doing, Track
 from ens.models import Novel, Info
-from ens.local import LocalCache
+from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novels, manual
@@ -49,7 +49,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         raise
 
     try:
-        local = LocalCache(novel)
+        local = LocalStorage(novel)
         echo(local.info)
 
         if fetch_info:
@@ -81,7 +81,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
     except LocalNotFound:
         logger.debug('local initialize')
 
-        local = LocalCache.new(novel)
+        local = LocalStorage.new(novel)
         try:
             with doing('Getting Info'):
                 info = remote.get_info(novel)
@@ -89,19 +89,19 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             echo(e)
             echo('[alert]爬取 Info 失败')
             del local
-            LocalCache.remove(novel)
+            LocalStorage.remove(novel)
             raise click.Abort
         except Exception as e:
             console.print_exception()
             echo('[alert]爬取 Info 失败，未捕获的异常，请检查爬虫逻辑')
             del local
-            LocalCache.remove(novel)
+            LocalStorage.remove(novel)
             raise click.Abort
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
             del local
-            LocalCache.remove(novel)
+            LocalStorage.remove(novel)
             raise click.Abort
 
         local.update_info(info) # 更新信息
