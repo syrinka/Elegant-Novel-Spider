@@ -2,7 +2,6 @@ import click
 
 from ens.console import echo
 from ens.merge import merge, edit
-from ens.state import State
 from ens.remote import get_remote
 from ens.utils.click import arg_novel, opt_filter
 

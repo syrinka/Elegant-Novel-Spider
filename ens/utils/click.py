@@ -2,10 +2,11 @@ import re
 import click
 from pathlib import Path
 
+from diskcache import Cache
+
 from ens import __version__
 from ens.config import config
 from ens.console import echo, pager
-from ens.state import State
 from ens.remote import get_remote
 from ens.dumper import get_dumper
 from ens.models import Novel, FilterRule, Filter
@@ -21,18 +22,18 @@ def translate_novel(novel: str) -> str:
         # may raise ValueError1
         index = int(novel.removeprefix(config.CODE_INDEX_INDICATOR))
 
-        state = State('ens')
+        cache = Cache('.cache')
         if index == 0:
             try:
-                return state['last']
+                return cache['ens.last']
             except KeyError:
                 raise StateError('last not exists.')
                 
         else:
             try:
-                return state['list'][index - 1]
+                return cache['ens.list'][index - 1]
             except IndexError:
-                raise StateError(f'Cache index out of range, max index {len(state["list"])-1}')
+                raise StateError(f'Cache index out of range, max index {len(cache["ens.list"])-1}')
             except KeyError:
                 raise StateError('list not exists.')
 
@@ -48,9 +49,8 @@ def _novel_callback(ctx, param, novel):
     if m is None:
         raise ValueError(novel)
 
-    state = State('ens')
-    state.set('last', novel)
-    state.save()
+    cache = Cache('.cache')
+    cache.set('ens.last', novel)
     return Novel(m[1], m[2])
 
 
