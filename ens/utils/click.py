@@ -1,5 +1,6 @@
 import re
 import click
+from pathlib import Path
 
 from ens import __version__
 from ens.config import config
@@ -8,7 +9,6 @@ from ens.state import State
 from ens.remote import get_remote
 from ens.dumper import get_dumper
 from ens.models import Novel, FilterRule, Filter
-from ens.paths import MANUAL, join
 from ens.exceptions import *
 
 
@@ -134,10 +134,11 @@ def opt_pager(cmd):
 
 
 def manual(mpage):
+    MANUAL = Path(__file__).parent.parent / 'resources' / 'man'
     def wrap(cmd):
         # hack
         def get_help(ctx):
-            path = join(MANUAL, mpage)
+            path = MANUAL / mpage
             text = open(path, encoding='utf-8').read().format(
                 version=__version__
             )

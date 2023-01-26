@@ -1,6 +1,8 @@
 import os
 import click
 
+from diskcache import Cache
+
 from ens.console import echo
 from ens.exceptions import LocalError
 from ens.merge import edit
@@ -31,8 +33,7 @@ def func(filter, star, pager):
     shelf = get_local_shelf(filter)
     if star:
         shelf = Shelf(list(i for i in shelf.infos if i.star))
-
-    shelf.cache_shelf()
+    Cache('.cache').set('ens.list', [str(novel) for novel in shelf.novels])
     with pager:
         echo(shelf)
 

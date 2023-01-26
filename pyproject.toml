@@ -12,6 +12,7 @@ PyYAML = "^6.0"
 Flask = "^2.2.2"
 pydantic = {extras = ["dotenv"], version = "^1.9.2"}
 loguru = "^0.6.0"
+diskcache = "^5.4.0"
 
 [tool.poetry.dev-dependencies]
 

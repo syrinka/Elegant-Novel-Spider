@@ -9,7 +9,6 @@ from typing import (
 
 import yaml
 from ens.config import config
-from ens.state import State
 
 
 # hack yaml style
@@ -238,12 +237,6 @@ class Shelf(object):
     @property
     def novels(self) -> List[Novel]:
         return list(n.novel for n in self.infos)
-
-
-    def cache_shelf(self):
-        state = State('ens')
-        state.set('list', [str(novel) for novel in self.novels])
-        state.save()
 
 
     def dump(self):
