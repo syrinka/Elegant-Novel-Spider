@@ -175,14 +175,13 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 
     time1 = time.time()
     for remote in LOCAL.iterdir():
-        if not (LOCAL / remote).is_dir():
+        if not remote.is_dir():
             continue
         if not filter.is_remote_in_scope(remote):
             continue
 
-        for nid in (LOCAL / remote).iterdir():
-            path = (LOCAL / remote / nid / 'info.yml')
-            info = Info.load(path.read_text(encoding='utf-8'))
+        for path in remote.iterdir():
+            info = Info.load((path / 'info.yml').read_text(encoding='utf-8'))
             if not filter(info):
                 continue
             shelf += info
