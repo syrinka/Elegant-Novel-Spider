@@ -14,12 +14,12 @@ class TXTDumper(Dumper):
         for nav in catalog.nav_list():
             if nav.type == 'chap':
                 cid = catalog.spine[nav.index].cid
-                file.write('Chap. {}\n{}\n\n'.format(
+                file.write('◇Chapter {}\n{}\n\n'.format(
                     nav.title,
                     get_chap(cid)
                 ))
             elif nav.type == 'vol':
-                file.write('Vol. ' + nav.title + '\n\n')
+                file.write('◆Volume ' + nav.title + '\n\n')
 
         file.close()
 
