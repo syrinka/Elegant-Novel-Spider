@@ -4,8 +4,8 @@ from pydantic import BaseSettings
 
 class ENSConfig(BaseSettings):
     LOG_LEVEL: int = 0
-    CODE_DELIM: str = '~'
-    CODE_INDEX_INDICATOR: str = '#'
+    CODE_DELIM: str = '/'
+    CODE_INDEX_INDICATOR: str = '@'
     EMPTY_RULE_MODE: str = '*='
     DEFAULT_DUMPER: str = 'txt'
 
@@ -13,7 +13,8 @@ class ENSConfig(BaseSettings):
     DO_MERGE: Optional[str]
 
     class Config(object):
-        env_file = ['.env', '.env.example']
+        # .env is prior
+        env_file = ('.env.example', '.env')
 
 
 config = ENSConfig()
