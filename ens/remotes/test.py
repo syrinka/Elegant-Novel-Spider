@@ -17,7 +17,7 @@ class Test(Remote):
 
         c.vol('第一卷')
         for i in range(10):
-            c.chap('No.{}'.format(i))
+            c.chap(i, 'No.{}'.format(i))
 
         return c.build()
 
