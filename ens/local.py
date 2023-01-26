@@ -1,4 +1,3 @@
-import sqlite3
 import time
 from pathlib import Path
 from shutil import rmtree
@@ -10,12 +9,6 @@ from ens.exceptions import *
 
 
 LOCAL = Path() / 'local'
-_sql_chap = '''
-CREATE TABLE IF NOT EXISTS `data` (
-    cid VARCHAR(128),
-    content TEXT,
-    PRIMARY KEY (cid)
-);'''
 
 
 class LocalStorage(object):
@@ -56,18 +49,15 @@ class LocalStorage(object):
         if not path.exists():
             raise LocalNotFound(path)
         self.path = path
-        self.db_path = path / 'data.db'
 
         if new:
             self.write_file('info.yml', Info(novel).dump())
             self.write_file('catalog.yml', '')
-            sqlite3.connect(self.db_path).cursor().execute(_sql_chap)
+            (self.path / 'data').mkdir()
 
         try:
-            _info = self.read_file('info.yml')
-            self.info = Info.load(_info)
-            _catalog = self.read_file('catalog.yml')
-            self.catalog = Catalog.load(_catalog)
+            self.info = Info.load(self.read_file('info.yml'))
+            self.catalog = Catalog.load(self.read_file('catalog.yml'))
         except FileNotFoundError:
             raise InvalidLocal(path)
 
@@ -104,15 +94,6 @@ class LocalStorage(object):
         rmtree(path)
 
 
-    @contextmanager
-    def conn(self):
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
-        yield conn, cursor
-        cursor.close()
-        conn.close()
-
-
     def has_chap(self, cid: str) -> bool:
         """
         Args:
@@ -121,9 +102,7 @@ class LocalStorage(object):
         Returns:
             has (bool): True if has chapter
         """
-        with self.conn() as (conn, cursor):
-            cursor.execute('SELECT cid FROM `data` WHERE cid=?', (cid,))
-            return cursor.fetchone() is not None
+        return (self.path / 'data' / cid).exists()
 
 
     def get_chap(self, cid: str) -> str:
@@ -137,14 +116,10 @@ class LocalStorage(object):
         Raises:
             KeyError: 当缓存中没有对应章节的数据
         """
-        with self.conn() as (conn, cursor):
-            cursor.execute('SELECT content FROM `data` WHERE cid=?', (cid,))
-            data = cursor.fetchone()
-
-        if data is None:
+        try:
+            return (self.path / 'data' / cid).read_text('utf-8')
+        except FileNotFoundError:
             raise KeyError
-        else:
-            return data[0]
 
 
     def set_chap(self, cid: str, content: str):
@@ -153,12 +128,7 @@ class LocalStorage(object):
             cid (str): chapter ID
             content (str): chapter content
         """
-        with self.conn() as (conn, cursor):
-            cursor.execute(
-                'REPLACE INTO `data` VALUES (?, ?)',
-                (cid, content) # 去掉多余的换行
-            )
-            conn.commit()
+        (self.path / 'data' / cid).write_text(content, 'utf-8')
 
 
     def update_info(self, info: Optional[Info] = None):
