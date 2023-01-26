@@ -117,19 +117,13 @@ def opt_filter(cmd):
     return cmd
 
 
-class _fake_pager(object):
-    def __enter__(self):
-        pass
-
-
-    def __exit__(self, *args):
-        pass
-
-
 def _pager_callback(ctx, param, value):
     if value:
         return pager()
     else:
+        class _fake_pager(object):
+            def __enter__(self): pass
+            def __exit__(self, *args): pass
         return _fake_pager()
 
 
