@@ -9,4 +9,3 @@ DUMP = join(CWD, 'dump')
 
 RES = join(CWD, 'ens', 'resources')
 MANUAL = join(RES, 'man')
-FLASK_PATH = join(RES, 'flask')

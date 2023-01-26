@@ -1,10 +1,13 @@
+from pathlib import Path
 from flask import Flask
 from flask import request, render_template, redirect
 
-from ens.paths import FLASK_PATH
 from ens.models import *
 from ens.local import *
 from ens.exceptions import *
+
+
+FLASK_ROOT = Path(__file__).parent / 'resources' / 'flask'
 
 
 def get_local(remote, nid):
@@ -29,7 +32,7 @@ def resolve_query(query: str) -> Union[Filter, None]:
     return Filter(rules)
 
 
-api = Flask('api', root_path=FLASK_PATH)
+api = Flask('api', root_path=FLASK_ROOT)
 
 
 @api.get('/')
