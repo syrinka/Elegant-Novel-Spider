@@ -109,7 +109,7 @@ def func(novel, cid):
 @local.command('edit-catalog')
 @arg_novel
 def func(novel):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     old = local.catalog
     edited = edit(old.dump())
     new = old.load(edited)
@@ -126,7 +126,7 @@ def func(novel):
 @click.argument('i_cid')
 @click.argument('i_title')
 def func(novel, rel, cid, i_cid, i_title):
-    local = LocalCache(novel)
+    local = LocalStorage(novel)
     old = local.catalog.dump()
     i = old.find('({})\n'.format(cid))
     if i == -1:

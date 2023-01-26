@@ -223,7 +223,7 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
 
 
 def get_local_info(novel: Novel) -> Info:
-    path = (LOCAL / remote / nid / 'info.yml')
+    path = (LOCAL / novel.remote / novel.nid / 'info.yml')
     try:
         return Info.load(path.read_text(encoding='utf-8'))
     except FileNotFoundError:
