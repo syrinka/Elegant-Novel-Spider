@@ -12,9 +12,9 @@ Options
   info    信息
 
 [bright_blue]Management[/]
-  local   本地缓存
+  local   本地数据
   remote  远程源
-  dumper  输出类型
+  dumper  输出格式
 
 [bright_magenta]Others[/]
   web     启动 web 界面
