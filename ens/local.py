@@ -78,11 +78,7 @@ class LocalStorage(object):
     def new(cls, novel: Novel):
         """创建一个本地缓存"""
         path = LOCAL / novel.remote / novel.nid
-        if path.exists():
-            raise LocalAlreadyExists(path)
-        else:
-            path.mkdir(parents=True)
-
+        path.mkdir(parents=True)
         return cls(novel, new=True)
 
 

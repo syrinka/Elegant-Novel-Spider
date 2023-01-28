@@ -15,15 +15,6 @@ class ENSError(Exception):
         return f'[red]{self.__class__.__name__}[/] {msg}'
 
 
-# Local
-class LocalError(ENSError):
-    pass
-
-
-class LocalAlreadyExists(LocalError):
-    """@param path"""
-
-
 # Remote
 class RemoteError(ENSError):
     pass

@@ -4,7 +4,6 @@ import click
 from diskcache import Cache
 
 from ens.console import echo
-from ens.exceptions import LocalError
 from ens.merge import edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf, Info
@@ -148,7 +147,7 @@ def func(novel, i_cid, i_title, rel, cid):
     else:
         i = old.find('({})\n'.format(cid))
         if i == -1:
-            raise LocalError('no such cid')
+            raise KeyError('指定的 Chapter ID 不存在')
 
         if rel == 'before':
             while old[i] != '\n':
