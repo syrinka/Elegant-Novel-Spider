@@ -126,8 +126,8 @@ def func(novel):
         else:
             echo()
 
-    # local.update_catalog(new)
-    # echo('更新成功')
+    local.update_catalog(new)
+    echo('更新成功')
 
 
 @local.command('insert-chapter')
