@@ -3,7 +3,6 @@ import importlib
 from typing import List, Callable
 
 from ens.models import Info, Catalog
-from ens.exceptions import DumperNotFound
 
 
 class Dumper(object):
@@ -18,7 +17,7 @@ def get_dumper(name) -> Dumper:
         name = f'ens.dumpers.{name}'
         return importlib.import_module(name).export()
     except ImportError:
-        raise DumperNotFound(name)
+        raise KeyError(f'未找到名为 {name} 的 dumper')
 
 
 def get_dumper_list() -> List[str]:

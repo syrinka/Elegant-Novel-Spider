@@ -5,7 +5,6 @@ from typing import Dict, Type
 
 from ens.console import logger
 from ens.models import Novel, Info, Info_, Catalog
-from ens.exceptions import RemoteNotFound
 
 
 _dependencies = {
@@ -103,4 +102,4 @@ def get_remote(name) -> Remote:
     try:
         return get_remote_list()[name]()
     except ImportError:
-        raise RemoteNotFound(name)
+        raise KeyError(f'未找到名为 {name} 的 remote')

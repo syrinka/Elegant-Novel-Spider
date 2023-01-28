@@ -14,7 +14,6 @@ from ens.exceptions import (
     FetchError,
     SourceNotFound,
     LocalNotFound,
-    RemoteNotFound,
     ExternalError,
     MaybeIsolated
 )
@@ -45,7 +44,7 @@ def fetch(novels: List[Novel], **kw):
 def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
     try:
         remote = get_remote(novel.remote)
-    except RemoteNotFound:
+    except KeyError:
         raise
 
     try:

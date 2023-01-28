@@ -37,10 +37,6 @@ class RemoteError(ENSError):
     pass
 
 
-class RemoteNotFound(RemoteError):
-    """@param name"""
-
-
 class MaybeIsolated(RemoteError):
     msg = '该小说可能已在远端被删除'
 
@@ -73,16 +69,6 @@ class SourceNotFound(FetchError):
 
     @param reason
     """
-
-
-# Dumper
-class DumpError(ENSError):
-    pass
-
-
-class DumperNotFound(DumpError):
-    """@param name"""
-
 
 # Misc
 class ExternalError(ENSError):
