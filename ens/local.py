@@ -43,7 +43,7 @@ class LocalStorage(object):
         elif novel:
             path = LOCAL / novel.remote / novel.nid
         else:
-            raise Exception
+            raise Exception('path 与 novel 至少应传入一项')
 
         if not path.exists():
             raise KeyError(path)
@@ -57,8 +57,9 @@ class LocalStorage(object):
         try:
             self.info = Info.load(self.read_file('info.yml'))
             self.catalog = Catalog.load(self.read_file('catalog.yml'))
-        except FileNotFoundError:
-            raise ValueError(path)
+            assert (self.path / 'data').exists()
+        except (FileNotFoundError, AssertionError):
+            raise ValueError('损坏的数据库')
 
 
     def read_file(self, file) -> str:
