@@ -8,6 +8,7 @@ from ens.merge import edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
 from ens.models import Shelf, Info
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
+from ens.exceptions import Abort
 
 
 @manual('ens-local')
@@ -177,7 +178,7 @@ def func(novel, i_cid, i_title, rel, cid):
     echo(after)
 
     if not click.confirm('确定吗？'):
-        raise click.Abort()
+        raise Abort()
 
     content = edit('')
     local.set_chap(i_cid, content)

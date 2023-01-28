@@ -7,7 +7,6 @@ from ens.remote import Remote
 from ens.models import Info_ as Info, Catalog
 from ens.console import log
 from ens.utils.remote import CatalogBuilder
-from ens.exceptions import FetchError
 
 
 class RemoteExample(Remote):

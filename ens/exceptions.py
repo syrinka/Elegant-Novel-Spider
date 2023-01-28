@@ -1,12 +1,6 @@
 class MaybeIsolated(Exception):
     pass
 
-
-# Fetch
-class FetchError(Exception):
-    """@param reason"""
-
-
 class RequestError(Exception):
     """当网络出现异常，这可能是由于以下原因
 
@@ -15,7 +9,6 @@ class RequestError(Exception):
 
     @param reason
     """
-
 
 # Misc
 class ExternalError(Exception):
@@ -29,3 +22,6 @@ class FeatureUnsupport(Exception):
     """@param feature"""
     def __str__(self) -> str:
         return f'该功能不支持或无法运行，请检查 `DO_{self.args[0].upper()}` 配置项'
+    
+class Abort(BaseException):
+    pass

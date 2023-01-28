@@ -30,6 +30,13 @@ class Remote(object):
             - 章节被删除
             - 章节未审核通过
             若抛出该异常时，则不再重试
+        Exception
+            一般的运行时错误，例如：
+            - 请求超时
+            - 连接中断
+            - 服务端拒绝响应
+        Abort
+            立即终止
     """
     def __init_subclass__(cls) -> None:
         """patch `get_info()`
@@ -63,7 +70,9 @@ class Remote(object):
     def get_info(self, novel: Novel) -> Info:
         """
         Raises:
-            FetchError
+            FileNotFoundError
+            Exception
+            Abort
         """
         raise NotImplementedError
 
@@ -71,7 +80,9 @@ class Remote(object):
     def get_catalog(self, nid: str) -> Catalog:
         """
         Raises:
-            FetchError
+            FileNotFoundError
+            Exception
+            Abort
         """
         raise NotImplementedError
 
@@ -79,7 +90,9 @@ class Remote(object):
     def get_content(self, nid: str, cid: str) -> str:
         """
         Raises:
-            FetchError
+            FileNotFoundError
+            Exception
+            Abort
         """
         raise NotImplementedError
 

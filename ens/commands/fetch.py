@@ -10,7 +10,7 @@ from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novels, manual
-from ens.exceptions import ExternalError
+from ens.exceptions import ExternalError, Abort
 
 
 @manual('ens-fetch')
@@ -91,7 +91,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         if not click.confirm('是这本吗？', default=True):
             del local
             LocalStorage.remove(novel)
-            raise click.Abort
+            raise Abort
 
         local.update_info(info) # 更新信息
 
@@ -113,7 +113,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             new_cat = merge_catalog(old_cat, new_cat)
         except ExternalError:
             echo('放弃合并，本次爬取终止')
-            raise click.Abort
+            raise Abort
 
     local.update_catalog(new_cat)
     
@@ -212,6 +212,6 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             echo('等待所有线程退出中')
             for th in threads: # 等待线程全部退出
                 th.join()
-            raise click.Abort
+            raise Abort
 
     echo('Done.', style='good')
