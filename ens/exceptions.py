@@ -85,10 +85,6 @@ class DumperNotFound(DumpError):
 
 
 # Misc
-class StateError(ENSError):
-    """@param msg"""
-
-
 class ExternalError(ENSError):
     """当调用外部程序失败时
     @param ret_code

@@ -27,15 +27,16 @@ def translate_novel(novel: str) -> str:
             try:
                 return cache['ens.last']
             except KeyError:
-                raise StateError('last not exists.')
+                raise KeyError('ens.last')
                 
         else:
             try:
                 return cache['ens.list'][index - 1]
             except IndexError:
-                raise StateError(f'Cache index out of range, max index {len(cache["ens.list"])-1}')
+                maxi = len(cache["ens.list"]) - 1
+                raise KeyError(f'Index out of range, max index {maxi}')
             except KeyError:
-                raise StateError('list not exists.')
+                raise KeyError('ens.list')
 
     else:
         return novel
@@ -47,7 +48,7 @@ def _novel_callback(ctx, param, novel):
 
     m = format.match(novel)
     if m is None:
-        raise ValueError(novel)
+        raise ValueError(f'非法的 Novel ID：{novel}')
 
     cache = Cache('.cache')
     cache.set('ens.last', novel)
