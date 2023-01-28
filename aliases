@@ -1,0 +1,3 @@
+#!/bin/bash
+alias ens='python -m ens'
+alias el='python -m ens local'
