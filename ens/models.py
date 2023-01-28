@@ -28,6 +28,9 @@ class Chapter(NamedTuple):
     cid: str
     title: str
 
+    def __str__(self):
+        return '{} ({})'.format(self.title, self.cid)
+
 class Volume(NamedTuple):
     title: str
     chaps: List[Chapter]
