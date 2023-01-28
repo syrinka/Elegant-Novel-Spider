@@ -43,7 +43,7 @@ class LocalStorage(object):
         elif novel:
             path = LOCAL / novel.remote / novel.nid
         else:
-            raise ENSError()
+            raise Exception
 
         if not path.exists():
             raise KeyError(path)

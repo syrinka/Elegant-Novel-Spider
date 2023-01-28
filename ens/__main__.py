@@ -1,5 +1,4 @@
 from ens.console import console
-from ens.exceptions import ENSError
 from ens.cli import ens_cli
 
 
