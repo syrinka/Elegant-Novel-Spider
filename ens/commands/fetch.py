@@ -13,7 +13,6 @@ from ens.utils.click import arg_novels, manual
 from ens.exceptions import (
     FetchError,
     SourceNotFound,
-    LocalNotFound,
     ExternalError,
     MaybeIsolated
 )
@@ -77,7 +76,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             echo('Info 更新成功！')
             return
 
-    except LocalNotFound:
+    except KeyError:
         logger.debug('local initialize')
 
         local = LocalStorage.new(novel)

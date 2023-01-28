@@ -14,7 +14,7 @@ def get_local(remote, nid):
     novel = Novel(remote, nid)
     try:
         return LocalStorage(novel)
-    except LocalNotFound:
+    except KeyError:
         return None
 
 

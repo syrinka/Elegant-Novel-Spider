@@ -20,15 +20,7 @@ class LocalError(ENSError):
     pass
 
 
-class LocalNotFound(LocalError):
-    """@param path"""
-
-
 class LocalAlreadyExists(LocalError):
-    """@param path"""
-
-
-class InvalidLocal(LocalError):
     """@param path"""
 
 

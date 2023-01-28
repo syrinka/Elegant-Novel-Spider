@@ -35,8 +35,8 @@ class LocalStorage(object):
             novel
 
         Raises:
-            LocalNotFound: 指定本地缓存不存在
-            InvalidLocal: 文件缺失或损坏
+            KeyError: 指定本地缓存不存在
+            ValueError: 文件缺失或损坏
         """
         if path:
             path = Path(path)
@@ -46,7 +46,7 @@ class LocalStorage(object):
             raise ENSError()
 
         if not path.exists():
-            raise LocalNotFound(path)
+            raise KeyError(path)
         self.path = path
 
         if new:
@@ -58,7 +58,7 @@ class LocalStorage(object):
             self.info = Info.load(self.read_file('info.yml'))
             self.catalog = Catalog.load(self.read_file('catalog.yml'))
         except FileNotFoundError:
-            raise InvalidLocal(path)
+            raise ValueError(path)
 
 
     def read_file(self, file) -> str:
@@ -197,4 +197,4 @@ def get_local_info(novel: Novel) -> Info:
     try:
         return Info.load(path.read_text(encoding='utf-8'))
     except FileNotFoundError:
-        raise LocalNotFound(novel)
+        raise KeyError(novel)
