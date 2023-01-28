@@ -20,6 +20,16 @@ class Remote(object):
 
     Class methods:
         status: 获取该远程源支持的功能
+
+    Raises:
+        FileNotFoundError
+            当预期的数据不存在，这可能是由于以下原因
+            - 小说不存在
+            - 小说被删除
+            - 章节不存在
+            - 章节被删除
+            - 章节未审核通过
+            若抛出该异常时，则不再重试
     """
     def __init_subclass__(cls) -> None:
         """patch `get_info()`

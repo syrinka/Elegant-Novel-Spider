@@ -17,25 +17,15 @@ class RequestError(Exception):
     """
 
 
-class SourceNotFound(Exception):
-    """当请求的数据不存在，这可能是由于以下原因
-    
-    - 小说不存在
-    - 小说被删除
-    - 章节不存在
-    - 章节被删除
-    - 章节未审核通过
-
-    当抛出该异常时，将不再重试
-
-    @param reason
-    """
-
 # Misc
 class ExternalError(Exception):
     """当调用外部程序失败时
     @param ret_code
     """
+    def __str__(self) -> str:
+        return f'外部程序运行失败，返回值 {self.args[0]}'
 
 class FeatureUnsupport(Exception):
     """@param feature"""
+    def __str__(self) -> str:
+        return f'该功能不支持或无法运行，请检查 `DO_{self.args[0].upper()}` 配置项'

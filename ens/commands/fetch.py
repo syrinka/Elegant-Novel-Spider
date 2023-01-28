@@ -10,12 +10,7 @@ from ens.local import LocalStorage
 from ens.remote import get_remote
 from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novels, manual
-from ens.exceptions import (
-    FetchError,
-    SourceNotFound,
-    ExternalError,
-    MaybeIsolated
-)
+from ens.exceptions import ExternalError
 
 
 @manual('ens-fetch')
@@ -54,10 +49,10 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             try:
                 with doing('Getting Info'):
                     info = remote.get_info(novel)
-            except FetchError as e:
+            except Exception as e:
                 echo('[alert]爬取 Info 失败')
-                if isinstance(e, SourceNotFound):
-                    raise MaybeIsolated()
+                if isinstance(e, FileNotFoundError):
+                    echo('预期的资源不存在，可能已被删除')
                 else:
                     raise e
 
@@ -83,18 +78,14 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         try:
             with doing('Getting Info'):
                 info = remote.get_info(novel)
-        except FetchError as e:
-            echo(e)
-            echo('[alert]爬取 Info 失败')
-            del local
-            LocalStorage.remove(novel)
-            raise click.Abort
         except Exception as e:
-            console.print_exception()
             echo('[alert]爬取 Info 失败，未捕获的异常，请检查爬虫逻辑')
             del local
             LocalStorage.remove(novel)
-            raise click.Abort
+            if isinstance(e, FileNotFoundError):
+                echo('预期的资源不存在，可能已被删除')
+            else:
+                raise e
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
@@ -107,10 +98,10 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
     try:
         with doing('Getting catalog'):
             new_cat = remote.get_catalog(novel.nid)
-    except FetchError as e:
-        echo('[alert]爬取 Info 失败')
-        if isinstance(e, SourceNotFound):
-            raise MaybeIsolated()
+    except Exception as e:
+        echo('[alert]爬取 Catalog 失败')
+        if isinstance(e, FileNotFoundError):
+            echo('预期的资源不存在，可能已被删除')
         else:
             raise e
 
@@ -132,7 +123,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         track.update_desc(title)
         try:
             content = remote.get_content(novel.nid, cid)
-        except FetchError as e:
+        except Exception as e:
             echo(e)
             return
 
