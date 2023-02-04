@@ -176,7 +176,7 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
     for remote in LOCAL.iterdir():
         if not remote.is_dir():
             continue
-        if not filter.is_remote_in_scope(remote):
+        if not filter.is_remote_in_scope(remote.name):
             continue
 
         for path in remote.iterdir():
