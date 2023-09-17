@@ -5,7 +5,7 @@ from ens.utils.remote import CatalogBuilder
 
 class Test(Remote):
     def get_info(self, nid: str) -> RemoteInfo:
-        return Info(
+        return RemoteInfo(
             '示例书目 {}'.format(nid),
             '群星',
             'nothing here',
