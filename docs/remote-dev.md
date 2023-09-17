@@ -4,14 +4,14 @@
 
 ```python
 from ens.remote import Remote
-from ens.models import Info_ as Info, Catalog
+from ens.models import Catalog, RemoteInfo
 from ens.console import log
 from ens.utils.remote import CatalogBuilder
 
 
 class RemoteExample(Remote):
-    def get_info(self, nid: str) -> Info:
-        return Info('title', 'author', 'intro', 'finish')
+    def get_info(self, nid: str) -> RemoteInfo:
+        return RemoteInfo('title', 'author', 'intro', 'finish')
 
 
     def get_catalog(self, nid: str) -> Catalog:
@@ -40,7 +40,7 @@ exports = ('example', RemoteExample)
 
 ## 依赖
 
-我们推荐使用 `poetry add DEPENDENCY --group=REMOTE` 为每个远端源分别指定依赖。
+推荐使用 `poetry add DEPENDENCY --group=REMOTE` 为每个远端源分别指定依赖。
 
 这样可以 `poetry install --with=REMOTE` 安装特定远端源的依赖。
 
