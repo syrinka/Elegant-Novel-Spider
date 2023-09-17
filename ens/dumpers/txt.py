@@ -16,12 +16,12 @@ class TXTDumper(Dumper):
             if nav.type == 'chap':
                 assert nav.index is not None
                 cid = catalog.spine[nav.index].cid
-                file.write('◇Chapter {}\n{}\n\n'.format(
+                file.write('✦Chapter {}\n{}\n\n'.format( # Chapter
                     nav.title,
                     get_chap(cid),
                 ))
             elif nav.type == 'vol':
-                file.write('◆Volume ' + nav.title + '\n\n')
+                file.write('✧Volume ' + nav.title + '\n\n') # Volume
 
         file.close()
 
