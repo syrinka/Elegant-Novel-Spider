@@ -72,6 +72,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         try:
             with doing('Getting Info'):
                 info = remote.get_info(novel.nid)
+                info = LocalInfo.from_remote(info, local.info)
         except Exception as e:
             echo('[alert]爬取 Info 失败，未捕获的异常，请检查爬虫逻辑')
             del local

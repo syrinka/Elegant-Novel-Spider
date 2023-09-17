@@ -1,5 +1,6 @@
-import click
 from pathlib import Path
+
+import click
 
 from ens.local import LocalStorage
 from ens.utils.click import arg_novel, opt_dumper
@@ -21,7 +22,7 @@ def dump(novel, dumper, output, **kw):
     output = output.format(
         title = local.info.title,
         author = local.info.author,
-        ext = dumper.ext or ''
+        ext = dumper.ext or '',
     )
     output = Path() / 'dump' / output
 
@@ -29,5 +30,5 @@ def dump(novel, dumper, output, **kw):
         local.info,
         local.catalog,
         local.get_chap,
-        output
+        output,
     )

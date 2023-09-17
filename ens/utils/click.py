@@ -1,16 +1,16 @@
 import re
-import click
 from pathlib import Path
 
+import click
 from diskcache import Cache
 
 from ens import __version__
 from ens.config import config
 from ens.console import echo, pager
-from ens.remote import get_remote
 from ens.dumper import get_dumper
-from ens.models import Novel, FilterRule, Filter
 from ens.exceptions import *
+from ens.models import Filter, FilterRule, Novel
+from ens.remote import get_remote
 
 
 def translate_novel(novel: str) -> str:
@@ -28,12 +28,12 @@ def translate_novel(novel: str) -> str:
                 return cache['ens.last']
             except KeyError:
                 raise KeyError('ens.last')
-                
+
         else:
             try:
                 return cache['ens.list'][index - 1]
             except IndexError:
-                maxi = len(cache["ens.list"]) - 1
+                maxi = len(cache['ens.list']) - 1
                 raise KeyError(f'Index out of range, max index {maxi}')
             except KeyError:
                 raise KeyError('ens.list')
@@ -57,19 +57,19 @@ def _novel_callback(ctx, param, novel):
 
 arg_novel = click.argument('novel',
     metavar = 'NOVEL',
-    callback = _novel_callback
+    callback = _novel_callback,
 )
 
 
 arg_novels = click.argument('novels',
     metavar = 'NOVEL...',
     nargs = -1,
-    callback = lambda c, p, v: list(_novel_callback(c, p, i) for i in v)
+    callback = lambda c, p, v: list(_novel_callback(c, p, i) for i in v),
 )
 
 
 arg_remote = click.argument('remote',
-    callback = lambda c, p, v: get_remote(v)
+    callback = lambda c, p, v: get_remote(v),
 )
 
 
@@ -141,7 +141,7 @@ def manual(mpage):
         def get_help(ctx):
             path = MANUAL / mpage
             text = open(path, encoding='utf-8').read().format(
-                version=__version__
+                version=__version__,
             )
             echo(text, nl=False)
 

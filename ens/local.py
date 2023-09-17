@@ -50,7 +50,7 @@ class LocalStorage(object):
         self.path = path
 
         if new and novel:
-            self.write_file('info.yml', LocalInfo(novel).dump())
+            self.write_file('info.yml', LocalInfo(novel, 'No Title').dump())
             self.write_file('catalog.yml', '')
             (self.path / 'data').mkdir()
 
