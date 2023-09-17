@@ -1,16 +1,16 @@
-from threading import Thread, Lock
+from threading import Lock, Thread
 from time import sleep
 from typing import List
 
 import click
 
-from ens.console import console, echo, logger, doing, Track
-from ens.models import Novel, Info
+from ens.console import Track, console, doing, echo, logger
+from ens.exceptions import Abort, ExternalError
 from ens.local import LocalStorage
+from ens.merge import catalog_lose, merge, merge_catalog
+from ens.models import LocalInfo, Novel, RemoteInfo
 from ens.remote import get_remote
-from ens.merge import catalog_lose, merge_catalog, merge
 from ens.utils.click import arg_novels, manual
-from ens.exceptions import ExternalError, Abort
 
 
 @manual('ens-fetch')
@@ -48,24 +48,18 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         if fetch_info:
             try:
                 with doing('Getting Info'):
-                    info = remote.get_info(novel)
+                    info = remote.get_info(novel.nid)
+                    info = LocalInfo.from_remote(info, local.info)
             except Exception as e:
                 echo('[alert]爬取 Info 失败')
                 if isinstance(e, FileNotFoundError):
                     echo('预期的资源不存在，可能已被删除')
-                else:
-                    raise e
-
-            # 同步一些本地独立信息
-            #TODO refactor
-            info.star = local.info.star
-            info.isolated = local.info.isolated
-            info.comment = local.info.comment
+                raise e
 
             old = local.info.dump()
             new = info.dump()
             merged = merge(old, new)
-            info = Info.load(merged)
+            info = LocalInfo.load(merged)
             local.update_info(info)
 
             echo('Info 更新成功！')
@@ -77,15 +71,14 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         local = LocalStorage.new(novel)
         try:
             with doing('Getting Info'):
-                info = remote.get_info(novel)
+                info = remote.get_info(novel.nid)
         except Exception as e:
             echo('[alert]爬取 Info 失败，未捕获的异常，请检查爬虫逻辑')
             del local
             LocalStorage.remove(novel)
             if isinstance(e, FileNotFoundError):
                 echo('预期的资源不存在，可能已被删除')
-            else:
-                raise e
+            raise e
 
         echo(info.verbose())
         if not click.confirm('是这本吗？', default=True):
@@ -102,8 +95,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
         echo('[alert]爬取 Catalog 失败')
         if isinstance(e, FileNotFoundError):
             echo('预期的资源不存在，可能已被删除')
-        else:
-            raise e
+        raise e
 
     # merge catalog
     old_cat = local.catalog
@@ -116,7 +108,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             raise Abort
 
     local.update_catalog(new_cat)
-    
+
     merge_lock = Lock()
     def resolve(chap):
         cid, title = chap
@@ -127,7 +119,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
             echo(e)
             return
 
-        if mode == 'update' or mode == 'flush':
+        if mode in ('update', 'flush'):
             local.set_chap(cid, content)
 
         elif mode == 'diff':
@@ -135,7 +127,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                 old = local.get_chap(cid)
             except KeyError:
                 # 是新章节，直接保存
-                local.set_chap(cid, content)     
+                local.set_chap(cid, content)
                 return
 
             if old != content:
@@ -155,8 +147,8 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                 old = local.get_chap(cid)
             except KeyError:
                 # 是新章节，直接保存
-                local.set_chap(cid, content)     
-                return           
+                local.set_chap(cid, content)
+                return
 
             if old in content:
                 print(chap.title)
@@ -188,7 +180,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
                 try:
                     with sync:
                         chap = next(chaps) # 保护生成器线程安全
-                    
+
                     resolve(chap)
 
                 except StopIteration:

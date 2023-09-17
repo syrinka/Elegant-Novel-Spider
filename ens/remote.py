@@ -1,16 +1,18 @@
 import pkgutil
-import importlib
-from dataclasses import asdict
-from typing import Dict, Type
+from typing import Dict, Type, TypedDict
 
 from ens.console import logger
-from ens.models import Novel, Info, Info_, Catalog
-
+from ens.models import Catalog, Novel, RemoteInfo
 
 _dependencies = {
     'fetch': ('get_info', 'get_catalog', 'get_content'),
-    'info': ('get_info',)
+    'info': ('get_info',),
 }
+
+
+class GetInfoKwargs(TypedDict):
+    nid: str
+    novel: Novel
 
 
 class Remote(object):
@@ -38,18 +40,6 @@ class Remote(object):
         Abort
             立即终止
     """
-    def __init_subclass__(cls) -> None:
-        """patch `get_info()`
-
-        from `(self, str) -> Info_` to `(self, Novel) -> Info`
-        """
-        cls._get_info = cls.get_info
-        def patch(self, novel) -> Info:
-            info_ = self._get_info(novel.nid)
-            return Info(novel, **asdict(info_))
-        cls.get_info = patch
-
-
     @classmethod
     def _is_overrided(cls, funcname: str) -> bool:
         """判断函数是否被重写"""
@@ -67,7 +57,7 @@ class Remote(object):
         return status
 
 
-    def get_info(self, novel: Novel) -> Info:
+    def get_info(self, nid: str) -> RemoteInfo:
         """
         Raises:
             FileNotFoundError
@@ -100,10 +90,10 @@ class Remote(object):
 def get_remote_list() -> Dict[str, Type[Remote]]:
     from ens.remotes import __path__
     remotes = {}
-    for ff, modname, ispkg in pkgutil.iter_modules(__path__):
+    for ff, modname, _ispkg in pkgutil.iter_modules(__path__):
         fullname = 'ens.remote.' + modname
         try:
-            exports = ff.find_module(fullname).load_module(fullname).exports
+            exports = ff.find_module(fullname).load_module(fullname).exports # type: ignore
         except ModuleNotFoundError as e:
             logger.warning('loading {} failed for lack of module {}'.format(fullname, e.name))
             continue
@@ -124,5 +114,5 @@ def get_remote(name) -> Remote:
     """获取一个 Remote 实例"""
     try:
         return get_remote_list()[name]()
-    except ImportError:
-        raise KeyError(f'未找到名为 {name} 的 remote')
+    except ImportError as e:
+        raise KeyError(f'未找到名为 {name} 的 remote') from e

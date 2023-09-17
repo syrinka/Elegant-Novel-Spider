@@ -6,7 +6,7 @@ from diskcache import Cache
 from ens.console import echo
 from ens.merge import edit
 from ens.local import LocalStorage, get_local_shelf, get_local_info
-from ens.models import Shelf, Info
+from ens.models import Shelf, LocalInfo
 from ens.utils.click import manual, arg_novel, opt_filter, opt_pager
 from ens.exceptions import Abort
 
@@ -65,7 +65,7 @@ def func(novel):
 def func(novel, edit_):
     info = get_local_info(novel)
     if edit_:
-        info = Info.load(edit(info.dump(), '.yml'))
+        info = LocalInfo.load(edit(info.dump(), '.yml'))
     echo(info.verbose())
 
 

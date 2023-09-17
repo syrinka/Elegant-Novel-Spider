@@ -1,9 +1,10 @@
 import sys
+
 import click
 from loguru import logger
 
-from ens.config import config
 from ens.commands import mount
+from ens.config import config
 from ens.utils.click import manual
 
 
@@ -17,7 +18,7 @@ from ens.utils.click import manual
 @click.pass_context
 def ens_cli(ctx, log_level):
     ctx.info_name = 'ens'
-    
+
     level = log_level or config.LOG_LEVEL or 0
     logger.remove()
     if level:

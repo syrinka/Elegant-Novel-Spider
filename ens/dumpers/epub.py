@@ -1,14 +1,12 @@
 import os
-import zipfile
 import uuid
+import zipfile
 from collections import OrderedDict
 from datetime import datetime
 from typing import Callable
 
-from ens.console import echo
 from ens.dumper import Dumper
-from ens.models import Info, Catalog
-
+from ens.models import Catalog, LocalInfo
 
 tpl_mimetype = 'application/epub+zip'
 
@@ -43,7 +41,7 @@ class Volume(object):
 class EPUBDumper(Dumper):
     ext = '.epub'
 
-    def dump(self, info: Info, catalog: Catalog, get_chap: Callable[[str], str], path: str):
+    def dump(self, info: LocalInfo, catalog: Catalog, get_chap: Callable[[str], str], path: str):
         self.zip = zipfile.ZipFile(path, 'w')
 
         self.write('mimetype', tpl_mimetype)
@@ -62,13 +60,14 @@ class EPUBDumper(Dumper):
         self.intro = info.intro
         self.write('stylesheet.css', default_style)
         self.write('text', 'cover_page.xhtml',
-            tpl_cover.format(title=info.title, author=info.author)
+            tpl_cover.format(title=info.title, author=info.author),
         )
         self.spine.append('cover')
         self.manifest['cover'] = 'cover_page.xhtml'
 
         for nav in catalog.nav_list():
             if nav.type == 'chap':
+                assert nav.index is not None
                 cid = catalog.spine[nav.index].cid
                 self.chap(nav.title, get_chap(cid))
             elif nav.type == 'vol':
@@ -113,8 +112,8 @@ class EPUBDumper(Dumper):
         self.write('text', src_name,
             tpl_chapter.format(
                 title=title,
-                content=self.content_proc(content)
-            )
+                content=self.content_proc(content),
+            ),
         )
         self.spine.append(src_id)
         self.manifest[src_id] = src_name
@@ -158,7 +157,7 @@ class EPUBDumper(Dumper):
             nav += '</navPoint>'
 
         self.write('toc.ncx',
-            tpl_toc.format(title=self.title, nav=nav, uid=self.uid)
+            tpl_toc.format(title=self.title, nav=nav, uid=self.uid),
         )
 
 
@@ -181,8 +180,8 @@ class EPUBDumper(Dumper):
                 date = datetime.now().strftime('%Y-%m-%d'),
                 spine = spine,
                 manifest = manifest,
-                uid = self.uid
-            )
+                uid = self.uid,
+            ),
         )
 
 

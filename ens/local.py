@@ -3,9 +3,8 @@ from pathlib import Path
 from shutil import rmtree
 
 from ens.console import logger
-from ens.models import *
 from ens.exceptions import *
-
+from ens.models import *
 
 LOCAL = Path() / 'local'
 
@@ -26,9 +25,10 @@ class LocalStorage(object):
         remove: 删除本地数据
     """
     def __init__(self,
-        novel: Novel = None, *,
-        path: Union[str, Path] = None,
-        new: Optional[bool] = False
+        novel: Optional[Novel] = None,
+        *,
+        path: Optional[Union[str, Path]] = None,
+        new: bool = False,
     ):
         """
         Args:
@@ -49,27 +49,27 @@ class LocalStorage(object):
             raise KeyError(path)
         self.path = path
 
-        if new:
-            self.write_file('info.yml', Info(novel).dump())
+        if new and novel:
+            self.write_file('info.yml', LocalInfo(novel).dump())
             self.write_file('catalog.yml', '')
             (self.path / 'data').mkdir()
 
         try:
-            self.info = Info.load(self.read_file('info.yml'))
+            self.info = LocalInfo.load(self.read_file('info.yml'))
             self.catalog = Catalog.load(self.read_file('catalog.yml'))
             assert (self.path / 'data').exists()
-        except (FileNotFoundError, AssertionError):
-            raise ValueError('损坏的数据库')
+        except (FileNotFoundError, AssertionError) as e:
+            raise ValueError('损坏的数据库') from e
 
 
     def read_file(self, file) -> str:
         return (self.path / file).read_text(encoding='utf-8')
 
-    
+
     def write_file(self, file, text) -> int:
         return (self.path / file).write_text(text, encoding='utf-8')
 
-    
+
     @classmethod
     def from_path(cls, path):
         return cls(path=path)
@@ -114,8 +114,8 @@ class LocalStorage(object):
         """
         try:
             return (self.path / 'data' / cid).read_text('utf-8')
-        except FileNotFoundError:
-            raise KeyError
+        except FileNotFoundError as e:
+            raise KeyError from e
 
 
     def set_chap(self, cid: str, content: str):
@@ -132,9 +132,9 @@ class LocalStorage(object):
             yield i.name
 
 
-    def update_info(self, info: Optional[Info] = None):
+    def update_info(self, info: Optional[LocalInfo] = None):
         """更新小说的信息，并写入缓存
-        
+
         Args:
             info (Info, optional)
         """
@@ -143,10 +143,10 @@ class LocalStorage(object):
         (self.path / 'info.yml').rename(self.path / 'info.yml.bak')
         self.write_file('info.yml', self.info.dump())
 
-    
+
     def update_catalog(self, catalog: Optional[Catalog] = None):
         """更新小说的目录
-        
+
         Args:
             info (Catalog, optional)
         """
@@ -159,7 +159,7 @@ class LocalStorage(object):
     def isolate(self):
         """标记该小说为孤立小说"""
         self.info.isolated = True
-        self.set_info()
+        self.update_info()
 
 
     def prune(self):
@@ -180,7 +180,7 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
             continue
 
         for path in remote.iterdir():
-            info = Info.load((path / 'info.yml').read_text(encoding='utf-8'))
+            info = LocalInfo.load((path / 'info.yml').read_text(encoding='utf-8'))
             if not filter(info):
                 continue
             shelf += info
@@ -191,9 +191,9 @@ def get_local_shelf(filter: Optional[Filter] = None) -> Shelf:
     return shelf
 
 
-def get_local_info(novel: Novel) -> Info:
+def get_local_info(novel: Novel) -> LocalInfo:
     path = (LOCAL / novel.remote / novel.nid / 'info.yml')
     try:
-        return Info.load(path.read_text(encoding='utf-8'))
-    except FileNotFoundError:
-        raise KeyError(novel)
+        return LocalInfo.load(path.read_text(encoding='utf-8'))
+    except FileNotFoundError as e:
+        raise KeyError(novel) from e

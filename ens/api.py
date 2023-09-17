@@ -1,11 +1,10 @@
 from pathlib import Path
-from flask import Flask
-from flask import request, render_template, redirect
 
-from ens.models import *
-from ens.local import *
+from flask import Flask, redirect, render_template, request
+
 from ens.exceptions import *
-
+from ens.local import *
+from ens.models import *
 
 FLASK_ROOT = Path(__file__).parent / 'resources' / 'flask'
 
@@ -44,18 +43,18 @@ def root():
 def shelf():
     query = request.args.get('query')
     filter = resolve_query(query)
-    return render_template('shelf.html', 
-        shelf = get_local_shelf(filter)
+    return render_template('shelf.html',
+        shelf = get_local_shelf(filter),
     )
 
 
 @api.get('/novel/<remote>/<nid>')
 def novel(remote, nid):
     local = get_local(remote, nid)
-    
+
     return render_template('novel.html',
         info = local.info,
-        nav = local.catalog.nav_list()
+        nav = local.catalog.nav_list(),
     )
 
 
@@ -79,5 +78,5 @@ def chap(remote, nid, index):
         content = content,
         path = f'{remote}/{nid}',
         prev = f'/chap/{remote}/{nid}/{prev}' if prev else '',
-        next = f'/chap/{remote}/{nid}/{next}' if next else ''
+        next = f'/chap/{remote}/{nid}/{next}' if next else '',
     )

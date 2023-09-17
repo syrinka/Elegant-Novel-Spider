@@ -16,6 +16,37 @@ diskcache = "^5.4.0"
 
 [tool.poetry.dev-dependencies]
 
+[tool.pyright]
+include = ["ens"]
+
+[tool.ruff]
+include = ["ens"]
+select = [
+    "E", "W", # pycodestyle
+    "B",      # flake8-bugbear
+    "FBT",    # flake8-boolean-trap
+    "COM",    # flake8-commas
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "ARG",    # flake8-unused-arguments
+    "FIX",    # flake8-fixme
+    "PL",     # pylint
+    "I",      # isort
+]
+ignore = [
+    "F403",   # wildcard import
+    "E501",   # limit char
+    "ARG002", # unused argument
+    "FIX004", # hack
+    "B904",   # raise from
+]
+
+[tool.ruff.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "single"
+
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

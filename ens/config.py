@@ -1,4 +1,5 @@
 from typing import Optional
+
 from pydantic import BaseSettings
 
 
@@ -9,8 +10,8 @@ class ENSConfig(BaseSettings):
     EMPTY_RULE_MODE: str = '*='
     DEFAULT_DUMPER: str = 'txt'
 
-    DO_EDIT: Optional[str]
-    DO_MERGE: Optional[str]
+    DO_EDIT: Optional[str] = None
+    DO_MERGE: Optional[str] = None
 
     class Config(object):
         # .env is prior

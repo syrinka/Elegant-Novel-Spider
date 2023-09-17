@@ -1,5 +1,5 @@
-import os
 import difflib
+import os
 from tempfile import mkstemp
 
 from ens.config import config
@@ -9,7 +9,7 @@ from ens.utils.exec import call, executable
 
 
 def merge(old: str, new: str, ext='.txt') -> str:
-    if not executable(config.DO_MERGE or ''):
+    if not (config.DO_MERGE and executable(config.DO_MERGE)):
         raise FeatureUnsupport('merge')
 
     if old == new:
@@ -37,8 +37,7 @@ def merge(old: str, new: str, ext='.txt') -> str:
 
     if ret == 0:
         return final
-    else:
-        raise ExternalError(ret)
+    raise ExternalError(ret)
 
 
 def catalog_lose(old: Catalog, new: Catalog) -> bool:
@@ -54,12 +53,12 @@ def catalog_lose(old: Catalog, new: Catalog) -> bool:
 
 def merge_catalog(old: Catalog, new: Catalog) -> Catalog:
     return Catalog.load(
-        merge(old.dump(), new.dump())
+        merge(old.dump(), new.dump()),
     )
 
 
 def edit(text, ext='.txt') -> str:
-    if not executable(config.DO_EDIT or ''):
+    if not (config.DO_EDIT and executable(config.DO_EDIT)):
         raise FeatureUnsupport('edit')
 
     fd, path = mkstemp(ext)
@@ -76,8 +75,7 @@ def edit(text, ext='.txt') -> str:
 
     if ret == 0:
         return final
-    else:
-        raise ExternalError(ret)
+    raise ExternalError(ret)
 
 
 if __name__ == '__main__':

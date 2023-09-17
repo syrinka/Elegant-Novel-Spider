@@ -22,6 +22,6 @@ class FeatureUnsupport(Exception):
     """@param feature"""
     def __str__(self) -> str:
         return f'该功能不支持或无法运行，请检查 `DO_{self.args[0].upper()}` 配置项'
-    
+
 class Abort(BaseException):
     pass

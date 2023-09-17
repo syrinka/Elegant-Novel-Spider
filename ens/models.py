@@ -1,13 +1,11 @@
 from __future__ import annotations
+
 import re
-from dataclasses import dataclass, field, InitVar, asdict
-from typing import (
-    List, Dict, Literal, 
-    Union, Optional,
-    NamedTuple
-)
+from dataclasses import InitVar, asdict, dataclass, field
+from typing import Dict, List, Literal, NamedTuple, Optional, Union
 
 import yaml
+
 from ens.config import config
 
 
@@ -15,7 +13,7 @@ from ens.config import config
 # turn multi line string into "|" style
 def str_presenter(dumper, data):
     scaler = dumper.represent_scalar(u'tag:yaml.org,2002:str', data)
-    if len(data.splitlines()) >= 2:
+    if len(data.splitlines()) >= 2:  # noqa: PLR2004
         scaler.style = '|'
     return scaler
 
@@ -64,15 +62,15 @@ class Novel(object):
 
     def __rich__(self):
         return '[cyan]{}[/]{}[cyan]{}[/]'.format(
-            self.remote, config.CODE_DELIM, self.nid
+            self.remote, config.CODE_DELIM, self.nid,
         )
 
 
 @dataclass
-class Info(object):
+class LocalInfo(object):
     novel: Novel
-    
-    title: Optional[str] = None
+
+    title: str
     author: Optional[str] = None
     intro: Optional[str] = None
     finish: Optional[bool] = None
@@ -90,7 +88,7 @@ class Info(object):
             self.author or '[gray27]anon[/]', # anonymous
             self.novel.__rich__(),
             '[gray27]isolated[/]' if self.isolated else '',
-            '[bright_yellow]★[/]' if self.star else ''
+            '[bright_yellow]★[/]' if self.star else '',
         )
 
 
@@ -105,9 +103,19 @@ class Info(object):
 
 
     @classmethod
-    def load(cls, data: str) -> Info:
-        data = yaml.load(data, Loader=yaml.SafeLoader)
+    def load(cls, path: str) -> LocalInfo:
+        data = yaml.load(path, Loader=yaml.SafeLoader)
         return cls(**data)
+
+
+    @classmethod
+    def from_remote(cls, remote: RemoteInfo, base: LocalInfo) -> LocalInfo:
+        return cls(
+            star = base.star,
+            isolated = base.isolated,
+            comment = base.comment,
+            **asdict(remote),
+        )
 
 
     def verbose(self):
@@ -115,23 +123,40 @@ class Info(object):
             self.__rich__(),
             ('[cyan]' + self.intro + '[/]') \
                 if self.intro else None,
-            ' '.join(f'\[{tag}]' for tag in self.tags) \
+            ' '.join(rf'\[{tag}]' for tag in self.tags) \
                 if self.tags else None,
             ('[purple]' + self.comment  + '[/]') \
-                if self.comment else None
+                if self.comment else None,
         ]
         return '\n\n'.join(item for item in items if item is not None)
 
 
 @dataclass
-class Info_(object):
+class RemoteInfo(object):
     """Info directly returned from `get_info()`
     """
-    title: Optional[str] = None
+    title: str
     author: Optional[str] = None
     intro: Optional[str] = None
     finish: Optional[bool] = None
     tags: List[str] = field(default_factory=list)
+
+
+    def __rich__(self):
+        return '[green]{}[/]  [magenta]@{}[/] ({}) {} {}'.format(
+            self.title,
+            self.author or '[gray27]anon[/]', # anonymous
+        )
+
+    def verbose(self):
+        items = [
+            self.__rich__(),
+            ('[cyan]' + self.intro + '[/]') \
+                if self.intro else None,
+            ' '.join(rf'\[{tag}]' for tag in self.tags) \
+                if self.tags else None,
+        ]
+        return '\n\n'.join(item for item in items if item is not None)
 
 
 @dataclass
@@ -143,7 +168,7 @@ class FilterRule(object):
     _rule_format = re.compile(
         r'(?P<attr>(?:remote)|(?:author)|(?:title)|(?:intro))'
         r'(?P<not>!?)(?P<mode>(?:[\^\@\*]?=)|)'
-        r'(?P<value>.*)'
+        r'(?P<value>.*)',
     )
 
     rule_str: InitVar[str]
@@ -157,22 +182,29 @@ class FilterRule(object):
         rule = self._rule_format.match(rule_str)
         if rule is None:
             raise ValueError(rule_str)
-        self.attr = rule['attr']
-        self.mode = rule['mode'] or config.EMPTY_RULE_MODE
+        self.attr = rule['attr'] # type: ignore
+        self.mode = rule['mode'] or config.EMPTY_RULE_MODE # type: ignore
         self.value = rule['value']
         self.rev = bool(rule['not'])
 
-    
+
     def compare(self, v0, v1) -> bool:
-        if   self.mode == '=':  res = v1 in v0
-        elif self.mode == '==': res = v0 == v1
-        elif self.mode == '^=': res = v0.startswith(v1)
-        elif self.mode == '$=': res = v0.endswith(v1)
-        elif self.mode == '*=': res = v1 in v0
+        if self.mode == '=':
+            res = v1 in v0
+        elif self.mode == '==':
+            res = v0 == v1
+        elif self.mode == '^=':
+            res = v0.startswith(v1)
+        elif self.mode == '$=':
+            res = v0.endswith(v1)
+        elif self.mode == '*=':
+            res = v1 in v0
+        else:
+            raise RuntimeError
         return res ^ self.rev
 
 
-    def __call__(self, info: Info) -> bool:
+    def __call__(self, info: LocalInfo) -> bool:
         if self.attr == 'remote':
             v0 = info.novel.remote
         else:
@@ -180,9 +212,10 @@ class FilterRule(object):
         v1 = self.value
         return self.compare(v0, v1)
 
+
     def __repr__(self):
         return '{} {} {}'.format(
-            self.attr, self.mode, self.value
+            self.attr, self.mode, self.value,
         ) + (' (not)' if self.rev else '')
 
 
@@ -195,13 +228,14 @@ class Filter(object):
     def __call__(self, info) -> bool:
         if self.rules is None:
             return True
-        else:
-            judge = all if self.mode == 'all' else any
-            return judge(rule(info) for rule in self.rules)
+        judge = all if self.mode == 'all' else any
+        return judge(rule(info) for rule in self.rules)
 
-    
+
     def __repr__(self):
-        return '\n'.join(str(rule) for rule in self.rules)
+        if self.rules is not None:
+            return '\n'.join(str(rule) for rule in self.rules)
+        return '[None Filter]'
 
 
     def is_remote_in_scope(self, remote) -> bool:
@@ -212,19 +246,18 @@ class Filter(object):
         """
         if self.rules is None:
             return True
-        else:
-            for rule in self.rules:
-                if rule.attr == 'remote':
-                    v0 = rule.value
-                    v1 = remote
-                    if not rule.compare(v0, v1):
-                        return False
-            return True
+        for rule in self.rules:
+            if rule.attr == 'remote':
+                v0 = rule.value
+                v1 = remote
+                if not rule.compare(v0, v1):
+                    return False
+        return True
 
 
 @dataclass
 class Shelf(object):
-    infos: List[Info] = field(default_factory=list)
+    infos: List[LocalInfo] = field(default_factory=list)
 
 
     def __add__(self, info):
@@ -248,7 +281,7 @@ class Shelf(object):
 
     @classmethod
     def load(cls, data):
-        return cls([Info.load(d) for d in data])
+        return cls([LocalInfo.load(d) for d in data])
 
 
 @dataclass
@@ -294,7 +327,7 @@ class Catalog(object):
             if i not in other.map:
                 delta.append(self.map[i])
         return delta
-            
+
 
     def dump(self) -> str:
         piece = []
@@ -302,7 +335,7 @@ class Catalog(object):
             piece.append(f'# {vol.title}')
             for chap in vol.chaps:
                 piece.append(f'. {chap.title} ({chap.cid})')
-        
+
         return '\n'.join(piece) + '\n'
 
 
@@ -316,6 +349,9 @@ class Catalog(object):
                 catalog.append(Volume(i[2:], []))
             elif i.startswith('. '):
                 m = pattern.match(i)
-                catalog[-1].chaps.append(Chapter(m['cid'], m['title']))
+                if m is not None:
+                    catalog[-1].chaps.append(Chapter(m['cid'], m['title']))
+                else:
+                    raise ValueError('invalid catalog literal')
 
         return cls(catalog)

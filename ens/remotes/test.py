@@ -1,10 +1,10 @@
+from ens.models import Catalog, RemoteInfo
 from ens.remote import Remote
-from ens.models import Info_ as Info, Catalog
 from ens.utils.remote import CatalogBuilder
 
 
 class Test(Remote):
-    def get_info(self, nid: str) -> Info:
+    def get_info(self, nid: str) -> RemoteInfo:
         return Info(
             '示例书目 {}'.format(nid),
             '群星',
