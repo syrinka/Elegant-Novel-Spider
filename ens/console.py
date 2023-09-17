@@ -1,31 +1,24 @@
 import os
-import tempfile
 import subprocess
+import tempfile
 from contextlib import contextmanager
 from typing import Iterable
 
 import loguru
 from rich.console import Console
+from rich.progress import BarColumn, Progress, SpinnerColumn, TimeRemainingColumn
 from rich.theme import Theme
-from rich.progress import (
-    Progress,
-    SpinnerColumn,
-    TimeRemainingColumn,
-    BarColumn
-)
 
 from ens.config import config
 from ens.exceptions import *
-
 
 __all__ = [
     'logger',
     'console',
     'doing',
     'echo',
-    'run',
     'pager',
-    'Track'
+    'Track',
 ]
 
 logger = loguru.logger
@@ -55,8 +48,8 @@ def pager(title=None):
         f.write(cap.get())
 
     command = 'less -rf {} {}'.format(
-        '--prompt=\'{}\''.format(title) if title else '',
-        path
+        "--prompt='{}'".format(title) if title else '',
+        path,
     )
 
     p = subprocess.Popen(command, shell=True)
@@ -84,7 +77,7 @@ class Track(object):
         )
         self.jobs = jobs
         self.task_id = self.progress.add_task(desc, total=len(jobs))
-        
+
 
     def __iter__(self):
         with self.progress:
@@ -102,4 +95,4 @@ if __name__ == '__main__':
     a = Track(range(1,150))
     for i in a:
         time.sleep(0.1)
-        a.desc(i)
+        a.update_desc(i)
