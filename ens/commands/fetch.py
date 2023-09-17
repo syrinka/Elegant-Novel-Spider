@@ -4,11 +4,11 @@ from typing import List
 
 import click
 
-from ens.console import Track, console, doing, echo, logger
+from ens.console import Track, doing, echo, logger
 from ens.exceptions import Abort, ExternalError
 from ens.local import LocalStorage
 from ens.merge import catalog_lose, merge, merge_catalog
-from ens.models import LocalInfo, Novel, RemoteInfo
+from ens.models import LocalInfo, Novel
 from ens.remote import get_remote
 from ens.utils.click import arg_novels, manual
 
@@ -24,18 +24,23 @@ from ens.utils.click import arg_novels, manual
 @click.option('-r', '--retry',
     type = click.IntRange(min=0),
     default = 3)
-@click.option('-t', '--thread', 'thnum', # TODO 多线程执行
+@click.option('-t', '--thread', 'thnum',
     type = click.IntRange(min=2),
     default = None)
-def fetch(novels: List[Novel], **kw):
+def fetch(novels: List[Novel], retry, **kw):
     """
     爬取小说
     """
     for novel in novels:
-        fetch_novel(novel, **kw)
+        if retry == 0:
+            fetch_novel(novel, **kw)
+        else:
+            for count in range(retry+1):
+                logger.debug(f'Retry times {count}')
+                fetch_novel(novel, **kw)
 
 
-def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: int):
+def fetch_novel(novel: Novel, fetch_info: bool, mode: str, thnum: int):  # noqa: PLR0912, PLR0915, FBT001
     try:
         remote = get_remote(novel.remote)
     except KeyError:
@@ -111,7 +116,7 @@ def fetch_novel(novel: Novel, fetch_info: bool, mode: str, retry: int, thnum: in
     local.update_catalog(new_cat)
 
     merge_lock = Lock()
-    def resolve(chap):
+    def resolve(chap):  # noqa: PLR0912
         cid, title = chap
         track.update_desc(title)
         try:
