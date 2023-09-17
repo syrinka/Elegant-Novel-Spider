@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 from contextlib import contextmanager
-from typing import Iterable
+from typing import Optional, Sequence
 
 import loguru
 from rich.console import Console
@@ -34,7 +34,7 @@ console = Console(highlight=False, theme=theme)
 doing = console.status
 
 
-def echo(*msg, style: str = None, nl: bool = True):
+def echo(*msg, style: Optional[str] = None, nl: bool = True):
     console.print(*msg, style=style, end='\n' if nl else '')
 
 
@@ -62,9 +62,9 @@ def pager(title=None):
 class Track(object):
     """
     track = Track(jobs, msg)
-
     """
-    def __init__(self, jobs: Iterable, msg='Working...', desc=''):
+
+    def __init__(self, jobs: Sequence, msg='Working...', desc=''):
         self.progress = Progress(
             SpinnerColumn(),
             msg,
