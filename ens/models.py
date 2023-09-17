@@ -143,7 +143,7 @@ class RemoteInfo(object):
 
 
     def __rich__(self):
-        return '[green]{}[/]  [magenta]@{}[/] ({}) {} {}'.format(
+        return '[green]{}[/]  [magenta]@{}[/]'.format(
             self.title,
             self.author or '[gray27]anon[/]', # anonymous
         )
