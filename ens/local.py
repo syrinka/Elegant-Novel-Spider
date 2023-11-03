@@ -140,6 +140,7 @@ class LocalStorage(object):
         """
         if info is not None:
             self.info = info
+        (self.path / 'info.yml.bak').unlink(missing_ok=True)
         (self.path / 'info.yml').rename(self.path / 'info.yml.bak')
         self.write_file('info.yml', self.info.dump())
 
@@ -152,6 +153,7 @@ class LocalStorage(object):
         """
         if catalog is not None:
             self.catalog = catalog
+        (self.path / 'catalog.yml.bak').unlink(missing_ok=True)
         (self.path / 'catalog.yml').rename(self.path / 'catalog.yml.bak')
         self.write_file('catalog.yml', self.catalog.dump())
 
