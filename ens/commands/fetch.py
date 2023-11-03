@@ -32,12 +32,13 @@ def fetch(novels: List[Novel], retry, **kw):
     爬取小说
     """
     for novel in novels:
-        if retry == 0:
-            fetch_novel(novel, **kw)
-        else:
-            for count in range(retry+1):
-                logger.debug(f'Retry times {count}')
-                fetch_novel(novel, **kw)
+        fetch_novel(novel, **kw)
+        # if retry == 0:
+        #     fetch_novel(novel, **kw)
+        # else:
+        #     for count in range(retry+1):
+        #         logger.debug(f'Retry times {count}')
+        #         fetch_novel(novel, **kw)
 
 
 def fetch_novel(novel: Novel, fetch_info: bool, mode: str, thnum: int):  # noqa: PLR0912, PLR0915, FBT001
