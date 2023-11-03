@@ -111,6 +111,7 @@ class LocalInfo(object):
     @classmethod
     def from_remote(cls, remote: RemoteInfo, base: LocalInfo) -> LocalInfo:
         return cls(
+            novel = base.novel,
             star = base.star,
             isolated = base.isolated,
             comment = base.comment,
