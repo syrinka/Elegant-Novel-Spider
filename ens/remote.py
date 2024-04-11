@@ -93,7 +93,7 @@ def get_remote_list() -> Dict[str, Type[Remote]]:
     for ff, modname, _ispkg in pkgutil.iter_modules(__path__):
         fullname = 'ens.remote.' + modname
         try:
-            exports = ff.find_module(fullname).load_module(fullname).exports # type: ignore
+            exports = ff.find_spec(fullname).loader.load_module(fullname).exports # type: ignore
         except ModuleNotFoundError as e:
             logger.warning('loading {} failed for lack of module {}'.format(fullname, e.name))
             continue
