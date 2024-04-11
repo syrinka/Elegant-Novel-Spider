@@ -23,7 +23,7 @@ from ens.utils.click import arg_novels, manual
     default = 'update')
 @click.option('-r', '--retry',
     type = click.IntRange(min=0),
-    default = 3)
+    default = 0)
 @click.option('-t', '--thread', 'thnum',
     type = click.IntRange(min=2),
     default = None)
@@ -32,13 +32,17 @@ def fetch(novels: List[Novel], retry, **kw):
     爬取小说
     """
     for novel in novels:
-        fetch_novel(novel, **kw)
-        # if retry == 0:
-        #     fetch_novel(novel, **kw)
-        # else:
-        #     for count in range(retry+1):
-        #         logger.debug(f'Retry times {count}')
-        #         fetch_novel(novel, **kw)
+        if retry == 0:
+            fetch_novel(novel, **kw)
+        else:
+            for count in range(retry+1):
+                logger.debug(f'Retry times {count}')
+                try:
+                    fetch_novel(novel, **kw)
+                except Exception as e:
+                    logger.exception(e)
+                    continue
+                break
 
 
 def fetch_novel(novel: Novel, fetch_info: bool, mode: str, thnum: int):  # noqa: PLR0912, PLR0915, FBT001
